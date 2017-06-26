@@ -35,13 +35,6 @@ module.exports = {
         })
       },
       {
-        test: /\.css$/,
-        use: WebpackExtractTextPlugin.extract({
-          fallback: 'style-loader',
-          use: ['css-loader', 'sass-loader']
-        })
-      },
-      {
         test: /\.svg/,
         loader: 'svg-fill-loader?raw=false'
       }
