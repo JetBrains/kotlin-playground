@@ -1,6 +1,6 @@
-var webpack = require('webpack');
-var WebpackExtractTextPlugin = require('extract-text-webpack-plugin');
-var path = require('path');
+const webpack = require('webpack'),
+  WebpackExtractTextPlugin = require('extract-text-webpack-plugin'),
+  path = require('path');
 
 
 const env = process.env.NODE_ENV || 'development';
@@ -30,15 +30,20 @@ module.exports = {
         test: /\.scss$/,
         use: WebpackExtractTextPlugin.extract({
           fallback: 'style-loader',
-          use: [ 'css-loader', 'sass-loader' ]
+          filename: 'app.bundle.css',
+          use: ['css-loader', 'sass-loader']
         })
       },
       {
         test: /\.css$/,
         use: WebpackExtractTextPlugin.extract({
           fallback: 'style-loader',
-          use: [ 'css-loader', 'sass-loader' ]
+          use: ['css-loader', 'sass-loader']
         })
+      },
+      {
+        test: /\.svg/,
+        loader: 'svg-fill-loader?raw=false'
       }
     ]
   },
@@ -48,7 +53,7 @@ module.exports = {
       $: 'jquery',
       jquery: 'jquery'
     }),
-    new WebpackExtractTextPlugin('[name].css')
+    new WebpackExtractTextPlugin('build/[name].css')
   ],
   devServer: {
     contentBase: __dirname,
