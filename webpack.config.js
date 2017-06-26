@@ -52,7 +52,7 @@ module.exports = {
   ],
   devServer: {
     contentBase: __dirname,
-    compress: true,
+    host: '0.0.0.0',
     port: 9009
   }
 };
