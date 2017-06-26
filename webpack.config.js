@@ -30,7 +30,6 @@ module.exports = {
         test: /\.scss$/,
         use: WebpackExtractTextPlugin.extract({
           fallback: 'style-loader',
-          filename: 'app.bundle.css',
           use: ['css-loader', 'sass-loader']
         })
       },
