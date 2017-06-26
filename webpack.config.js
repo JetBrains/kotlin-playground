@@ -34,8 +34,11 @@ module.exports = {
         })
       },
       {
-        test: /\.svg/,
-        loader: 'svg-fill-loader?raw=false'
+        test: /\.svg$/,
+        loader: [
+          'url-loader?limit=20480&name=assets/[name]-[hash].[ext]',
+          'svg-fill-loader'
+        ]
       }
     ]
   },
