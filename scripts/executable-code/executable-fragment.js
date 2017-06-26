@@ -1,8 +1,6 @@
 const ExecutableCodeTemplate = require('./executable-fragment.monk');
 
 const CodeMirror = require('codemirror');
-require('codemirror/lib/codemirror.css');
-require('./executable-fragment.scss');
 
 const Monkberry = require('monkberry');
 const directives = require('monkberry-directives').default;
@@ -38,6 +36,7 @@ class ExecutableFragment extends ExecutableCodeTemplate {
       folded: true,
       output: null,
     };
+    this.codemirror = new CodeMirror();
   }
 
   static render(element) {

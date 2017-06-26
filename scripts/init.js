@@ -1,3 +1,4 @@
+import $ from 'jquery';
 const CodeMirror = require('./codemirror/CodeMirror');
 const ExecutableCode = require('./executable-code');
 
