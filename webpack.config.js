@@ -3,8 +3,8 @@ const webpack = require('webpack'),
   path = require('path');
 
 
-const env = process.env.NODE_ENV || 'development';
-const isProduction = env === 'production';
+const env = process.env.NODE_ENV || 'development',
+  isProduction = env === 'production';
 
 module.exports = {
   entry: './scripts/init.js',
@@ -17,18 +17,18 @@ module.exports = {
     rules: [
       {
         test: /\.js$/,
-        use: 'babel-loader',
+        loader: 'babel-loader',
         include: [
           path.resolve(__dirname, 'scripts')
         ]
       },
       {
         test: /\.monk$/,
-        use: 'monkberry-loader'
+        loader: 'monkberry-loader'
       },
       {
         test: /\.scss$/,
-        use: WebpackExtractTextPlugin.extract({
+        loader: WebpackExtractTextPlugin.extract({
           fallback: 'style-loader',
           use: ['css-loader', 'sass-loader']
         })
