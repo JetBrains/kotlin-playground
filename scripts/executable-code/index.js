@@ -1,6 +1,7 @@
 const ExecutableFragment = require('./executable-fragment');
 const WebDemoApi = require('./webdemo-api');
 const $ = require('jquery');
+require('./executable-fragment.scss');
 
 module.exports = function (nodesOrSelector) {
   WebDemoApi.getCompilerConfigs().then(compilerConfigs => {
