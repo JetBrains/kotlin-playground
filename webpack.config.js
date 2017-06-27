@@ -12,7 +12,7 @@ module.exports = {
   entry: './src/init.js',
   output: {
     path: path.resolve(__dirname, 'dist'),
-    filename: '[name].js',
+    filename: 'runcode.js',
   },
   devtool: isProduction ? false : 'source-map',
   module: {
@@ -67,7 +67,7 @@ module.exports = {
       $: 'jquery',
       jquery: 'jquery'
     }),
-    new WebpackExtractTextPlugin('[name].css'),
+    new WebpackExtractTextPlugin('runcode.css'),
     new HtmlWebpackPlugin({
       template: 'src/index.html'
     }),
