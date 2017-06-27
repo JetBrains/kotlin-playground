@@ -1,6 +1,7 @@
 const webpack = require('webpack'),
   WebpackExtractTextPlugin = require('extract-text-webpack-plugin'),
   HtmlWebpackPlugin = require('html-webpack-plugin'),
+  CleanWebpackPlugin = require('clean-webpack-plugin'),
   path = require('path');
 
 
@@ -10,7 +11,7 @@ const env = process.env.NODE_ENV || 'development',
 module.exports = {
   entry: './scripts/init.js',
   output: {
-    path: path.resolve(__dirname, 'build'),
+    path: path.resolve(__dirname, 'dist'),
     filename: '[name].js',
   },
   devtool: isProduction ? false : 'source-map',
@@ -69,7 +70,8 @@ module.exports = {
     new WebpackExtractTextPlugin('[name].css'),
     new HtmlWebpackPlugin({
       template: 'scripts/index.html'
-    })
+    }),
+    new CleanWebpackPlugin('dist')
   ],
   devServer: {
     contentBase: __dirname,
