@@ -53,8 +53,8 @@ module.exports = {
             loader: 'file-loader',
             options: {
               name: '[name].[ext]',
-              outputPath: 'executable-code/icons/',
-              publicPath: 'executable-code/icons/'
+              outputPath: 'icons/',
+              publicPath: 'icons/'
             }
           }
         ]

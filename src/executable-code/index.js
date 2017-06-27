@@ -2,9 +2,6 @@ const ExecutableFragment = require('./executable-fragment'),
   WebDemoApi = require('./webdemo-api'),
   $ = require('jquery');
 
-require('./executable-fragment.scss');
-require('./icons/loading.gif');
-
 export default function ExecutableCode (nodesOrSelector) {
   WebDemoApi.getCompilerConfigs().then(compilerConfigs => {
     $(nodesOrSelector).each((ind, element) => {
