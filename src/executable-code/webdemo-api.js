@@ -1,5 +1,5 @@
-const $ = require('jquery');
-const URLSearchParams = require('url-search-params');
+import URLSearchParams from 'url-search-params';
+
 const webDemoURL = 'https://try.kotlinlang.org';
 
 function getExceptionCauses(exception) {
@@ -10,7 +10,7 @@ function getExceptionCauses(exception) {
   }
 }
 
-class WebDemoApi {
+export default class WebDemoApi {
   static getCompilerConfigs() {
     return fetch(`${webDemoURL}/kotlinServer?type=getKotlinVersions`)
       .then(response => response.json())
@@ -68,5 +68,3 @@ class WebDemoApi {
     })
   }
 }
-
-module.exports = WebDemoApi;

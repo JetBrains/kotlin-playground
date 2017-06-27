@@ -1,6 +1,6 @@
-const ExecutableFragment = require('./executable-fragment'),
-  WebDemoApi = require('./webdemo-api'),
-  $ = require('jquery');
+import $ from 'jquery';
+import ExecutableFragment from './executable-fragment';
+import WebDemoApi from './webdemo-api';
 
 export default function ExecutableCode (nodesOrSelector) {
   WebDemoApi.getCompilerConfigs().then(compilerConfigs => {
