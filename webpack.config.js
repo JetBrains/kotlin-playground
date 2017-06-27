@@ -1,5 +1,6 @@
 const webpack = require('webpack'),
   WebpackExtractTextPlugin = require('extract-text-webpack-plugin'),
+  HtmlWebpackPlugin = require('html-webpack-plugin'),
   path = require('path');
 
 
@@ -9,8 +10,8 @@ const env = process.env.NODE_ENV || 'development',
 module.exports = {
   entry: './scripts/init.js',
   output: {
-    path: __dirname,
-    filename: 'build/[name].js',
+    path: path.resolve(__dirname, 'build'),
+    filename: '[name].js',
   },
   devtool: isProduction ? false : 'source-map',
   module: {
@@ -39,6 +40,23 @@ module.exports = {
           'url-loader?limit=20480&name=assets/[name]-[hash].[ext]',
           'svg-fill-loader'
         ]
+      },
+      {
+        test: /\.html$/,
+        loader: ['html-loader']
+      },
+      {
+        test: /\.(gif|jpg|png)$/,
+        loader: [
+          {
+            loader: 'file-loader',
+            options: {
+              name: '[name].[ext]',
+              outputPath: 'executable-code/icons/',
+              publicPath: 'executable-code/icons/'
+            }
+          }
+        ]
       }
     ]
   },
@@ -48,7 +66,10 @@ module.exports = {
       $: 'jquery',
       jquery: 'jquery'
     }),
-    new WebpackExtractTextPlugin('build/[name].css')
+    new WebpackExtractTextPlugin('[name].css'),
+    new HtmlWebpackPlugin({
+      template: 'scripts/index.html'
+    })
   ],
   devServer: {
     contentBase: __dirname,

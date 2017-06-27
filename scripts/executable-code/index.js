@@ -1,12 +1,14 @@
-const ExecutableFragment = require('./executable-fragment');
-const WebDemoApi = require('./webdemo-api');
-const $ = require('jquery');
+const ExecutableFragment = require('./executable-fragment'),
+  WebDemoApi = require('./webdemo-api'),
+  $ = require('jquery');
+
 require('./executable-fragment.scss');
+require('./icons/loading.gif');
 
 module.exports = function (nodesOrSelector) {
   WebDemoApi.getCompilerConfigs().then(compilerConfigs => {
     $(nodesOrSelector).each((ind, element) => {
-      const code = $(element).find('code')[ 0 ].textContent;
+      const code = $(element).find('code')[0].textContent;
       const executableFragmentContainer = document.createElement('div');
       element.parentNode.replaceChild(executableFragmentContainer, element);
       const minCompilerVersion = element.getAttribute('data-min-compiler-version');
@@ -22,7 +24,7 @@ module.exports = function (nodesOrSelector) {
       let compilerVersion;
       if (minCompilerVersion) {
         compilerVersion = minCompilerVersion > latestStableVersion ?
-          compilerConfigs[ compilerConfigs.length - 1 ].version :
+          compilerConfigs[compilerConfigs.length - 1].version :
           latestStableVersion;
       } else {
         compilerVersion = latestStableVersion;
