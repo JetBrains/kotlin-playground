@@ -28,17 +28,15 @@ module.exports = {
       },
       {
         test: /\.scss$/,
-        use: WebpackExtractTextPlugin.extract({
-          fallback: 'style-loader',
-          use: [ 'css-loader', 'sass-loader' ]
-        })
+        use: [
+          'style-loader',
+          'css-loader',
+          'sass-loader'
+        ]
       },
       {
         test: /\.css$/,
-        use: WebpackExtractTextPlugin.extract({
-          fallback: 'style-loader',
-          use: [ 'css-loader', 'sass-loader' ]
-        })
+        use: [ 'css-loader' ]
       }
     ]
   },
@@ -47,8 +45,7 @@ module.exports = {
       jQuery: 'jquery',
       $: 'jquery',
       jquery: 'jquery'
-    }),
-    new WebpackExtractTextPlugin('[name].css')
+    })
   ],
   devServer: {
     contentBase: __dirname,
