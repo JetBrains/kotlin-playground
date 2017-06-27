@@ -9,7 +9,7 @@ const env = process.env.NODE_ENV || 'development',
   isProduction = env === 'production';
 
 module.exports = {
-  entry: './src/init.js',
+  entry: './src/index.js',
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: 'runcode.js',
