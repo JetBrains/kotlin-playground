@@ -6,7 +6,7 @@
   "scripts": {
     "start": "cross-env NODE_ENV=development webpack-dev-server",
     "build": "cross-env NODE_ENV=production webpack",
-    "sass": "node-sass --watch -o scripts/executable-code scripts/executable-code/executable-fragment.scss"
+    "sass": "node-sass --watch -o src/executable-code src/executable-code/executable-fragment.scss"
   },
   "dependencies": {
     "codemirror": "5.27.2",

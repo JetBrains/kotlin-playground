@@ -9,7 +9,7 @@ const env = process.env.NODE_ENV || 'development',
   isProduction = env === 'production';
 
 module.exports = {
-  entry: './scripts/init.js',
+  entry: './src/init.js',
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: '[name].js',
@@ -21,7 +21,7 @@ module.exports = {
         test: /\.js$/,
         loader: 'babel-loader',
         include: [
-          path.resolve(__dirname, 'scripts')
+          path.resolve(__dirname, 'src')
         ]
       },
       {
@@ -69,7 +69,7 @@ module.exports = {
     }),
     new WebpackExtractTextPlugin('[name].css'),
     new HtmlWebpackPlugin({
-      template: 'scripts/index.html'
+      template: 'src/index.html'
     }),
     new CleanWebpackPlugin('dist')
   ],
