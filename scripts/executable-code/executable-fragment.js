@@ -33,7 +33,7 @@ class ExecutableFragment extends ExecutableCodeTemplate {
     this.state = {
       code: '',
       foldButtonHover: false,
-      folded: true,
+      folded: false,
       output: null,
     };
     this.codemirror = new CodeMirror();
@@ -84,7 +84,7 @@ class ExecutableFragment extends ExecutableCodeTemplate {
     }
 
     if (this.state.folded) {
-      this.codemirror.setOption("lineNumbers", false);
+      this.codemirror.setOption("lineNumbers", true);
       this.codemirror.setValue(sample);
     } else {
       this.codemirror.setOption("lineNumbers", true);
