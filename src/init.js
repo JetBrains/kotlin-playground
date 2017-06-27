@@ -1,17 +1,13 @@
 import $ from 'jquery';
+import 'codemirror/addon/runmode/colorize';
+import 'codemirror/mode/clike/clike';
+import 'codemirror/mode/groovy/groovy';
+import 'codemirror/mode/xml/xml';
+import 'codemirror/mode/javascript/javascript';
+import 'codemirror/mode/shell/shell';
 
-const ExecutableCode = require('./executable-code');
-
-// Bring in codemirror
-require('codemirror/addon/runmode/colorize.js');
-require('codemirror/mode/clike/clike.js');
-require('codemirror/mode/groovy/groovy.js');
-require('codemirror/mode/xml/xml.js');
-require('codemirror/mode/javascript/javascript.js');
-require('codemirror/mode/shell/shell.js');
-
+import ExecutableCode from './executable-code';
 
 $(document).ready(function () {
     new ExecutableCode('.sample');
-    console.log(99);
 });

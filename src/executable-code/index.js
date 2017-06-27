@@ -5,7 +5,7 @@ const ExecutableFragment = require('./executable-fragment'),
 require('./executable-fragment.scss');
 require('./icons/loading.gif');
 
-module.exports = function (nodesOrSelector) {
+export default function ExecutableCode (nodesOrSelector) {
   WebDemoApi.getCompilerConfigs().then(compilerConfigs => {
     $(nodesOrSelector).each((ind, element) => {
       const code = $(element).find('code')[0].textContent;
