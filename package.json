@@ -47,6 +47,7 @@
     "sass-loader": "6.0.6",
     "style-loader": "^0.18.2",
     "svg-fill-loader": "0.0.8",
+    "uglifyjs-webpack-plugin": "^0.4.6",
     "url-loader": "0.5.9",
     "webpack": "^3.0.0",
     "webpack-dev-server": "2.5.0"

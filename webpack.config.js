@@ -2,6 +2,7 @@ const webpack = require('webpack'),
   WebpackExtractTextPlugin = require('extract-text-webpack-plugin'),
   HtmlWebpackPlugin = require('html-webpack-plugin'),
   CleanWebpackPlugin = require('clean-webpack-plugin'),
+  UglifyJSPlugin = require('uglifyjs-webpack-plugin'),
   path = require('path');
 
 
@@ -18,7 +19,7 @@ module.exports = {
     path: path.resolve(__dirname, 'dist'),
     filename: '[name].js',
   },
-  devtool: isProduction ? false : 'source-map',
+  devtool: 'source-map',
   module: {
     rules: [
       {
@@ -79,6 +80,9 @@ module.exports = {
     new webpack.optimize.CommonsChunkPlugin({
       name: 'vendor',
     }),
+    new UglifyJSPlugin({
+      sourceMap: true
+    })
   ],
   devServer: {
     contentBase: __dirname,
