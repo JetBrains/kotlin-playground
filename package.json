@@ -17,7 +17,6 @@
     "fixer.js": "^1.4.18",
     "imports-loader": "^0.7.1",
     "in-viewport": "^3.5.0",
-    "jquery": "3.2.1",
     "npm-check-updates": "^2.12.1",
     "scrolltofixed": "1.0.6",
     "url-search-params": "0.9.0"

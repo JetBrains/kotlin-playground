@@ -12,7 +12,7 @@ const env = process.env.NODE_ENV || 'development',
 module.exports = {
   entry: {
     runcode: './src/index.js',
-    vendor: ['jquery', 'monkberry', 'monkberry-directives',
+    vendor: ['monkberry', 'monkberry-directives',
     'codemirror']
   },
   output: {
@@ -67,11 +67,6 @@ module.exports = {
     ]
   },
   plugins: [
-    new webpack.ProvidePlugin({
-      jQuery: 'jquery',
-      $: 'jquery',
-      jquery: 'jquery'
-    }),
     new WebpackExtractTextPlugin('[name].css'),
     new HtmlWebpackPlugin({
       template: 'src/index.html'
