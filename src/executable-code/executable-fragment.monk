@@ -19,7 +19,7 @@
         {% if (waitingForOutput) %}
             <div class="output-wrapper">
                 <div class="loading-indicator">
-                    <img src="executable-code/icons/loading.gif"/>
+                    <div class="loader-icon"></div>
                 </div>
             </div>
         {% else %}

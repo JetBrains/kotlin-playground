@@ -7,10 +7,10 @@ import 'codemirror/mode/javascript/javascript';
 import 'codemirror/mode/shell/shell';
 
 import './scss/index.scss';
-import './icons/loading.gif';
 
 import ExecutableCode from './executable-code';
 
 $(document).ready(function () {
   new ExecutableCode('.sample');
 });
+

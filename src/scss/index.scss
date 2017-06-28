@@ -3,7 +3,6 @@
 @import "_colors";
 @import "_font";
 @import "_grid";
-
 @import "../../node_modules/codemirror/lib/codemirror.css";
 
 .executable-fragment-wrapper {
@@ -71,6 +70,16 @@
   }
 }
 
+.loader-icon {
+  background: url("../icons/loader.svg");
+  background-size: cover;
+  background-repeat: no-repeat;
+  height: 30px;
+  width: 60px;
+  margin: 20px;
+}
+
+
 .cm__ERROR {
   color: #ff0000 !important;
 }
@@ -127,11 +136,6 @@
   overflow: auto;
   padding-left: 10px;
   padding-top: 15px;
-}
-
-.loading-indicator img {
-  height: 50px;
-  margin: auto;
 }
 
 .error-output {
@@ -237,4 +241,7 @@
   span {
     margin-left: 15px;
   }
+}
+
+.executable-fragment-wrapper {
 }
