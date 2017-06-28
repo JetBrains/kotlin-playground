@@ -9,10 +9,14 @@ const env = process.env.NODE_ENV || 'development',
   isProduction = env === 'production';
 
 module.exports = {
-  entry: './src/index.js',
+  entry: {
+    runcode: './src/index.js',
+    vendor: ['jquery', 'monkberry', 'monkberry-directives',
+    'codemirror']
+  },
   output: {
     path: path.resolve(__dirname, 'dist'),
-    filename: 'runcode.js',
+    filename: '[name].js',
   },
   devtool: isProduction ? false : 'source-map',
   module: {
@@ -67,11 +71,14 @@ module.exports = {
       $: 'jquery',
       jquery: 'jquery'
     }),
-    new WebpackExtractTextPlugin('runcode.css'),
+    new WebpackExtractTextPlugin('[name].css'),
     new HtmlWebpackPlugin({
       template: 'src/index.html'
     }),
-    new CleanWebpackPlugin('dist')
+    new CleanWebpackPlugin('dist'),
+    new webpack.optimize.CommonsChunkPlugin({
+      name: 'vendor',
+    }),
   ],
   devServer: {
     contentBase: __dirname,
