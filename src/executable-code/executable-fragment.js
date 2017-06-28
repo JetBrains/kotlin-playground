@@ -1,11 +1,10 @@
-const ExecutableCodeTemplate = require('./executable-fragment.monk');
+import CodeMirror from 'codemirror';
+import Monkberry from 'monkberry';
+import directives from 'monkberry-directives';
+import 'monkberry-events';
 
-const CodeMirror = require('codemirror');
-
-const Monkberry = require('monkberry');
-const directives = require('monkberry-directives').default;
-const WebDemoApi = require('./webdemo-api');
-require('monkberry-events');
+import ExecutableCodeTemplate from './executable-fragment.monk';
+import WebDemoApi from './webdemo-api';
 
 function countLines(string) {
   return (string.match(/\n/g) || []).length;

@@ -12,8 +12,7 @@ const env = process.env.NODE_ENV || 'development',
 module.exports = {
   entry: {
     runcode: './src/index.js',
-    vendor: ['monkberry', 'monkberry-directives',
-    'codemirror']
+    vendor: ['monkberry', 'monkberry-directives', 'codemirror']
   },
   output: {
     path: path.resolve(__dirname, 'dist'),
