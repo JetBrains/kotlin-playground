@@ -33,7 +33,7 @@ class ExecutableFragment extends ExecutableCodeTemplate {
     this.state = {
       code: '',
       foldButtonHover: false,
-      folded: false,
+      folded: true,
       output: null,
     };
     this.codemirror = new CodeMirror();
@@ -228,6 +228,7 @@ class ExecutableFragment extends ExecutableCodeTemplate {
       mode: 'text/x-kotlin',
       indentUnit: 4,
       viewportMargin: Infinity,
+      foldGutter: true,
       gutters: [
         "errors-and-warnings-gutter",
         "CodeMirror-foldgutter"
