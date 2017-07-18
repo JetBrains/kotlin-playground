@@ -1,5 +1,5 @@
 {
-  "name": "kotlin-web-demo",
+  "name": "kotlin-runcode",
   "version": "1.0.0",
   "description": "Kotlin embedded runnable examples",
   "main": "dist/runcode.js",
