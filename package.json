@@ -1,13 +1,17 @@
 {
   "name": "kotlin-web-demo",
   "version": "1.0.0",
-  "description": "Web Demo Package",
-  "main": "webpack.config.js",
-  "scripts": {
-    "start": "cross-env NODE_ENV=development webpack-dev-server",
-    "build": "cross-env NODE_ENV=production webpack",
-    "sass": "node-sass --watch -o src/executable-code src/executable-code/executable-fragment.scss"
-  },
+  "description": "Kotlin embedded runnable examples",
+  "main": "dist/runcode.js",
+  "author": "JetBrains",
+  "license": "Apache-2.0",
+  "repository": "JetBrains/kotlin-runcode",
+  "files": [
+    "src",
+    "dist",
+    "README.md",
+    "webpack.config.js"
+  ],
   "dependencies": {
     "codemirror": "5.27.2",
     "core-js": "2.4.1",
@@ -51,6 +55,10 @@
     "webpack": "^3.0.0",
     "webpack-dev-server": "2.5.0"
   },
-  "author": "",
-  "license": "ISC"
+  "scripts": {
+    "start": "cross-env NODE_ENV=development webpack-dev-server",
+    "build": "cross-env NODE_ENV=production webpack",
+    "sass": "node-sass --watch -o src/executable-code src/executable-code/executable-fragment.scss",
+    "prepublish": "npm run build"
+  }
 }
