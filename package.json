@@ -1,6 +1,6 @@
 {
   "name": "kotlin-runcode",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Kotlin embedded runnable code",
   "main": "dist/runcode.js",
   "author": "JetBrains",
