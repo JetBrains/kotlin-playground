@@ -1,4 +1,5 @@
 import URLSearchParams from 'url-search-params';
+import fetch from 'whatwg-fetch'
 
 const webDemoURL = 'https://try.kotlinlang.org';
 
