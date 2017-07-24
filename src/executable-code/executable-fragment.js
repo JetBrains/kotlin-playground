@@ -5,6 +5,9 @@ import 'monkberry-events';
 import ExecutableCodeTemplate from './executable-fragment.monk';
 import WebDemoApi from './webdemo-api';
 
+const SAMPLE_START = '//sampleStart';
+const SAMPLE_END = '//sampleEnd';
+
 function countLines(string) {
   return (string.match(/\n/g) || []).length;
 }
@@ -51,13 +54,25 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
 
   update(state) {
     let sample;
+
     if (state.code) {
-      this.prefix = state.code.substring(0, state.code.indexOf('//sampleStart'));
-      debugger;
-      sample = state.code.substring(state.code.indexOf('//sampleStart') + '//sampleStart'.length + 1,
-        state.code.indexOf('//sampleEnd') - 1);
-      this.suffix = state.code.substring(state.code.indexOf('//sampleEnd') + '//sampleEnd'.length);
-      if(this.suffix.endsWith('\n')) {
+      const code = state.code;
+      const codeLen = code.length;
+      const startIndex = code.indexOf(SAMPLE_START);
+      const endIndex = code.indexOf(SAMPLE_END);
+      const hasMarkers = startIndex > -1 && endIndex > -1;
+
+      this.prefix = '';
+      this.suffix = '';
+      sample = code;
+
+      if (hasMarkers) {
+        this.prefix = code.substring(0, startIndex);
+        this.suffix = code.substring(code.indexOf(SAMPLE_END) + SAMPLE_END.length);
+        sample = code.substring(startIndex + SAMPLE_START.length + 1, endIndex - 1);
+      }
+
+      if (this.suffix.endsWith('\n')) {
         this.suffix = this.suffix.substr(0, this.suffix.length - 1)
       }
     } else {

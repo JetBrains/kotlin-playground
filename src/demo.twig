@@ -5,7 +5,7 @@
 </head>
 <body>
 <pre>
-<code class="a">fun sum(a: Int, b: Int): Int {
+<code data-min-compiler-version="1.0.0">fun sum(a: Int, b: Int): Int {
   return a + b
 }
 
@@ -15,9 +15,28 @@ fun printSum(a: Int, b: Int): Unit {
 
 fun main(args: Array&lt;String&gt;) {
   printSum(-1, 8)
-}
-    </code>
+}</code>
 </pre>
+
+
+<pre>
+<code>
+//sampleStart
+fun sum(a: Int, b: Int): Int {
+  return a + b
+}
+
+fun printSum(a: Int, b: Int): Unit {
+  println("sum of $a and $b is ${a + b}")
+}
+//sampleEnd
+
+fun main(args: Array&lt;String&gt;) {
+  printSum(-1, 8)
+}
+</code>
+</pre>
+
 
 <script>
 KotlinExecutableCode('code')
