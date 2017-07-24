@@ -2,7 +2,6 @@ import CodeMirror from 'codemirror';
 import Monkberry from 'monkberry';
 import directives from 'monkberry-directives';
 import 'monkberry-events';
-
 import ExecutableCodeTemplate from './executable-fragment.monk';
 import WebDemoApi from './webdemo-api';
 
@@ -24,7 +23,7 @@ function unEscapeString(s) {
   return unEscapedString
 }
 
-class ExecutableFragment extends ExecutableCodeTemplate {
+export default class ExecutableFragment extends ExecutableCodeTemplate {
   constructor() {
     super();
     this.arrayClasses = [];
@@ -54,6 +53,7 @@ class ExecutableFragment extends ExecutableCodeTemplate {
     let sample;
     if (state.code) {
       this.prefix = state.code.substring(0, state.code.indexOf('//sampleStart'));
+      debugger;
       sample = state.code.substring(state.code.indexOf('//sampleStart') + '//sampleStart'.length + 1,
         state.code.indexOf('//sampleEnd') - 1);
       this.suffix = state.code.substring(state.code.indexOf('//sampleEnd') + '//sampleEnd'.length);
@@ -257,5 +257,3 @@ class ExecutableFragment extends ExecutableCodeTemplate {
     })
   }
 }
-
-module.exports = ExecutableFragment;

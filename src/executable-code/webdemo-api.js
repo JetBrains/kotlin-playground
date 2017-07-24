@@ -1,5 +1,5 @@
 import URLSearchParams from 'url-search-params';
-import fetch from 'whatwg-fetch'
+import 'whatwg-fetch';
 
 const webDemoURL = 'https://try.kotlinlang.org';
 
@@ -12,9 +12,12 @@ function getExceptionCauses(exception) {
 }
 
 export default class WebDemoApi {
-  static getCompilerConfigs() {
+  /**
+   * @return {Promise<Object>}
+   */
+  static getCompilerVersions() {
     return fetch(`${webDemoURL}/kotlinServer?type=getKotlinVersions`)
-      .then(response => response.json())
+      .then(response => response.json());
   }
 
   static executeKotlinCode(code, compilerVersion) {
