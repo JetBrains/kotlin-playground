@@ -14,16 +14,8 @@
   ],
   "dependencies": {
     "codemirror": "5.27.2",
-    "core-js": "2.4.1",
-    "event-emitter": "^0.3.5",
-    "exports-loader": "^0.6.4",
-    "extend": "^3.0.1",
-    "fixer.js": "^1.4.18",
-    "imports-loader": "^0.7.1",
-    "in-viewport": "^3.5.0",
     "npm-check-updates": "^2.12.1",
-    "scrolltofixed": "1.0.6",
-    "url-search-params": "0.9.0",
+    "url-search-params": "0.7.1",
     "whatwg-fetch": "^2.0.3"
   },
   "devDependencies": {
@@ -34,7 +26,6 @@
     "babel-plugin-transform-runtime": "6.23.0",
     "babel-preset-es2015": "6.24.1",
     "ci-publish": "^1.3.0",
-    "clean-webpack-plugin": "^0.1.16",
     "cross-env": "5.0.1",
     "css-loader": "0.28.4",
     "extract-text-webpack-plugin": "2.1.2",
@@ -49,6 +40,7 @@
     "postcss-loader": "2.0.6",
     "query-string": "4.3.4",
     "resolve-url-loader": "2.1.0",
+    "rimraf": "2.6.1",
     "sass-loader": "6.0.6",
     "style-loader": "^0.18.2",
     "svg-fill-loader": "0.0.8",
@@ -60,7 +52,7 @@
   },
   "scripts": {
     "start": "cross-env NODE_ENV=development webpack-dev-server",
-    "build": "cross-env NODE_ENV=production webpack",
+    "build": "rimraf dist && webpack && cross-env NODE_ENV=production webpack -p --env.production",
     "sass": "node-sass --watch -o src/executable-code src/executable-code/executable-fragment.scss",
     "release:ci": "npm run build && ci-publish"
   }

@@ -2,15 +2,19 @@ const path = require('path');
 const webpack = require('webpack');
 const WebpackExtractTextPlugin = require('extract-text-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const CleanWebpackPlugin = require('clean-webpack-plugin');
 
 module.exports =  (params = {}) => {
+  const isProduction = process.env.NODE_ENV === 'production';
+  const entryName = isProduction ? 'runcode.min' : 'runcode';
+
   return {
-    entry: './src/index.js',
+    entry: {
+      [entryName]: './src/index'
+    },
 
     output: {
       path: path.resolve(__dirname, 'dist'),
-      filename: 'runcode.js',
+      filename: '[name].js',
       library: 'KotlinExecutableCode',
       libraryTarget: 'umd'
     },
@@ -37,7 +41,6 @@ module.exports =  (params = {}) => {
         {
           test: /\.scss$/,
           loader: WebpackExtractTextPlugin.extract({
-            fallback: 'style-loader',
             use: ['css-loader', 'sass-loader']
           })
         },
@@ -62,10 +65,9 @@ module.exports =  (params = {}) => {
 
       new HtmlWebpackPlugin({
         template: 'src/demo.twig',
+        filename: 'demo.html',
         inject: 'head'
-      }),
-
-      new CleanWebpackPlugin('dist')
+      })
     ],
 
     devServer: {
