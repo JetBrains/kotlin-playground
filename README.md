@@ -1,36 +1,50 @@
-# kotlin-runcode
+# Kotlin Runnable Code
 
 Self-contained component to embed in websites for running Kotlin code.
 
-## Setup for development
+## Installation
 
-Run `npm start` which will invoke `webpack` and set up an internal development server.
+Run `npm install` or `yarn`.
 
-## Setup for end use
+## Usage
 
-Run `webpack` and copy the output of the `dist` folder to your scripts folder.
-Wrap any code you want in a box in a div tag. Use markdown=1 if it's markdown input.
+For instance you have some Kotlin code in HTML markup (`<` and `>` should be replaced with HTML entities):
 
-<div class="sample" markdown="1">
-```kotlin
-fun main(args: Array<String>) {
+```html
+<code>
+fun main(args: Array&lt;String&gt;) {
    println("Hello")
 }
+</code>
 ```
-</div>
 
-All that code will appear in an editable box. If you want to highlight a specific area to focus on a specific sample, use //sampleStart and //sampleEnd
+Just import the library and initialize it with the CSS selector:
 
-<div class="sample" markdown="1">
-```kotlin
+```js
+import KotlinRunnable from 'kotlin-runcode';
+
+window.addEventListener('DOMContentLoaded', () => {
+  KotlinRunnable('code'); // <== CSS selector to select code nodes
+});
+```
+
+All that code will appear in an editable box.
+If you want to highlight a specific area to focus on a specific sample, use `//sampleStart` and `//sampleEnd` markers:
+
+```html
+<code>
+fun main(args: Array&lt;String&gt;) {
+   println("Hello")
+}
+
 //sampleStart
-fun message(input: String) {
-   println(input)
+fun sum(a: Int, b: Int): Int {
+  return a + b
 }
 //sampleEnd
-fun main(args: Array<String>) {
-   message("Hello")
-}
+</code>
 ```
-</div>
 
+## Development
+
+Run `npm start` which will invoke `webpack` and set up an internal development server.
