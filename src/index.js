@@ -6,7 +6,7 @@ import 'codemirror/mode/xml/xml';
 import 'codemirror/mode/javascript/javascript';
 import 'codemirror/mode/shell/shell';
 
-import './scss/index.scss';
+import './index.scss';
 
 import ExecutableCode from './executable-code';
 import WebDemoApi from "./executable-code/webdemo-api";

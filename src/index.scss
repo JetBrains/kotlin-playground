@@ -1,9 +1,6 @@
-@import "_adaptive";
-@import "_base";
-@import "_colors";
-@import "_font";
-@import "_grid";
-@import "../../node_modules/codemirror/lib/codemirror.css";
+@import "~codemirror/lib/codemirror.css";
+
+$font-family-mono: 'Liberation Mono', Consolas, Menlo, Courier, monospace !global;
 
 .executable-fragment-wrapper {
   margin-bottom: 20px;
@@ -60,7 +57,7 @@
   height: 20px;
   width: 16px;
   cursor: pointer;
-  background: url("../icons/run.svg");
+  background: url("img/run.svg");
   background-size: cover;
   background-repeat: no-repeat;
 
@@ -71,7 +68,7 @@
 }
 
 .loader-icon {
-  background: url("../icons/loader.svg");
+  background: url("img/loader.svg");
   background-size: cover;
   background-repeat: no-repeat;
   height: 30px;
@@ -177,10 +174,10 @@
   transform: translate(-50%, -50%);
   z-index: 10;
   cursor: pointer;
-  background: url('../icons/button_open.svg?fill=%23d4d4d4&selector=.data-fill') no-repeat;
+  background: url('img/button_open.svg?fill=%23d4d4d4&selector=.data-fill') no-repeat;
   background-color: transparent;
   &._hover {
-    background-image: url('../icons/button_open.svg?fill=%23f68322&selector=.data-fill');
+    background-image: url('img/button_open.svg?fill=%23f68322&selector=.data-fill');
   }
 }
 
@@ -190,11 +187,11 @@
   }
 
   .fold-button {
-    background-image: url('../icons/button_close.svg?fill=%23d4d4d4&selector=.data-fill');
+    background-image: url('img/button_close.svg?fill=%23d4d4d4&selector=.data-fill');
   }
 
   .fold-button._hover {
-    background-image: url('../icons/button_close.svg?fill=%23f68322&selector=.data-fill');
+    background-image: url('img/button_close.svg?fill=%23f68322&selector=.data-fill');
   }
 }
 
@@ -208,21 +205,21 @@
   height: 5px;
 
   &._top {
-    background-image: url('../icons/zigzag_top.svg?fill=%23eee&selector=.data-fill');
+    background-image: url('img/zigzag_top.svg?fill=%23eee&selector=.data-fill');
     top: 0;
     transform: translate(-50%, -50%);
 
     &._hover {
-      background-image: url('../icons/zigzag_top.svg?fill=%23f68322&selector=.data-fill');
+      background-image: url('img/zigzag_top.svg?fill=%23f68322&selector=.data-fill');
     }
   }
 
   &._bottom {
-    background-image: url('../icons/zigzag_bottom.svg?fill=%23eee&selector=.data-fill');
+    background-image: url('img/zigzag_bottom.svg?fill=%23eee&selector=.data-fill');
     bottom: 0;
     transform: translate(-50%, 50%);
     &._hover {
-      background-image: url('../icons/zigzag_bottom.svg?fill=%23f68322&selector=.data-fill');
+      background-image: url('img/zigzag_bottom.svg?fill=%23f68322&selector=.data-fill');
     }
   }
 

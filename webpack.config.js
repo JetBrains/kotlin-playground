@@ -1,7 +1,6 @@
 const path = require('path');
 const webpack = require('webpack');
-const WebpackExtractTextPlugin = require('extract-text-webpack-plugin');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
+const HtmlPlugin = require('html-webpack-plugin');
 
 module.exports =  (params = {}) => {
   const isProduction = process.env.NODE_ENV === 'production';
@@ -15,45 +14,35 @@ module.exports =  (params = {}) => {
     output: {
       path: path.resolve(__dirname, 'dist'),
       filename: '[name].js',
-      library: 'KotlinExecutableCode',
+      library: 'KotlinRunCode',
       libraryTarget: 'umd'
     },
 
-    devtool: false,
+    devtool: 'source-map',
 
     module: {
       rules: [
         {
           test: /\.js$/,
-          loader: 'babel-loader',
-          include: [
-            path.resolve(__dirname, 'src')
-          ]
+          include: path.resolve(__dirname, 'src'),
+          loader: 'babel-loader'
         },
         {
           test: /\.monk$/,
           loader: 'monkberry-loader'
         },
         {
-          test: /\.twig$/,
-          loader: 'twig-loader'
-        },
-        {
           test: /\.scss$/,
-          loader: WebpackExtractTextPlugin.extract({
-            use: ['css-loader', 'sass-loader']
-          })
+          use: [
+            'style-loader',
+            'css-loader',
+            'sass-loader'
+          ]
         },
         {
           test: /\.svg$/,
-          loader: [
-            {
-              loader: 'url-loader',
-              options: {
-                limit: 20480,
-                name: 'assets/[name]-[hash].[ext]'
-              }
-            },
+          use: [
+            'svg-url-loader',
             'svg-fill-loader'
           ]
         }
@@ -61,19 +50,12 @@ module.exports =  (params = {}) => {
     },
 
     plugins: [
-      new WebpackExtractTextPlugin('[name].css'),
-
-      new HtmlWebpackPlugin({
-        template: 'src/demo.twig',
+      new HtmlPlugin({
+        template: 'src/demo.ejs',
         filename: 'demo.html',
-        inject: 'head'
+        inject: 'head',
+        title: 'KotlinRunCode demo'
       })
-    ],
-
-    devServer: {
-      contentBase: __dirname,
-      host: '0.0.0.0',
-      port: 9009
-    }
+    ]
   };
 };

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title><%= htmlWebpackPlugin.options.title %></title>
+</head>
+<body>
+
+<pre>
+<code data-min-compiler-version="1.1">
+//sampleStart
+fun sum(a: Int, b: Int): Int {
+  return a + b
+}
+//sampleEnd
+
+fun main(args: Array&lt;String&gt;) {
+  printSum(-1, 8)
+}
+</code>
+</pre>
+
+<script>
+KotlinRunCode('code');
+</script>
+
+</body>
+</html>
