@@ -8,6 +8,6 @@
 /build
 /.idea
 .DS_Store
-bundle.js
 /node_modules
 /dist
+*.log

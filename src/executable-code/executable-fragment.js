@@ -3,7 +3,7 @@ import Monkberry from 'monkberry';
 import directives from 'monkberry-directives';
 import 'monkberry-events';
 import ExecutableCodeTemplate from './executable-fragment.monk';
-import WebDemoApi from './webdemo-api';
+import WebDemoApi from '../webdemo-api';
 
 const SAMPLE_START = '//sampleStart';
 const SAMPLE_END = '//sampleEnd';

@@ -1,7 +1,7 @@
 import URLSearchParams from 'url-search-params';
 import 'whatwg-fetch';
 
-const webDemoURL = 'https://try.kotlinlang.org';
+const webDemoURL = __WEBDEMO_URL__;
 
 function getExceptionCauses(exception) {
   if (exception.cause !== undefined && exception.cause != null) {

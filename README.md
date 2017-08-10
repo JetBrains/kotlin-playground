@@ -7,13 +7,13 @@ HTML code blocks to editable and runnable editor.
 
 ### Quickly from CDN
 
-Insert `<script>` tag into the page and specify code blocks selector to attach.
+Insert `<script>` tag into the page and specify code blocks selector to attach via `data-selector` HTML attribute.
 
 ```html
 <script src="https://unpkg.com/kotlin-runcode/dist/runcode.min.js" data-selector="code"></script>
 ```
 
-By default selector "code" is used.
+Selector option is required.
 
 ### Manually from NPM
 
