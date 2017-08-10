@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>KotlinRunCode examples</title>
+  <link rel="stylesheet" href="examples.css">
+  <link rel="stylesheet" href="examples-highlight.css">
+  <style>
+  .markdown-body {
+		max-width: 980px;
+		margin: 50px auto;
+	}
+  </style>
+  <script src="https://unpkg.com/kotlin-runcode/dist/runcode.min.js" data-selector=".kotlin-code"></script>
+</head>
+<body class="markdown-body">
+<h1>KotlinRunCode demo</h1>
+<h3>Automatic initialization</h3>
+<p>For instance you have following block of Kotlin code:</p>
+<pre><code class="hljs language-txt">fun sum(a: Int, b: Int): Int {
+  return a + b
+}
+</code></pre>
+<p>Just add <code>&lt;script&gt;</code> tag into the page and specify code blocks selector to attach via <code>data-selector</code> HTML attribute.</p>
+<pre><code class="hljs language-html"><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"https://unpkg.com/kotlin-runcode/dist/runcode.min.js"</span> <span class="hljs-attr">data-selector</span>=<span class="hljs-string">".kotlin-code"</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
+</code></pre>
+<p>You will get:</p>
+<div class="kotlin-code">
+<pre><code class="hljs language-kotlin"><span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">sum</span><span class="hljs-params">(a: <span class="hljs-type">Int</span>, b: <span class="hljs-type">Int</span>)</span></span>: <span class="hljs-built_in">Int</span> {
+  <span class="hljs-keyword">return</span> a + b
+}
+</code></pre>
+</div>
+<h3>Manual initialization</h3>
+<pre><code class="hljs language-html"><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"https://unpkg.com/kotlin-runcode/dist/runcode.min.js"</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span><span class="javascript">
+<span class="hljs-built_in">document</span>.addEventListener(<span class="hljs-string">'DOMContentLoaded'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+  runcode(<span class="hljs-string">'.code-blocks-selector'</span>);
+});
+</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
+</code></pre>
+<p><button onclick="KotlinRunCode('.kotlin-code-2'); this.disabled = true">Create</button></p>
+<div class="kotlin-code-2">
+<pre><code class="hljs language-text">//sampleStart
+fun sum(a: Int, b: Int): Int {
+  return a + b
+}
+//sampleEnd
+
+fun main(args: Array&lt;String&gt;) {
+  printSum(-1, 8)
+}
+</code></pre>
+</div>
+</body>
+</html>
