@@ -1,8 +1,12 @@
 {
-  "presets": ["es2015"],
+  "presets": [
+    ["es2015", { "modules": false }]
+  ],
   "plugins": [
-    "transform-class-properties",
-    "add-module-exports",
-    "transform-runtime"
+    ["transform-runtime", {
+      "helpers": false,
+      "polyfill": false,
+      "regenerator": true
+    }]
   ]
 }

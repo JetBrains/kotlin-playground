@@ -63,6 +63,8 @@ module.exports =  (params = {}) => {
         inject: false
       }),
 
+      new webpack.optimize.ModuleConcatenationPlugin(),
+
       new webpack.DefinePlugin({
         __WEBDEMO_URL__: JSON.stringify(webDemoUrl)
       }),
@@ -83,6 +85,10 @@ module.exports =  (params = {}) => {
           });
         }
       }
-    ]
+    ],
+
+    devServer: {
+      contentBase: path.resolve(__dirname, 'src')
+    }
   };
 };
