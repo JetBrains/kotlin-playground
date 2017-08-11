@@ -20,7 +20,7 @@ export default class ExecutableCode {
   constructor(target, config = {})   {
     const node = typeof target === 'string' ? document.querySelector(target) : target;
     const cfg = merge.all([ defaultConfig, config ]);
-    const code = node.textContent;
+    const code = node.textContent.replace(/^\s+|\s+$/g, '');
 
     const executableFragmentContainer = document.createElement('div');
     node.parentNode.replaceChild(executableFragmentContainer, node);
@@ -30,7 +30,7 @@ export default class ExecutableCode {
 
     view.update({
       code: code,
-      compilerVersion: cfg.minCompilerVersion
+      compilerVersion: cfg.compilerVersion
     });
   }
 
@@ -68,7 +68,7 @@ export default class ExecutableCode {
               : latestStableVersion;
           }
 
-          instances.push(new ExecutableCode(node, compilerVersion));
+          instances.push(new ExecutableCode(node, { compilerVersion }));
         });
 
         return instances;

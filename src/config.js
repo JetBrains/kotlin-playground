@@ -3,5 +3,10 @@
  */
 export default {
   selector: 'code',
-  minCompilerVersion: undefined // should be defined manually
+
+  /**
+   * Will be calculated according to user defined `data-min-compiler-version`
+   * attribute and WebDemo API response
+   */
+  compilerVersion: undefined
 }
