@@ -52,6 +52,6 @@
     "build:production": "webpack -p --env.production",
     "prepare-examples": "node utils/prepare-examples",
     "release:ci": "rm -rf dist && npm run build:all && ci-publish",
-    "start": "webpack-dev-server"
+    "start": "webpack-dev-server --port 9000"
   }
 }
