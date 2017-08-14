@@ -51,7 +51,7 @@
     "build:all": "npm run build && npm run build:production",
     "build:production": "webpack -p --env.production",
     "prepare-examples": "node utils/prepare-examples",
-    "release:ci": "rm -rf dist && npm run build:all && npm publish",
+    "release:ci": "rm -rf dist && npm run build:all && $NPM_TOKEN=%env.NPM_TOKEN% npm publish",
     "start": "webpack-dev-server --port 9000"
   }
 }
