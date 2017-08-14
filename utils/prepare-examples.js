@@ -8,6 +8,6 @@ cp('-R', `${projectDir}/dist/examples`, projectDir);
 sed(
   '-i',
   '../runcode.js',
-  'https://unpkg.com/kotlin-runcode/dist/runcode.min.js',
+  'https://unpkg.com/kotlin-runcode@1/dist/runcode.min.js',
   `${projectDir}/examples/index.html`
 );

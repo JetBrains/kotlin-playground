@@ -10,7 +10,7 @@ HTML code blocks to editable and runnable editor.
 Insert `<script>` tag into the page and specify code blocks selector to attach via `data-selector` HTML attribute.
 
 ```html
-<script src="https://unpkg.com/kotlin-runcode/dist/runcode.min.js" data-selector="code"></script>
+<script src="https://unpkg.com/kotlin-runcode@1/dist/runcode.min.js" data-selector="code"></script>
 ```
 
 Selector option is required.

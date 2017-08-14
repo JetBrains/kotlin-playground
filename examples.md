@@ -30,7 +30,7 @@ fun sum(a: Int, b: Int): Int {
 Just add `<script>` tag into the page and specify code blocks selector to attach via `data-selector` HTML attribute.
 
 ```html
-<script src="https://unpkg.com/kotlin-runcode/dist/runcode.min.js" data-selector=".kotlin-code"></script>
+<script src="https://unpkg.com/kotlin-runcode@1/dist/runcode.min.js" data-selector=".kotlin-code"></script>
 ```
 
 You will get:
