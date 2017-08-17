@@ -4,14 +4,19 @@ const HtmlPlugin = require('html-webpack-plugin');
 
 module.exports =  (params = {}) => {
   const isProduction = params.production;
+  const env = isProduction ? 'production' : 'development';
   const mainEntryName = isProduction ? 'runcode.min' : 'runcode';
+  const libraryName = 'KotlinRunCode';
   const webDemoUrl = params.webDemoUrl || 'https://try.kotlinlang.org';
 
-  return {
+  const config = {
     entry: {
       [mainEntryName]: './src/index',
-      REMOVE_ME: '!!file-loader?name=examples/examples.css!github-markdown-css/github-markdown.css',
-      REMOVE_ME_2: '!!file-loader?name=examples/examples-highlight.css!highlight.js/styles/github.css'
+      REMOVE_ME: [
+        '!!file-loader?name=examples/examples.css!github-markdown-css/github-markdown.css',
+        '!!file-loader?name=examples/examples-highlight.css!highlight.js/styles/github.css'
+      ],
+      a: './a'
     },
 
     output: {
@@ -66,7 +71,12 @@ module.exports =  (params = {}) => {
       new webpack.optimize.ModuleConcatenationPlugin(),
 
       new webpack.DefinePlugin({
-        __WEBDEMO_URL__: JSON.stringify(webDemoUrl)
+        __WEBDEMO_URL__: JSON.stringify(webDemoUrl),
+        __IS_PRODUCTION__: isProduction,
+        __LIBRARY_NAME__: JSON.stringify(libraryName),
+        'process.env': {
+          NODE_ENV: JSON.stringify(env)
+        }
       }),
 
       // Remove all removeme* assets
@@ -91,4 +101,6 @@ module.exports =  (params = {}) => {
       contentBase: path.resolve(__dirname, 'src')
     }
   };
+
+  return config;
 };

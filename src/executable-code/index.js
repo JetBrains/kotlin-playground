@@ -19,8 +19,8 @@ export default class ExecutableCode {
    */
   constructor(target, config = {})   {
     const node = typeof target === 'string' ? document.querySelector(target) : target;
-    const cfg = merge.all([ defaultConfig, config ]);
     const code = node.textContent.replace(/^\s+|\s+$/g, '');
+    const cfg = merge.all([ defaultConfig, config ]);
 
     const executableFragmentContainer = document.createElement('div');
     node.parentNode.replaceChild(executableFragmentContainer, node);
@@ -66,6 +66,11 @@ export default class ExecutableCode {
             compilerVersion = minCompilerVersion > latestStableVersion
               ? versions[versions.length - 1].version
               : latestStableVersion;
+          }
+
+          // Skip empty nodes
+          if (node.textContent.trim() === '') {
+            return;
           }
 
           instances.push(new ExecutableCode(node, { compilerVersion }));
