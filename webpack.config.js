@@ -15,8 +15,7 @@ module.exports =  (params = {}) => {
       REMOVE_ME: [
         '!!file-loader?name=examples/examples.css!github-markdown-css/github-markdown.css',
         '!!file-loader?name=examples/examples-highlight.css!highlight.js/styles/github.css'
-      ],
-      a: './a'
+      ]
     },
 
     output: {
