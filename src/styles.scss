@@ -13,6 +13,12 @@ $font-family-mono: 'Liberation Mono', Consolas, Menlo, Courier, monospace !globa
 
 .CodeMirror {
   height: auto;
+
+  pre {
+    font-size: 12px !important;
+    line-height: 16.8px !important;
+    margin-bottom: 0 !important;
+  }
 }
 
 .CodeMirror-lines {
