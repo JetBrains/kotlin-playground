@@ -86,4 +86,5 @@ fun sum(a: Int, b: Int): Int {
 2. Install dependencies `npm install`.
 3. Following commands are available:
    - `npm start` to run a local development server at http://localhost:9000.
+      - Custom WebDemo URL - `npm start -- --env.webDemoUrl=http://localhost:6666`. 
    - `npm run build` to build a production bundle.
