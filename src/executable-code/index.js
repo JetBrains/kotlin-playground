@@ -19,6 +19,7 @@ export default class ExecutableCode {
    */
   constructor(target, config = {})   {
     const node = typeof target === 'string' ? document.querySelector(target) : target;
+    const highlightOnly = node.hasAttribute('data-highlight-only');
     const code = node.textContent.replace(/^\s+|\s+$/g, '');
     const cfg = merge.all([ defaultConfig, config ]);
 
@@ -30,15 +31,17 @@ export default class ExecutableCode {
 
     view.update({
       code: code,
-      compilerVersion: cfg.compilerVersion
+      compilerVersion: cfg.compilerVersion,
+      highlightOnly: highlightOnly
     });
   }
 
   /**
    * @param {string} selector
+   * @param {boolean} highlightOnly
    * @return {Promise<Array<ExecutableCode>>}
    */
-  static create(selector) {
+  static create(selector, highlightOnly) {
     const instances = [];
     const nodes = arrayFrom(document.querySelectorAll(selector));
 
@@ -73,7 +76,7 @@ export default class ExecutableCode {
             return;
           }
 
-          instances.push(new ExecutableCode(node, { compilerVersion }));
+          instances.push(new ExecutableCode(node, { compilerVersion, highlightOnly }));
         });
 
         return instances;

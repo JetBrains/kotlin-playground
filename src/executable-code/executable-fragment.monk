@@ -9,7 +9,10 @@
             </div>
             <div class="zigzag _top {{ foldButtonHover ? '_hover' : '' }}"></div>
 
-            <div class="run-button {{ waitingForOutput ? '_disabled' : ''}}" :onclick={{ this.execute.bind(this) }}></div>
+            {% if(!highlightOnly) %}
+                <div class="run-button {{ waitingForOutput ? '_disabled' : ''}}" :onclick={{ this.execute.bind(this) }}>
+                </div>
+            {% endif %}
 
             <textarea></textarea>
 
