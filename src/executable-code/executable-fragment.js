@@ -4,6 +4,8 @@ import directives from 'monkberry-directives';
 import 'monkberry-events';
 import ExecutableCodeTemplate from './executable-fragment.monk';
 import WebDemoApi from '../webdemo-api';
+import TargetPlatform from "../target-platform";
+import getJsExecutor from "../js-executor"
 
 const SAMPLE_START = '//sampleStart';
 const SAMPLE_END = '//sampleEnd';
@@ -54,6 +56,10 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
 
   update(state) {
     let sample;
+
+    if(state.compilerVersion) {
+      this.jsExecutor = getJsExecutor(state.compilerVersion)
+    }
 
     if (state.code) {
       const code = state.code;
@@ -155,15 +161,34 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
     this.update({
       waitingForOutput: true
     });
-    WebDemoApi.executeKotlinCode(this.getCode(), this.state.compilerVersion).then(
-      state => {
-        state.waitingForOutput = false;
-        this.update(state);
-      },
-      () => {
-        this.update({waitingForOutput: false})
-      }
-    )
+
+    if(this.state.targetPlatform === TargetPlatform.JAVA){
+      WebDemoApi.executeKotlinCode(this.getCode(), this.state.compilerVersion).then(
+        state => {
+          state.waitingForOutput = false;
+          this.update(state);
+        },
+        () => this.update({waitingForOutput: false})
+      )
+    } else {
+      WebDemoApi.translateKotlinToJs(this.getCode(), this.state.compilerVersion).then(
+        state => {
+          state.waitingForOutput = false;
+          const jsCode = state.jsCode;
+          delete state.jsCode;
+          try {
+            const codeOutput = this.jsExecutor.executeJsCode(jsCode, this.state.compilerVersion);
+            state.output = `<span class="standard-output">${codeOutput}</span>`;
+          } catch (e) {
+            state.output = `<span class="error-output">Unhandled JavaScript exception</span>`
+          }
+          state.exception = null;
+          this.update(state);
+        },
+        () => this.update({waitingForOutput: false})
+      )
+
+    }
   }
 
   getCode() {

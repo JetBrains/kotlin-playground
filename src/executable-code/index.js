@@ -9,6 +9,7 @@ import merge from 'deepmerge';
 import defaultConfig from '../config';
 import { arrayFrom, getConfigFromElement } from '../utils';
 import WebDemoApi from "../webdemo-api";
+import TargetPlatform from '../target-platform'
 import ExecutableFragment from './executable-fragment';
 import '../styles.scss';
 
@@ -20,6 +21,8 @@ export default class ExecutableCode {
   constructor(target, config = {})   {
     const node = typeof target === 'string' ? document.querySelector(target) : target;
     const highlightOnly = node.hasAttribute('data-highlight-only');
+    let targetPlatform = node.getAttribute('data-target-platform');
+    targetPlatform = targetPlatform !== null ? targetPlatform : "java";
     const code = node.textContent.replace(/^\s+|\s+$/g, '');
     const cfg = merge.all([ defaultConfig, config ]);
 
@@ -32,7 +35,8 @@ export default class ExecutableCode {
     view.update({
       code: code,
       compilerVersion: cfg.compilerVersion,
-      highlightOnly: highlightOnly
+      highlightOnly: highlightOnly,
+      targetPlatform: TargetPlatform.getById(targetPlatform)
     });
   }
 

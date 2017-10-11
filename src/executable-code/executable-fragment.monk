@@ -42,7 +42,7 @@
     </div>
 
     <div class="compiler-info">
-        <span>Target platform: JVM</span>
+        <span>Target platform: {{ targetPlatform.printableName }}</span>
         <span>Running on kotlin v. {{ compilerVersion }}</span>
     </div>
 

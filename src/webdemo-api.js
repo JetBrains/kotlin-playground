@@ -1,5 +1,6 @@
 import URLSearchParams from 'url-search-params';
 import 'whatwg-fetch';
+import TargetPlatform from "./target-platform";
 
 const webDemoURL = __WEBDEMO_URL__;
 
@@ -11,6 +12,38 @@ function getExceptionCauses(exception) {
   }
 }
 
+function sendRequestToWebdemo(code, compilerVersion, targetPlatform) {
+  const projectJson = JSON.stringify({
+    "id": "",
+    "name": "",
+    "args": "",
+    "compilerVersion": compilerVersion,
+    "confType": targetPlatform.id,
+    "originUrl": null,
+    "files": [
+      {
+        "name": "File.kt",
+        "text": code,
+        "publicId": ""
+      }
+    ],
+    "readOnlyFileNames": []
+  });
+
+  const body = new URLSearchParams();
+  body.set('filename', "File.kt");
+  body.set('project', projectJson);
+
+  return fetch(`${webDemoURL}/kotlinServer?type=run&runConf=${targetPlatform.id}`, {
+    method: 'POST',
+    body: body.toString(),
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+    }
+  }).then(response => response.json())
+}
+
+
 export default class WebDemoApi {
   /**
    * @return {Promise<Object>}
@@ -20,35 +53,17 @@ export default class WebDemoApi {
       .then(response => response.json());
   }
 
-  static executeKotlinCode(code, compilerVersion) {
-    const projectJson = JSON.stringify({
-      "id": "",
-      "name": "",
-      "args": "",
-      "compilerVersion": compilerVersion,
-      "confType": "java",
-      "originUrl": null,
-      "files": [
-        {
-          "name": "File.kt",
-          "text": code,
-          "publicId": ""
-        }
-      ],
-      "readOnlyFileNames": []
-    });
-
-    const body = new URLSearchParams();
-    body.set('filename', "File.kt");
-    body.set('project', projectJson);
-
-    return fetch(`${webDemoURL}/kotlinServer?type=run&runConf=java`, {
-      method: 'POST',
-      body: body.toString(),
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+  static translateKotlinToJs(code, compilerVersion) {
+    return sendRequestToWebdemo(code, compilerVersion, TargetPlatform.JS).then(function (data) {
+      return {
+        errors: data.errors["File.kt"],
+        jsCode: data.jsCode
       }
-    }).then(response => response.json()).then(function (data) {
+    })
+  }
+
+  static executeKotlinCode(code, compilerVersion){
+    return sendRequestToWebdemo(code, compilerVersion, TargetPlatform.JAVA).then(function (data) {
       let output;
       if (data.text !== undefined) {
         output = data.text.replace("<outStream>", "<span class=\"standard-output\">")
