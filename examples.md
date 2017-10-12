@@ -44,6 +44,28 @@ fun sum(a: Int, b: Int): Int {
 
 </div>
 
+You can also change target platform or disable run button using `data-highlight-only` and `data-target-platform` attributes
+
+<div class="kotlin-code" data-highlight-only>
+
+```kotlin
+fun sum(a: Int, b: Int): Int {
+  return a + b
+}
+```
+
+</div>
+
+<div class="kotlin-code" data-target-platform="js">
+
+```kotlin
+fun sum(a: Int, b: Int): Int {
+  return a + b
+}
+```
+
+</div>
+
 ## Manual initialization
 
 If you want to init KotlinRunCode manually - omit `data-selector` attribute and call it when it's needed:

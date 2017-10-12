@@ -31,6 +31,19 @@
 }
 </code></pre>
 </div>
+<p>You can also change target platform or disable run button using <code>data-highlight-only</code> and <code>data-target-platform</code> attributes</p>
+<div class="kotlin-code" data-highlight-only>
+<pre><code class="hljs language-kotlin"><span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">sum</span><span class="hljs-params">(a: <span class="hljs-type">Int</span>, b: <span class="hljs-type">Int</span>)</span></span>: <span class="hljs-built_in">Int</span> {
+  <span class="hljs-keyword">return</span> a + b
+}
+</code></pre>
+</div>
+<div class="kotlin-code" data-target-platform="js">
+<pre><code class="hljs language-kotlin"><span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">sum</span><span class="hljs-params">(a: <span class="hljs-type">Int</span>, b: <span class="hljs-type">Int</span>)</span></span>: <span class="hljs-built_in">Int</span> {
+  <span class="hljs-keyword">return</span> a + b
+}
+</code></pre>
+</div>
 <h2>Manual initialization</h2>
 <p>If you want to init KotlinRunCode manually - omit <code>data-selector</code> attribute and call it when it's needed:</p>
 <pre><code class="hljs language-html"><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"https://unpkg.com/kotlin-runcode@1/dist/runcode.min.js"</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
