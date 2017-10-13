@@ -1,6 +1,6 @@
 {
   "name": "kotlin-runcode",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "Self-contained component to embed in websites for running Kotlin code",
   "keywords": [
     "kotlin",
