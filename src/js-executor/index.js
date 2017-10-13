@@ -1,5 +1,4 @@
 import './index.scss'
-import $ from 'jquery'
 import Map from 'es6-map/polyfill';
 
 const webDemoURL = __WEBDEMO_URL__;
@@ -42,7 +41,10 @@ class JsExecutor {
     kotlinScript.src = `${webDemoURL}/static/kotlin/${this.kotlinVersion}/kotlin.js`;
     iframeHead.appendChild(kotlinScript);
     this._initializeKotlin();
-    $(iframeHead).append(`<script src="${webDemoURL}/static/lib/jquery/dist/jquery.min.js"></script>`);
+
+    const jqueryScript = document.createElement('script');
+    jqueryScript.src = `${webDemoURL}/static/lib/jquery/dist/jquery.min.js`;
+    iframeHead.appendChild(jqueryScript);
   }
 }
 
