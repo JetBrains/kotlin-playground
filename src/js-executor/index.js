@@ -1,5 +1,6 @@
 import './index.scss'
 import $ from 'jquery'
+import Map from 'es6-map/polyfill';
 
 const webDemoURL = __WEBDEMO_URL__;
 const jsExecutors = new Map();
