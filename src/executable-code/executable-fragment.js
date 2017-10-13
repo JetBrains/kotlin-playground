@@ -57,7 +57,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
   update(state) {
     let sample;
 
-    if(state.compilerVersion) {
+    if(state.compilerVersion && state.targetPlatform == TargetPlatform.JS) {
       this.jsExecutor = getJsExecutor(state.compilerVersion)
     }
 
