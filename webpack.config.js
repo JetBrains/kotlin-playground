@@ -14,8 +14,8 @@ module.exports =  (params = {}) => {
     entry: {
       [mainEntryName]: './src/index',
       REMOVE_ME: [
-        '!!file-loader?name=examples.css!github-markdown-css/github-markdown.css',
-        '!!file-loader?name=examples-highlight.css!highlight.js/styles/github.css'
+        '!!file-loader?name=examples/examples.css!github-markdown-css/github-markdown.css',
+        '!!file-loader?name=examples/examples-highlight.css!highlight.js/styles/github.css'
       ]
     },
 
