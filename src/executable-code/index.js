@@ -28,7 +28,7 @@ export default class ExecutableCode {
 
     const executableFragmentContainer = document.createElement('div');
     node.parentNode.replaceChild(executableFragmentContainer, node);
-    const view = ExecutableFragment.render(executableFragmentContainer);
+    const view = ExecutableFragment.render(executableFragmentContainer, { highlightOnly });
 
     this.node = executableFragmentContainer;
 

@@ -188,10 +188,6 @@ $font-family-mono: 'Liberation Mono', Consolas, Menlo, Courier, monospace !globa
 }
 
 ._unfolded {
-  .CodeMirror {
-    background-color: #f7f7f7;
-  }
-
   .fold-button {
     background-image: url('img/button_close.svg?fill=%23d4d4d4&selector=.data-fill');
   }

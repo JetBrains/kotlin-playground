@@ -1,3 +1,4 @@
+import merge from 'deepmerge';
 import CodeMirror from 'codemirror';
 import Monkberry from 'monkberry';
 import directives from 'monkberry-directives';
@@ -29,6 +30,18 @@ function unEscapeString(s) {
 }
 
 export default class ExecutableFragment extends ExecutableCodeTemplate {
+  static render(element, options = {}) {
+    const instance = Monkberry.render(ExecutableFragment, element, {
+      'directives': directives
+    });
+
+    instance.on('click', '.fold-button', (event) => {
+      instance.update({folded: !instance.state.folded});
+    });
+
+    return instance;
+  }
+
   constructor() {
     super();
     this.arrayClasses = [];
@@ -42,16 +55,8 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
     this.codemirror = new CodeMirror();
   }
 
-  static render(element) {
-    const instance = Monkberry.render(ExecutableFragment, element, {
-      'directives': directives
-    });
-
-    instance.on('click', '.fold-button', (event) => {
-      instance.update({folded: !instance.state.folded});
-    });
-
-    return instance;
+  get isShouldBeFolded() {
+    return this.prefix.trim() !== '' || this.suffix.trim() !== '';
   }
 
   update(state) {
@@ -90,11 +95,14 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
       }
     }
 
-    Object.assign(this.state, state);
+    this.state = merge.all([this.state, state, {
+      isShouldBeFolded: this.isShouldBeFolded
+    }]);
+
     super.update(this.state);
 
     if (!this.initialized) {
-      this.initializeCodeMirror();
+      this.initializeCodeMirror(state);
       this.initialized = true;
     } else {
       this.showDiagnostics(state.errors);
@@ -260,9 +268,11 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
     this.codemirror.clearGutter("errors-and-warnings-gutter")
   }
 
-  initializeCodeMirror() {
+  initializeCodeMirror(options = {}) {
     const textarea = this.nodes[0].getElementsByTagName('textarea')[0];
+    const readOnly = options.highlightOnly && options.highlightOnly === true;
     this.codemirror = CodeMirror.fromTextArea(textarea, {
+      readOnly: readOnly ? 'nocursor' : false,
       lineNumbers: false,
       mode: 'text/x-kotlin',
       indentUnit: 4,

@@ -3,20 +3,20 @@
 <div class="executable-fragment-wrapper">
     <div class="executable-fragment">
         <div class="code-area {{ folded ? '_folded' : '_unfolded' }}">
-            <div class="fold-button {{ foldButtonHover ? '_hover' : '' }}"
-                :onmouseenter={{ this.onFoldButtonMouseEnter.bind(this) }}
-                :onmouseleave={{ this.onFoldButtonMouseLeave.bind(this) }}>
-            </div>
-            <div class="zigzag _top {{ foldButtonHover ? '_hover' : '' }}"></div>
-
-            {% if(!highlightOnly) %}
-                <div class="run-button {{ waitingForOutput ? '_disabled' : ''}}" :onclick={{ this.execute.bind(this) }}>
+            {% if (isShouldBeFolded) %}
+                <div class="fold-button {{ foldButtonHover ? '_hover' : '' }}"
+                    :onmouseenter={{ this.onFoldButtonMouseEnter.bind(this) }}
+                    :onmouseleave={{ this.onFoldButtonMouseLeave.bind(this) }}>
                 </div>
+                <div class="zigzag _top {{ foldButtonHover ? '_hover' : '' }}"></div>
+                <div class="zigzag _bottom {{ foldButtonHover ? '_hover' : '' }}"></div>
+            {% endif %}
+
+            {% if (!highlightOnly) %}
+                <div class="run-button {{ waitingForOutput ? '_disabled' : ''}}" :onclick={{ this.execute.bind(this) }}></div>
             {% endif %}
 
             <textarea></textarea>
-
-            <div class="zigzag _bottom {{ foldButtonHover ? '_hover' : '' }}"></div>
         </div>
 
         {% if (waitingForOutput) %}
@@ -41,10 +41,11 @@
         {% endif %}
     </div>
 
-    <div class="compiler-info">
-        <span>Target platform: {{ targetPlatform.printableName }}</span>
-        <span>Running on kotlin v. {{ compilerVersion }}</span>
-    </div>
-
+    {% if (!highlightOnly) %}
+        <div class="compiler-info">
+            <span>Target platform: {{ targetPlatform.printableName }}</span>
+            <span>Running on kotlin v. {{ compilerVersion }}</span>
+        </div>
+    {% endif %}
 
 </div>
