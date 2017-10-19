@@ -6,6 +6,7 @@ module.exports =  (params = {}) => {
   const isProduction = params.production;
   const env = isProduction ? 'production' : 'development';
   const mainEntryName = isProduction ? 'runcode.min' : 'runcode';
+  const isServer = process.argv[1].includes('webpack-dev-server');
   const libraryName = 'KotlinRunCode';
   const webDemoUrl = params.webDemoUrl || 'https://try.kotlinlang.org';
 
@@ -13,8 +14,8 @@ module.exports =  (params = {}) => {
     entry: {
       [mainEntryName]: './src/index',
       REMOVE_ME: [
-        '!!file-loader?name=examples/examples.css!github-markdown-css/github-markdown.css',
-        '!!file-loader?name=examples/examples-highlight.css!highlight.js/styles/github.css'
+        '!!file-loader?name=examples.css!github-markdown-css/github-markdown.css',
+        '!!file-loader?name=examples-highlight.css!highlight.js/styles/github.css'
       ]
     },
 
@@ -22,7 +23,8 @@ module.exports =  (params = {}) => {
       path: path.resolve(__dirname, 'dist'),
       filename: '[name].js',
       library: 'KotlinRunCode',
-      libraryTarget: 'umd'
+      libraryTarget: 'umd',
+      libraryExport: 'default'
     },
 
     devtool: 'source-map',
@@ -63,7 +65,7 @@ module.exports =  (params = {}) => {
     plugins: [
       new HtmlPlugin({
         template: 'examples.md',
-        filename: 'examples/index.html',
+        filename: isServer ? 'index.html' : 'examples/index.html',
         inject: false
       }),
 
