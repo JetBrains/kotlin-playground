@@ -9,6 +9,8 @@ export default function init(selector) {
   return ExecutableCode.create(selector);
 }
 
+init.default = init;
+
 // Auto initialization via data-selector <script> attribute
 const currentScript = getCurrentScript();
 const config = getConfigFromElement(currentScript);
