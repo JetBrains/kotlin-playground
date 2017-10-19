@@ -91,7 +91,7 @@ fun sum(a: Int, b: Int): Int {
 //sampleEnd
 
 fun main(args: Array<String>) {
-  printSum(-1, 8)
+  print(sum(-1, 8))
 }
 ```
 
