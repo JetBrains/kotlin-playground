@@ -74,12 +74,12 @@ If you want to init KotlinRunCode manually - omit `data-selector` attribute and 
 <script src="https://unpkg.com/kotlin-runcode@1/dist/runcode.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-  KotlinRunCode.default('.code-blocks-selector');
+  KotlinRunCode('.code-blocks-selector');
 });
 </script>
 ```
 
-<button onclick="KotlinRunCode.default('.kotlin-code-2'); this.disabled = true">Create</button>
+<button onclick="KotlinRunCode('.kotlin-code-2'); this.disabled = true">Create</button>
 
 <div class="kotlin-code-2">
 
