@@ -9,13 +9,14 @@ module.exports =  (params = {}) => {
   const isServer = process.argv[1].includes('webpack-dev-server');
   const libraryName = 'KotlinRunCode';
   const webDemoUrl = params.webDemoUrl || 'https://try.kotlinlang.org';
+  const examplesPath = isServer ? '' : 'examples/';
 
   const config = {
     entry: {
       [mainEntryName]: './src/index',
       REMOVE_ME: [
-        '!!file-loader?name=examples/examples.css!github-markdown-css/github-markdown.css',
-        '!!file-loader?name=examples/examples-highlight.css!highlight.js/styles/github.css'
+        `!!file-loader?name=${examplesPath}examples.css!github-markdown-css/github-markdown.css`,
+        `!!file-loader?name=${examplesPath}examples-highlight.css!highlight.js/styles/github.css`
       ]
     },
 
