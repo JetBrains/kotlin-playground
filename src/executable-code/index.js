@@ -28,6 +28,8 @@ export default class ExecutableCode {
     const cfg = merge(defaultConfig, config);
 
     targetNode.style.display = 'none';
+    targetNode.setAttribute('data-kotlin-runcode-initialized', 'true');
+
     const mountNode = document.createElement('div');
     insertAfter(mountNode, targetNode);
 
@@ -50,12 +52,15 @@ export default class ExecutableCode {
     this.config = null;
     this.node = null;
     this.view.destroy();
+    const targetNode = this.targetNode;
 
     if (this.targetNodeStyle !== null) {
-      this.targetNode.style = this.targetNodeStyle;
+      targetNode.style = this.targetNodeStyle;
     } else {
-      this.targetNode.style = '';
+      targetNode.style = '';
     }
+
+    targetNode.removeAttribute('data-kotlin-runcode-initialized');
   }
 
   /**
@@ -93,8 +98,11 @@ export default class ExecutableCode {
               : latestStableVersion;
           }
 
-          // Skip empty nodes
-          if (node.textContent.trim() === '') {
+          // Skip empty and already initialized nodes
+          if (
+            node.textContent.trim() === '' ||
+            node.getAttribute('data-kotlin-runcode-initialized') === 'true'
+          ) {
             return;
           }
 
