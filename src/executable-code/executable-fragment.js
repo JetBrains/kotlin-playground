@@ -306,4 +306,13 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
       this.removeStyles()
     })
   }
+
+  destroy() {
+    this.arrayClasses = null;
+    this.initialized = false;
+    this.jsExecutor = false;
+    this.state = null;
+    this.codemirror.toTextArea();
+    this.remove();
+  }
 }

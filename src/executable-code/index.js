@@ -7,7 +7,7 @@ import 'codemirror/mode/javascript/javascript';
 import 'codemirror/mode/shell/shell';
 import merge from 'deepmerge';
 import defaultConfig from '../config';
-import { arrayFrom, getConfigFromElement } from '../utils';
+import { arrayFrom, getConfigFromElement, insertAfter } from '../utils';
 import WebDemoApi from "../webdemo-api";
 import TargetPlatform from '../target-platform'
 import ExecutableFragment from './executable-fragment';
@@ -19,25 +19,43 @@ export default class ExecutableCode {
    * @param {KotlinRunCodeConfig} [config]
    */
   constructor(target, config = {})   {
-    const node = typeof target === 'string' ? document.querySelector(target) : target;
-    const highlightOnly = node.hasAttribute('data-highlight-only');
-    let targetPlatform = node.getAttribute('data-target-platform');
+    const targetNode = typeof target === 'string' ? document.querySelector(target) : target;
+    const targetNodeStyle = targetNode.getAttribute('style');
+    const highlightOnly = targetNode.hasAttribute('data-highlight-only');
+    let targetPlatform = targetNode.getAttribute('data-target-platform');
     targetPlatform = targetPlatform !== null ? targetPlatform : "java";
-    const code = node.textContent.replace(/^\s+|\s+$/g, '');
-    const cfg = merge.all([ defaultConfig, config ]);
+    const code = targetNode.textContent.replace(/^\s+|\s+$/g, '');
+    const cfg = merge(defaultConfig, config);
 
-    const executableFragmentContainer = document.createElement('div');
-    node.parentNode.replaceChild(executableFragmentContainer, node);
-    const view = ExecutableFragment.render(executableFragmentContainer, { highlightOnly });
+    targetNode.style.display = 'none';
+    const mountNode = document.createElement('div');
+    insertAfter(mountNode, targetNode);
 
-    this.node = executableFragmentContainer;
-
+    const view = ExecutableFragment.render(mountNode, { highlightOnly });
     view.update({
       code: code,
       compilerVersion: cfg.compilerVersion,
       highlightOnly: highlightOnly,
       targetPlatform: TargetPlatform.getById(targetPlatform)
     });
+
+    this.config = cfg;
+    this.node = mountNode;
+    this.targetNode = targetNode;
+    this.targetNodeStyle = targetNodeStyle;
+    this.view = view;
+  }
+
+  destroy() {
+    this.config = null;
+    this.node = null;
+    this.view.destroy();
+
+    if (this.targetNodeStyle !== null) {
+      this.targetNode.style = this.targetNodeStyle;
+    } else {
+      this.targetNode.style = '';
+    }
   }
 
   /**

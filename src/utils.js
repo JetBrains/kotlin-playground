@@ -52,3 +52,11 @@ export function isEmbeddedFromCdn() {
   const src = currentScript.src ? currentScript.src : null;
   return src && src.indexOf(__CDN_URL__) !== -1;
 }
+
+/**
+ * @param {Element} newNode
+ * @param {Element} referenceNode
+ */
+export function insertAfter(newNode, referenceNode) {
+  referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
+}
