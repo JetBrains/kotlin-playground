@@ -64,7 +64,11 @@ export default class WebDemoApi {
     }
 
     fetch(`${WEBDEMO_URL}/kotlinServer?type=getKotlinVersions`)
-      .then(versions => (CACHE.compilerVersions = versions.json()));
+      .then(response => response.json())
+      .then(versions => {
+        CACHE.compilerVersions = versions;
+        return versions;
+      });
   }
 
   static translateKotlinToJs(code, compilerVersion) {
