@@ -63,7 +63,7 @@ export default class WebDemoApi {
       return Promise.resolve(CACHE.compilerVersions);
     }
 
-    fetch(`${WEBDEMO_URL}/kotlinServer?type=getKotlinVersions`)
+    return fetch(`${WEBDEMO_URL}/kotlinServer?type=getKotlinVersions`)
       .then(response => response.json())
       .then(versions => {
         CACHE.compilerVersions = versions;
