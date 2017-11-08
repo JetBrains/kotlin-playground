@@ -1,8 +1,19 @@
-import URLSearchParams from 'url-search-params';
 import 'whatwg-fetch';
+import URLSearchParams from 'url-search-params';
 import TargetPlatform from "./target-platform";
 
-const webDemoURL = __WEBDEMO_URL__;
+/**
+ * @typedef {Object} KotlinVersion
+ * @property {string} version
+ * @property {string} build
+ * @property {boolean} obsolete
+ * @property {boolean} latestStable
+ * @property {boolean} hasScriptJar
+ * @property {string|null} stdlibVersion
+ */
+
+const WEBDEMO_URL = __WEBDEMO_URL__;
+const CACHE = {};
 
 function getExceptionCauses(exception) {
   if (exception.cause !== undefined && exception.cause != null) {
@@ -12,7 +23,7 @@ function getExceptionCauses(exception) {
   }
 }
 
-function sendRequestToWebdemo(code, compilerVersion, targetPlatform) {
+function executeCode(code, compilerVersion, targetPlatform) {
   const projectJson = JSON.stringify({
     "id": "",
     "name": "",
@@ -34,7 +45,7 @@ function sendRequestToWebdemo(code, compilerVersion, targetPlatform) {
   body.set('filename', "File.kt");
   body.set('project', projectJson);
 
-  return fetch(`${webDemoURL}/kotlinServer?type=run&runConf=${targetPlatform.id}`, {
+  return fetch(`${WEBDEMO_URL}/kotlinServer?type=run&runConf=${targetPlatform.id}`, {
     method: 'POST',
     body: body.toString(),
     headers: {
@@ -43,18 +54,21 @@ function sendRequestToWebdemo(code, compilerVersion, targetPlatform) {
   }).then(response => response.json())
 }
 
-
 export default class WebDemoApi {
   /**
-   * @return {Promise<Object>}
+   * @return {Promise<Array<KotlinVersion>>}
    */
   static getCompilerVersions() {
-    return fetch(`${webDemoURL}/kotlinServer?type=getKotlinVersions`)
-      .then(response => response.json());
+    if ('compilerVersions' in CACHE) {
+      return Promise.resolve(CACHE.compilerVersions);
+    }
+
+    fetch(`${WEBDEMO_URL}/kotlinServer?type=getKotlinVersions`)
+      .then(versions => (CACHE.compilerVersions = versions.json()));
   }
 
   static translateKotlinToJs(code, compilerVersion) {
-    return sendRequestToWebdemo(code, compilerVersion, TargetPlatform.JS).then(function (data) {
+    return executeCode(code, compilerVersion, TargetPlatform.JS).then(function (data) {
       return {
         errors: data.errors["File.kt"],
         jsCode: data.jsCode
@@ -63,7 +77,7 @@ export default class WebDemoApi {
   }
 
   static executeKotlinCode(code, compilerVersion){
-    return sendRequestToWebdemo(code, compilerVersion, TargetPlatform.JAVA).then(function (data) {
+    return executeCode(code, compilerVersion, TargetPlatform.JAVA).then(function (data) {
       let output;
       if (data.text !== undefined) {
         output = data.text.replace("<outStream>", "<span class=\"standard-output\">")

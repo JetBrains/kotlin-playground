@@ -13,6 +13,8 @@ import TargetPlatform from '../target-platform'
 import ExecutableFragment from './executable-fragment';
 import '../styles.scss';
 
+const INITED_ATTRIBUTE_NAME = 'data-kotlin-runcode-initialized';
+
 export default class ExecutableCode {
   /**
    * @param {string|HTMLElement} target
@@ -28,7 +30,7 @@ export default class ExecutableCode {
     const cfg = merge(defaultConfig, config);
 
     targetNode.style.display = 'none';
-    targetNode.setAttribute('data-kotlin-runcode-initialized', 'true');
+    targetNode.setAttribute(INITED_ATTRIBUTE_NAME, 'true');
 
     const mountNode = document.createElement('div');
     insertAfter(mountNode, targetNode);
@@ -46,6 +48,8 @@ export default class ExecutableCode {
     this.targetNode = targetNode;
     this.targetNodeStyle = targetNodeStyle;
     this.view = view;
+
+    targetNode.KotlinRunCode = this;
   }
 
   destroy() {
@@ -60,7 +64,14 @@ export default class ExecutableCode {
       targetNode.style = '';
     }
 
-    targetNode.removeAttribute('data-kotlin-runcode-initialized');
+    targetNode.removeAttribute(INITED_ATTRIBUTE_NAME);
+    delete targetNode.KotlinRunCode;
+  }
+
+  isInited() {
+    const node = this.targetNode;
+    const attr = node && node.getAttribute(INITED_ATTRIBUTE_NAME);
+    return attr && attr === 'true';
   }
 
   /**
