@@ -271,8 +271,8 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
   initializeCodeMirror(options = {}) {
     const textarea = this.nodes[0].getElementsByTagName('textarea')[0];
     const readOnly = options.highlightOnly && options.highlightOnly === true;
-    this.codemirror = CodeMirror.fromTextArea(textarea, {
-      readOnly: readOnly ? 'nocursor' : false,
+    const codemirrorOptions = {
+      readOnly: readOnly,
       lineNumbers: false,
       mode: 'text/x-kotlin',
       indentUnit: 4,
@@ -282,7 +282,15 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
         "errors-and-warnings-gutter",
         "CodeMirror-foldgutter"
       ]
-    });
+    };
+
+    // Workaround to allow copy code in read-only mode
+    // Taken from https://github.com/codemirror/CodeMirror/issues/2568#issuecomment-308137063
+    if (readOnly) {
+      codemirrorOptions.cursorBlinkRate = -1;
+    }
+
+    this.codemirror = CodeMirror.fromTextArea(textarea, codemirrorOptions);
 
     if (window.navigator.appVersion.indexOf("Mac") != -1) {
       this.codemirror.setOption("extraKeys", {
