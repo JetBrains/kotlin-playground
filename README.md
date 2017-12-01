@@ -54,7 +54,7 @@ Following HTML attributes are supported.
 - `data-min-compiler-version`. Minimal target Kotlin compiler version:
   ```html
   <code data-min-compiler-version="1.1">
-  fun main(name: String) {
+  fun main(name: Array<String>) {
      println("Hello $name")
   }
   </code>
@@ -68,7 +68,7 @@ If you want to highlight a specific area to focus on a specific sample, use `//s
 
 ```html
 <code>
-fun main(name: String) {
+fun main(name: Array<String>) {
    println("Hello $name")
 }
 
