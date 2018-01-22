@@ -1,7 +1,7 @@
 import './index.scss'
 import Map from 'es6-map/polyfill';
+import {API_URLS} from "../config";
 
-const webDemoURL = __WEBDEMO_URL__;
 const jsExecutors = new Map();
 
 class JsExecutor {
@@ -16,19 +16,19 @@ class JsExecutor {
     return codeOutput;
   }
 
-  _initializeKotlin(){
+  _initializeKotlin() {
     setTimeout(() => {
-      try{
+      try {
         this.iframe.contentWindow.eval("if(kotlin.BufferedOutput!==undefined){kotlin.out = new kotlin.BufferedOutput()}" +
           "else{kotlin.kotlin.io.output = new kotlin.kotlin.io.BufferedOutput()}");
-      } catch(e) {
+      } catch (e) {
         this._initializeKotlin()
       }
     }, 3000);
   }
 
   reloadIframeScripts() {
-    if(this.iframe !== undefined){
+    if (this.iframe !== undefined) {
       document.body.removeChild(this.iframe)
     }
     const iframe = document.createElement('iframe');
@@ -38,12 +38,12 @@ class JsExecutor {
 
     const iframeHead = this.iframe.contentWindow.document.head;
     const kotlinScript = document.createElement('script');
-    kotlinScript.src = `${webDemoURL}/static/kotlin/${this.kotlinVersion}/kotlin.js`;
+    kotlinScript.src = API_URLS.KOTLIN_JS + `${this.kotlinVersion}/kotlin.js`;
     iframeHead.appendChild(kotlinScript);
     this._initializeKotlin();
 
     const jqueryScript = document.createElement('script');
-    jqueryScript.src = `${webDemoURL}/static/lib/jquery/dist/jquery.min.js`;
+    jqueryScript.src = API_URLS.JQUERY;
     iframeHead.appendChild(jqueryScript);
   }
 }
