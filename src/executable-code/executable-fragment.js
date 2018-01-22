@@ -7,27 +7,10 @@ import ExecutableCodeTemplate from './executable-fragment.monk';
 import WebDemoApi from '../webdemo-api';
 import TargetPlatform from "../target-platform";
 import getJsExecutor from "../js-executor"
+import {countLines, unEscapeString} from "../utils";
 
 const SAMPLE_START = '//sampleStart';
 const SAMPLE_END = '//sampleEnd';
-
-function countLines(string) {
-  return (string.match(/\n/g) || []).length;
-}
-
-function unEscapeString(s) {
-  const tagsToReplace = {
-    "&": "&amp;",
-    "<": "&amp;lt;",
-    ">": "&amp;gt;",
-    " ": "%20"
-  };
-  let unEscapedString = s;
-  Object.keys(tagsToReplace).forEach(function (key) {
-    unEscapedString = unEscapedString.replace(tagsToReplace[key], key)
-  });
-  return unEscapedString
-}
 
 export default class ExecutableFragment extends ExecutableCodeTemplate {
   static render(element, options = {}) {
@@ -292,7 +275,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
     /**
      * Register own helper for autocomplete.
      * Getting complections from try.kotlinlang.org.
-     * @see WebDemoApi
+     * {@see WebDemoApi}
      *
      * Override two function: render and hind:
      * render() - render own styles when autocomplete displays.

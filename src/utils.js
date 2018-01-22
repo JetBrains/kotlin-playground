@@ -60,3 +60,32 @@ export function isEmbeddedFromCdn() {
 export function insertAfter(newNode, referenceNode) {
   referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
 }
+
+/**
+ * Unescape special characters from string
+ * @param string
+ * @returns {string}
+ */
+export function unEscapeString(string) {
+  const tagsToReplace = {
+    "&": "&amp;",
+    "<": "&amp;lt;",
+    ">": "&amp;gt;",
+    " ": "%20"
+  };
+  let unEscapedString = string;
+  Object.keys(tagsToReplace).forEach(function (key) {
+    unEscapedString = unEscapedString.replace(tagsToReplace[key], key)
+  });
+  return unEscapedString
+}
+
+/**
+ * Getting count of lines
+ * @param string
+ * @returns {number}
+ */
+export function countLines(string) {
+  return (string.match(/\n/g) || []).length;
+}
+
