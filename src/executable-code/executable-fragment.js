@@ -62,7 +62,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
   update(state) {
     let sample;
 
-    if(state.compilerVersion && state.targetPlatform == TargetPlatform.JS) {
+    if (state.compilerVersion && state.targetPlatform === TargetPlatform.JS) {
       this.jsExecutor = getJsExecutor(state.compilerVersion)
     }
 
@@ -169,8 +169,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
     this.update({
       waitingForOutput: true
     });
-
-    if(this.state.targetPlatform === TargetPlatform.JAVA){
+    if (this.state.targetPlatform === TargetPlatform.JAVA) {
       WebDemoApi.executeKotlinCode(this.getCode(), this.state.compilerVersion).then(
         state => {
           state.waitingForOutput = false;
@@ -256,7 +255,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
       } else {
         const gutter = this.codemirror.lineInfo(interval.start.line).gutterMarkers["errors-and-warnings-gutter"];
         gutter.title += `\n${errorMessage}`;
-        if (gutter.className.indexOf("ERRORgutter") == -1) {
+        if (gutter.className.indexOf("ERRORgutter") === -1) {
           gutter.className = severity + "gutter"
         }
       }
@@ -290,15 +289,85 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
       codemirrorOptions.cursorBlinkRate = -1;
     }
 
+    /**
+     * Register own helper for autocomplete.
+     * Getting complections from try.kotlinlang.org.
+     * @see WebDemoApi
+     *
+     * Override two function: render and hind:
+     * render() - render own styles when autocomplete displays.
+     * hind()   - own implementation of replacing text after choosing complection.
+     */
+    CodeMirror.registerHelper('hint', 'kotlin', (mirror, callback) => {
+      let cur = mirror.getCursor();
+      let token = mirror.getTokenAt(cur);
+      WebDemoApi.getAutoCompletion(
+        mirror.getValue(),
+        cur,
+        this.state.compilerVersion,
+        this.state.targetPlatform.id,
+        processingCompletionsList
+      );
+
+      function processingCompletionsList(results) {
+        callback({
+          list: results.map(result => {
+            return {
+              render: (elt, data, cur) => {
+                let icon = document.createElement('div');
+                let text = document.createElement('div');
+                let tail = document.createElement('div');
+                icon.className = "icon " + result.icon;
+                icon.setAttribute("class", "icon " + result.icon);
+                text.setAttribute("class", "name");
+                tail.setAttribute("class", "tail");
+                text.textContent = result.displayText;
+                tail.textContent = result.tail;
+                elt.appendChild(icon);
+                elt.appendChild(text);
+                elt.appendChild(tail);
+              },
+
+              hint: (mirror, self, data) => {
+                let cur = mirror.getCursor();
+                let token = mirror.getTokenAt(cur);
+                let from = {line: cur.line, ch: token.start};
+                let to = {line: cur.line, ch: token.end};
+                if ((token.string === ".") || (token.string === " ") || (token.string === "(")) {
+                  mirror.replaceRange(result.text, to)
+                } else {
+                  mirror.replaceRange(result.text, from, to);
+                  if (result.text.endsWith('(')) {
+                    mirror.replaceRange(")", {line: cur.line, ch: token.start + result.text.length});
+                    mirror.execCommand("goCharLeft")
+                  }
+                }
+              }
+            }
+          }),
+
+          from: {line: cur.line, ch: token.start},
+          to: {line: cur.line, ch: token.end}
+        })
+      }
+    });
+
+    CodeMirror.hint.kotlin.async = true;
+
+    CodeMirror.commands.autocomplete = (cm) => {
+      CodeMirror.showHint(cm, CodeMirror.hint.kotlin);
+    };
+
     this.codemirror = CodeMirror.fromTextArea(textarea, codemirrorOptions);
 
-    if (window.navigator.appVersion.indexOf("Mac") != -1) {
+    if (window.navigator.appVersion.indexOf("Mac") !== -1) {
       this.codemirror.setOption("extraKeys", {
         "Cmd-Alt-L": "indentAuto",
         "Shift-Tab": "indentLess",
         "Ctrl-/": "toggleComment",
         "Cmd-[": false,
-        "Cmd-]": false
+        "Cmd-]": false,
+        "Ctrl-Space": "autocomplete"
       })
     } else {
       this.codemirror.setOption("extraKeys", {

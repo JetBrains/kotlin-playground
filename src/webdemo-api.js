@@ -15,6 +15,11 @@ import TargetPlatform from "./target-platform";
 const WEBDEMO_URL = __WEBDEMO_URL__;
 const CACHE = {};
 
+const API_URLS = {
+  COMPILE: `${WEBDEMO_URL}/kotlinServer?type=run&runConf=`,
+  COMPLETE: `${WEBDEMO_URL}/kotlinServer?type=complete&runConf=`
+};
+
 function getExceptionCauses(exception) {
   if (exception.cause !== undefined && exception.cause != null) {
     return [exception.cause].concat(getExceptionCauses(exception.cause))
@@ -23,7 +28,7 @@ function getExceptionCauses(exception) {
   }
 }
 
-function executeCode(code, compilerVersion, targetPlatform) {
+function executeCode(url, code, compilerVersion, targetPlatform, options) {
   const projectJson = JSON.stringify({
     "id": "",
     "name": "",
@@ -45,7 +50,12 @@ function executeCode(code, compilerVersion, targetPlatform) {
   body.set('filename', "File.kt");
   body.set('project', projectJson);
 
-  return fetch(`${WEBDEMO_URL}/kotlinServer?type=run&runConf=${targetPlatform.id}`, {
+  if (options !== undefined) {
+    for (let option in options ){
+      body.set(option, options[option])
+    }
+  }
+  return fetch(url + targetPlatform.id, {
     method: 'POST',
     body: body.toString(),
     headers: {
@@ -72,7 +82,7 @@ export default class WebDemoApi {
   }
 
   static translateKotlinToJs(code, compilerVersion) {
-    return executeCode(code, compilerVersion, TargetPlatform.JS).then(function (data) {
+    return executeCode(API_URLS.COMPILE, code, compilerVersion, TargetPlatform.JS).then(function (data) {
       return {
         errors: data.errors["File.kt"],
         jsCode: data.jsCode
@@ -80,8 +90,8 @@ export default class WebDemoApi {
     })
   }
 
-  static executeKotlinCode(code, compilerVersion){
-    return executeCode(code, compilerVersion, TargetPlatform.JAVA).then(function (data) {
+  static executeKotlinCode(code, compilerVersion) {
+    return executeCode(API_URLS.COMPILE, code, compilerVersion, TargetPlatform.JAVA).then(function (data) {
       let output;
       if (data.text !== undefined) {
         output = data.text.replace("<outStream>", "<span class=\"standard-output\">")
@@ -103,5 +113,16 @@ export default class WebDemoApi {
         exception: data.exception
       }
     })
+  }
+
+  /**
+   * Request for getting list of different completion proposals
+   */
+  static getAutoCompletion(code, cursor, compilerVersion, platform, callback) {
+    const parametres = {"line": cursor.line, "ch": cursor.ch};
+    executeCode(API_URLS.COMPLETE, code, compilerVersion, platform, parametres)
+      .then(data => {
+        callback(data);
+      })
   }
 }

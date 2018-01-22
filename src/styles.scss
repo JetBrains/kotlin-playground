@@ -82,7 +82,6 @@ $font-family-mono: 'Liberation Mono', Consolas, Menlo, Courier, monospace !globa
   margin: 20px;
 }
 
-
 .cm__ERROR {
   color: #ff0000 !important;
 }
@@ -243,4 +242,73 @@ $font-family-mono: 'Liberation Mono', Consolas, Menlo, Courier, monospace !globa
 }
 
 .executable-fragment-wrapper {
+}
+
+.CodeMirror-hints {
+  padding-left: 0 !important;
+  border: 1px solid #969696;
+  border-radius: 4px;
+  position: absolute;
+  background-color: #f7f7f7;
+  overflow-y: hidden;
+  z-index: 10;
+  max-height: 20em;
+  box-shadow: 2px 3px 5px rgba(0, 0, 0, .2);
+}
+
+.CodeMirror-hint {
+  white-space: pre;
+  cursor: pointer;
+  border-radius: 0;
+  margin: 0;
+  padding: 0 4px 0 0;
+  line-height: 18px;
+}
+
+li.CodeMirror-hint-active {
+  background-color: #d8d8d8;
+  color: #000000;
+}
+
+.CodeMirror-hint .name {
+  float: left;
+}
+
+.CodeMirror-hint .tail {
+  float: right;
+  padding-left: 20px;
+  margin-right: 5px;
+}
+
+.CodeMirror-hint .icon {
+  margin-top: 1px;
+  margin-left: 2px;
+  height: 16px;
+  width: 16px;
+  float: left;
+  margin-right: 10px;
+}
+
+.icon {
+  background: url("http://try.kotlinlang.org/static/images/icons_all_sprite.svg");
+}
+
+.icon.class {
+  background: url("http://try.kotlinlang.org/static/images/completion_class.svg");
+}
+
+.icon.package {
+  background: url("http://try.kotlinlang.org/static/images/completion_package.svg");
+}
+
+.icon.method {
+  background: url("http://try.kotlinlang.org/static/images/completion_method.svg");
+}
+
+.icon.genericValue {
+  background: url("http://try.kotlinlang.org/static/images/completion_generic.svg")
+}
+
+.icon.property {
+  background: url("http://try.kotlinlang.org/static/images/completion_property.svg");
 }
