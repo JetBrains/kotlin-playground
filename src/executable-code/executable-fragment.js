@@ -300,7 +300,6 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
                 let icon = document.createElement('div');
                 let text = document.createElement('div');
                 let tail = document.createElement('div');
-                icon.className = "icon " + result.icon;
                 icon.setAttribute("class", "icon " + result.icon);
                 text.setAttribute("class", "name");
                 tail.setAttribute("class", "tail");
