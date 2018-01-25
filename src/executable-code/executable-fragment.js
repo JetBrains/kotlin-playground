@@ -324,6 +324,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
                   // es6 => str.replaceRange(/\$(\w+)/,${'$' + result.text}, index) token.string.substring(cursorInStringIndex, token.string.length);
                   let completionText = firstSentence + result.text + token.string.substring(cursorInStringIndex, token.string.length);
                   mirror.replaceRange(completionText, from, to);
+                  mirror.setCursor(cur.line, token.start + sentence$index + result.text.length + 1);
                   if (completionText.endsWith('(')) {
                     mirror.replaceRange(")", {line: cur.line, ch: token.start + result.text.length});
                     mirror.execCommand("goCharLeft")
