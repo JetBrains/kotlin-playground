@@ -318,10 +318,18 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
                 if ((token.string === ".") || (token.string === " ") || (token.string === "(")) {
                   mirror.replaceRange(result.text, to)
                 } else {
+                  /*
+                  Replace string with $ in string in case=>
+                  val world = "world"
+                  println("Hello $world)
+
+                  Plain string => cursorInStringIndex = -1
+                  completionText will be equals result.text
+                   */
                   let cursorInStringIndex = cur.ch - token.start;
                   let sentence$index = token.string.substring(0, cursorInStringIndex).lastIndexOf('$');
                   let firstSentence = token.string.substring(0, sentence$index + 1);
-                  // es6 => str.replaceRange(/\$(\w+)/,${'$' + result.text}, index) token.string.substring(cursorInStringIndex, token.string.length);
+                  // es6 => str.replaceRange(/\$(\w+)/,${'$' + result.text}, index)
                   let completionText = firstSentence + result.text + token.string.substring(cursorInStringIndex, token.string.length);
                   mirror.replaceRange(completionText, from, to);
                   mirror.setCursor(cur.line, token.start + sentence$index + result.text.length + 1);
