@@ -288,7 +288,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
         mirror.getValue(),
         cur,
         this.state.compilerVersion,
-        this.state.targetPlatform.id,
+        this.state.targetPlatform,
         processingCompletionsList
       );
 
