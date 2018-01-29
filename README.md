@@ -52,7 +52,7 @@ TODO
 
 Following HTML attributes are supported.
 - `data-min-compiler-version`. Minimal target Kotlin compiler version.
-- `data-target-platform`. target platform. `js` or `java`. `java` - set as default.
+- `data-target-platform`. target platform: `js` or `java` - (default).
   ```html
   <code data-min-compiler-version="1.1" data-target-platform="js" >
   fun sayHello(name: String) {
@@ -69,7 +69,7 @@ Following HTML attributes are supported.
   </code>
   ```
 
-  To see all available versions please[visit](https://try.kotlinlang.org/kotlinServer?type=getKotlinVersions)
+  To see all available versions please [visit](https://try.kotlinlang.org/kotlinServer?type=getKotlinVersions)
 
 **Make editable only part of the code**
 
