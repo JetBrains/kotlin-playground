@@ -51,16 +51,25 @@ TODO
 ### Configure specific code block
 
 Following HTML attributes are supported.
-- `data-min-compiler-version`. Minimal target Kotlin compiler version:
+- `data-min-compiler-version`. Minimal target Kotlin compiler version.
+- `data-target-platform`. target platform. `js` or `java`. `java` - set as default.
   ```html
-  <code data-min-compiler-version="1.1">
-  fun main(name: String) {
+  <code data-min-compiler-version="1.1" data-target-platform="js" >
+  fun sayHello(name: String) {
+     println("Hello $name")
+  }
+  </code>
+  ```
+- `data-highlight-only`. Disable run-button:
+  ```html
+  <code data-highlight-only>
+  fun sayHello(name: String) {
      println("Hello $name")
   }
   </code>
   ```
 
-  To see all available versions please visit https://try.kotlinlang.org/kotlinServer?type=getKotlinVersions.
+  To see all available versions please[visit](https://try.kotlinlang.org/kotlinServer?type=getKotlinVersions)
 
 **Make editable only part of the code**
 
