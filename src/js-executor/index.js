@@ -47,10 +47,6 @@ class JsExecutor {
     kotlinScript.src = API_URLS.KOTLIN_JS + `${this.kotlinVersion}/kotlin.js`;
     iframeHead.appendChild(kotlinScript);
     this._initializeKotlin();
-
-    const jqueryScript = document.createElement('script');
-    jqueryScript.src = API_URLS.JQUERY;
-    iframeHead.appendChild(jqueryScript);
   }
 }
 

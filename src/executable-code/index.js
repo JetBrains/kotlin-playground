@@ -10,7 +10,7 @@ import 'codemirror/mode/xml/xml';
 import 'codemirror/mode/javascript/javascript';
 import 'codemirror/mode/shell/shell';
 import merge from 'deepmerge';
-import defaultConfig from '../config';
+import defaultConfig, {API_URLS} from '../config';
 import {arrayFrom, getConfigFromElement, insertAfter} from '../utils';
 import WebDemoApi from "../webdemo-api";
 import TargetPlatform from '../target-platform'
@@ -30,11 +30,15 @@ export default class ExecutableCode {
     const highlightOnly = targetNode.hasAttribute('data-highlight-only');
     let targetPlatform = targetNode.getAttribute('data-target-platform');
     let jsLibs = targetNode.getAttribute('data-js-libs');
-    let additionalLibs = new Set();
     targetPlatform = targetPlatform !== null ? targetPlatform : "java";
     const code = targetNode.textContent.replace(/^\s+|\s+$/g, '');
     const cfg = merge(defaultConfig, config);
 
+    /*
+      additionalLibs - setting default additional JS-library
+      checkUrl       - regex for validation string js-libraries
+     */
+    let additionalLibs = new Set(API_URLS.JQUERY.split());
     const checkUrl = new RegExp("https?://.+\.js$");
 
     targetNode.style.display = 'none';
