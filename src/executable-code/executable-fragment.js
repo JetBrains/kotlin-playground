@@ -8,6 +8,7 @@ import WebDemoApi from '../webdemo-api';
 import TargetPlatform from "../target-platform";
 import getJsExecutor from "../js-executor"
 import {countLines, unEscapeString} from "../utils";
+import ComplectionView from "../complection-view";
 
 const SAMPLE_START = '//sampleStart';
 const SAMPLE_END = '//sampleEnd';
@@ -275,11 +276,8 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
     /**
      * Register own helper for autocomplete.
      * Getting complections from try.kotlinlang.org.
-     * {@see WebDemoApi}
-     *
-     * Override two function: render and hind:
-     * render() - render own styles when autocomplete displays.
-     * hind()   - own implementation of replacing text after choosing complection.
+     * {@see WebDemoApi}      - getting data from WebDemo
+     * {@see ComplectionView} - implementation completion view
      */
     CodeMirror.registerHelper('hint', 'kotlin', (mirror, callback) => {
       let cur = mirror.getCursor();
@@ -294,54 +292,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
 
       function processingCompletionsList(results) {
         callback({
-          list: results.map(result => {
-            return {
-              render: (elt, data, cur) => {
-                let icon = document.createElement('div');
-                let text = document.createElement('div');
-                let tail = document.createElement('div');
-                icon.setAttribute("class", "icon " + result.icon);
-                text.setAttribute("class", "name");
-                tail.setAttribute("class", "tail");
-                text.textContent = result.displayText;
-                tail.textContent = result.tail;
-                elt.appendChild(icon);
-                elt.appendChild(text);
-                elt.appendChild(tail);
-              },
-
-              hint: (mirror, self, data) => {
-                let cur = mirror.getCursor();
-                let token = mirror.getTokenAt(cur);
-                let from = {line: cur.line, ch: token.start};
-                let to = {line: cur.line, ch: token.end};
-                if ((token.string === ".") || (token.string === " ") || (token.string === "(")) {
-                  mirror.replaceRange(result.text, to)
-                } else {
-                  /*
-                  Replace string with $ in string in case=>
-                  val world = "world"
-                  println("Hello $world)
-
-                  Plain string => cursorInStringIndex = -1
-                  completionText will be equals result.text
-                   */
-                  let cursorInStringIndex = cur.ch - token.start;
-                  let sentence$index = token.string.substring(0, cursorInStringIndex).lastIndexOf('$');
-                  let firstSentence = token.string.substring(0, sentence$index + 1);
-                  // es6 => str.replaceRange(/\$(\w+)/,${'$' + result.text}, index)
-                  let completionText = firstSentence + result.text + token.string.substring(cursorInStringIndex, token.string.length);
-                  mirror.replaceRange(completionText, from, to);
-                  mirror.setCursor(cur.line, token.start + sentence$index + result.text.length + 1);
-                  if (completionText.endsWith('(')) {
-                    mirror.replaceRange(")", {line: cur.line, ch: token.start + result.text.length});
-                    mirror.execCommand("goCharLeft")
-                  }
-                }
-              }
-            }
-          }),
-
+          list: results.map(result => { return new ComplectionView(result)}),
           from: {line: cur.line, ch: token.start},
           to: {line: cur.line, ch: token.end}
         })
