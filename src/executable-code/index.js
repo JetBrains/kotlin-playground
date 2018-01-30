@@ -7,7 +7,7 @@ import 'codemirror/mode/javascript/javascript';
 import 'codemirror/mode/shell/shell';
 import merge from 'deepmerge';
 import defaultConfig from '../config';
-import { arrayFrom, getConfigFromElement, insertAfter } from '../utils';
+import {arrayFrom, getConfigFromElement, insertAfter} from '../utils';
 import WebDemoApi from "../webdemo-api";
 import TargetPlatform from '../target-platform'
 import ExecutableFragment from './executable-fragment';
@@ -20,27 +20,39 @@ export default class ExecutableCode {
    * @param {string|HTMLElement} target
    * @param {KotlinRunCodeConfig} [config]
    */
-  constructor(target, config = {})   {
+  constructor(target, config = {}) {
     const targetNode = typeof target === 'string' ? document.querySelector(target) : target;
     const targetNodeStyle = targetNode.getAttribute('style');
     const highlightOnly = targetNode.hasAttribute('data-highlight-only');
     let targetPlatform = targetNode.getAttribute('data-target-platform');
+    let jsLibs = targetNode.getAttribute('data-js-libs');
+    let additionalLibs = new Set();
     targetPlatform = targetPlatform !== null ? targetPlatform : "java";
     const code = targetNode.textContent.replace(/^\s+|\s+$/g, '');
     const cfg = merge(defaultConfig, config);
 
+    const checkUrl = new RegExp("https?://.+\.js$");
+
     targetNode.style.display = 'none';
     targetNode.setAttribute(INITED_ATTRIBUTE_NAME, 'true');
+    if (jsLibs !== null) {
+      jsLibs
+        .replace(" ", "")
+        .split(",")
+        .filter(lib => checkUrl.test(lib))
+        .forEach(lib => additionalLibs.add(lib));
+    }
 
     const mountNode = document.createElement('div');
     insertAfter(mountNode, targetNode);
 
-    const view = ExecutableFragment.render(mountNode, { highlightOnly });
+    const view = ExecutableFragment.render(mountNode, {highlightOnly});
     view.update({
       code: code,
       compilerVersion: cfg.compilerVersion,
       highlightOnly: highlightOnly,
-      targetPlatform: TargetPlatform.getById(targetPlatform)
+      targetPlatform: TargetPlatform.getById(targetPlatform),
+      jsLibs: additionalLibs
     });
 
     this.config = cfg;
@@ -117,7 +129,7 @@ export default class ExecutableCode {
             return;
           }
 
-          instances.push(new ExecutableCode(node, { compilerVersion, highlightOnly }));
+          instances.push(new ExecutableCode(node, {compilerVersion, highlightOnly}));
         });
 
         return instances;
