@@ -5,14 +5,14 @@ import {API_URLS} from "../config";
 const jsExecutors = new Map();
 
 class JsExecutor {
-  constructor(kotlinVersion) {
+  constructor(kotlinVersion, jsLibs) {
     this.kotlinVersion = kotlinVersion;
-    this.reloadIframeScripts()
+    this.reloadIframeScripts(jsLibs)
   }
 
-  executeJsCode(jsCode) {
+  executeJsCode(jsCode, jsLibs) {
     const codeOutput = this.iframe.contentWindow.eval(jsCode);
-    this.reloadIframeScripts();
+    this.reloadIframeScripts(jsLibs);
     return codeOutput;
   }
 
@@ -27,7 +27,7 @@ class JsExecutor {
     }, 3000);
   }
 
-  reloadIframeScripts() {
+  reloadIframeScripts(jsLibs) {
     if (this.iframe !== undefined) {
       document.body.removeChild(this.iframe)
     }
@@ -35,8 +35,14 @@ class JsExecutor {
     iframe.className = "k2js-iframe";
     document.body.appendChild(iframe);
     this.iframe = iframe;
-
     const iframeHead = this.iframe.contentWindow.document.head;
+    Array.from(jsLibs).forEach(
+      lib => {
+        const script = document.createElement('script');
+        script.src = lib;
+        iframeHead.appendChild(script);
+      }
+    );
     const kotlinScript = document.createElement('script');
     kotlinScript.src = API_URLS.KOTLIN_JS + `${this.kotlinVersion}/kotlin.js`;
     iframeHead.appendChild(kotlinScript);
@@ -48,12 +54,12 @@ class JsExecutor {
   }
 }
 
-function getJsExecutor(kotlinVersion) {
+function getJsExecutor(kotlinVersion, jsLibs) {
   let executor;
   if (jsExecutors.has(kotlinVersion)) {
     executor = jsExecutors.get(kotlinVersion);
   } else {
-    executor = new JsExecutor(kotlinVersion);
+    executor = new JsExecutor(kotlinVersion, jsLibs);
     jsExecutors.set(kotlinVersion, executor);
   }
   return executor;
