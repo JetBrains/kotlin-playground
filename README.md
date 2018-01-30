@@ -95,6 +95,25 @@ fun sum(a: Int, b: Int): Int {
 </code>
 ```
 
+### Helper
+
+Kotlin run-code supports several options for helping.
+
+  **For OS X**
+  
+  - Cmd-Alt-L   — formatting code
+  - Shift-Tab   — indent less
+  - Cmd-Alt-L   — auto formatting code
+  - Ctrl-Space  — autocomplete 
+  
+  **For Windows and other**
+  
+  - Ctrl-Alt-L  — formatting code
+  - Shift-Tab   — indent less
+  - Ctrl-Alt-L  — auto formatting code
+  - Ctrl-Space  — autocomplete 
+ 
+
 ## Development
 
 1. Fork & clone a repository ([how to](https://help.github.com/articles/fork-a-repo)).

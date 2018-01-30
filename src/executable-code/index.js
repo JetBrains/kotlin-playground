@@ -1,4 +1,8 @@
 import 'codemirror';
+import 'codemirror/lib/codemirror';
+import 'codemirror/addon/hint/show-hint'
+import 'codemirror/addon/hint/anyword-hint'
+import 'codemirror/mode/smalltalk/smalltalk'
 import 'codemirror/addon/runmode/colorize';
 import 'codemirror/mode/clike/clike';
 import 'codemirror/mode/groovy/groovy';
@@ -7,7 +11,7 @@ import 'codemirror/mode/javascript/javascript';
 import 'codemirror/mode/shell/shell';
 import merge from 'deepmerge';
 import defaultConfig from '../config';
-import { arrayFrom, getConfigFromElement, insertAfter } from '../utils';
+import {arrayFrom, getConfigFromElement, insertAfter} from '../utils';
 import WebDemoApi from "../webdemo-api";
 import TargetPlatform from '../target-platform'
 import ExecutableFragment from './executable-fragment';

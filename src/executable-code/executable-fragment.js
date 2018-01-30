@@ -7,27 +7,11 @@ import ExecutableCodeTemplate from './executable-fragment.monk';
 import WebDemoApi from '../webdemo-api';
 import TargetPlatform from "../target-platform";
 import getJsExecutor from "../js-executor"
+import {countLines, unEscapeString} from "../utils";
+import ComplectionView from "../complection-view";
 
 const SAMPLE_START = '//sampleStart';
 const SAMPLE_END = '//sampleEnd';
-
-function countLines(string) {
-  return (string.match(/\n/g) || []).length;
-}
-
-function unEscapeString(s) {
-  const tagsToReplace = {
-    "&": "&amp;",
-    "<": "&amp;lt;",
-    ">": "&amp;gt;",
-    " ": "%20"
-  };
-  let unEscapedString = s;
-  Object.keys(tagsToReplace).forEach(function (key) {
-    unEscapedString = unEscapedString.replace(tagsToReplace[key], key)
-  });
-  return unEscapedString
-}
 
 export default class ExecutableFragment extends ExecutableCodeTemplate {
   static render(element, options = {}) {
@@ -62,7 +46,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
   update(state) {
     let sample;
 
-    if(state.compilerVersion && state.targetPlatform == TargetPlatform.JS) {
+    if (state.compilerVersion && state.targetPlatform === TargetPlatform.JS) {
       this.jsExecutor = getJsExecutor(state.compilerVersion)
     }
 
@@ -169,8 +153,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
     this.update({
       waitingForOutput: true
     });
-
-    if(this.state.targetPlatform === TargetPlatform.JAVA){
+    if (this.state.targetPlatform === TargetPlatform.JAVA) {
       WebDemoApi.executeKotlinCode(this.getCode(), this.state.compilerVersion).then(
         state => {
           state.waitingForOutput = false;
@@ -256,7 +239,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
       } else {
         const gutter = this.codemirror.lineInfo(interval.start.line).gutterMarkers["errors-and-warnings-gutter"];
         gutter.title += `\n${errorMessage}`;
-        if (gutter.className.indexOf("ERRORgutter") == -1) {
+        if (gutter.className.indexOf("ERRORgutter") === -1) {
           gutter.className = severity + "gutter"
         }
       }
@@ -290,15 +273,48 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
       codemirrorOptions.cursorBlinkRate = -1;
     }
 
+    /**
+     * Register own helper for autocomplete.
+     * Getting complections from try.kotlinlang.org.
+     * {@see WebDemoApi}      - getting data from WebDemo
+     * {@see ComplectionView} - implementation completion view
+     */
+    CodeMirror.registerHelper('hint', 'kotlin', (mirror, callback) => {
+      let cur = mirror.getCursor();
+      let token = mirror.getTokenAt(cur);
+      WebDemoApi.getAutoCompletion(
+        mirror.getValue(),
+        cur,
+        this.state.compilerVersion,
+        this.state.targetPlatform,
+        processingCompletionsList
+      );
+
+      function processingCompletionsList(results) {
+        callback({
+          list: results.map(result => { return new ComplectionView(result)}),
+          from: {line: cur.line, ch: token.start},
+          to: {line: cur.line, ch: token.end}
+        })
+      }
+    });
+
+    CodeMirror.hint.kotlin.async = true;
+
+    CodeMirror.commands.autocomplete = (cm) => {
+      CodeMirror.showHint(cm, CodeMirror.hint.kotlin);
+    };
+
     this.codemirror = CodeMirror.fromTextArea(textarea, codemirrorOptions);
 
-    if (window.navigator.appVersion.indexOf("Mac") != -1) {
+    if (window.navigator.appVersion.indexOf("Mac") !== -1) {
       this.codemirror.setOption("extraKeys", {
         "Cmd-Alt-L": "indentAuto",
         "Shift-Tab": "indentLess",
         "Ctrl-/": "toggleComment",
         "Cmd-[": false,
-        "Cmd-]": false
+        "Cmd-]": false,
+        "Ctrl-Space": "autocomplete"
       })
     } else {
       this.codemirror.setOption("extraKeys", {
@@ -306,7 +322,8 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
         "Shift-Tab": "indentLess",
         "Ctrl-/": "toggleComment",
         "Ctrl-[": false,
-        "Ctrl-]": false
+        "Ctrl-]": false,
+        "Ctrl-Space": "autocomplete"
       })
     }
 
