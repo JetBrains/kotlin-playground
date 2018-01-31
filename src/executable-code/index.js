@@ -10,6 +10,7 @@ import 'codemirror/mode/xml/xml';
 import 'codemirror/mode/javascript/javascript';
 import 'codemirror/mode/shell/shell';
 import merge from 'deepmerge';
+import Set from 'es6-set/polyfill';
 import defaultConfig, {API_URLS} from '../config';
 import {arrayFrom, getConfigFromElement, insertAfter} from '../utils';
 import WebDemoApi from "../webdemo-api";
