@@ -36,15 +36,15 @@ export default class ExecutableCode {
     const cfg = merge(defaultConfig, config);
 
     /*
-      additionalLibs - setting default additional JS-library
-      checkUrl       - regex for validation string js-libraries
+      additionalLibs - setting additional JS-library
      */
-    let additionalLibs = new Set(API_URLS.JQUERY.split());
-    const checkUrl = new RegExp("https?://.+\.js$");
-
+    let additionalLibs;
     targetNode.style.display = 'none';
     targetNode.setAttribute(INITED_ATTRIBUTE_NAME, 'true');
-    if (jsLibs !== null) {
+    if (jsLibs !== null && targetPlatform === "js") {
+      // setting JQuery as default JS library
+      additionalLibs = new Set(API_URLS.JQUERY.split());
+      let checkUrl = new RegExp("https?://.+\.js$");
       jsLibs
         .replace(" ", "")
         .split(",")

@@ -56,7 +56,7 @@ fun sum(a: Int, b: Int): Int {
 
 </div>
 
-<div class="kotlin-code" data-target-platform="js">
+<div class="kotlin-code" data-target-platform="js" data-js-libs="https://d3js.org/d3.v4.min.js">
 
 ```kotlin
 fun sum(a: Int, b: Int): Int {
