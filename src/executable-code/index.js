@@ -79,52 +79,63 @@ export default class ExecutableCode {
   }
 
   /**
-   * @param {string} selector
+   * @param {string|Node|NodeList} target
    * @param {boolean} highlightOnly
    * @return {Promise<Array<ExecutableCode>>}
    */
-  static create(selector, highlightOnly) {
-    const instances = [];
-    const nodes = arrayFrom(document.querySelectorAll(selector));
+  static create(target, highlightOnly) {
+    let targetNodes;
 
-    if (nodes.length === 0) {
-      return instances;
+    if (typeof target === 'string') {
+      targetNodes = arrayFrom(document.querySelectorAll(target));
+    } else if (target instanceof Node) {
+      targetNodes = [target];
+    } else if (target instanceof NodeList === false) {
+      throw new Error(`'target' type should be string|Node|NodeList, ${typeof target} given`);
     }
 
-    return WebDemoApi.getCompilerVersions()
-      .then((versions) => {
-        nodes.forEach((node) => {
-          const config = getConfigFromElement(node, true);
-          const minCompilerVersion = config.minCompilerVersion;
+    // Return empty array if there is no nodes attach to
+    if (targetNodes.length === 0) {
+      return Promise.resolve([]);
+    }
 
-          let latestStableVersion = null;
+    return WebDemoApi.getCompilerVersions().then((versions) => {
+      const instances = [];
 
-          versions.forEach((compilerConfig) => {
-            if (compilerConfig.latestStable) {
-              latestStableVersion = compilerConfig.version;
-            }
-          });
+      targetNodes.forEach((node) => {
+        const config = getConfigFromElement(node, true);
+        const minCompilerVersion = config.minCompilerVersion;
+        let latestStableVersion = null;
 
-          let compilerVersion = latestStableVersion;
-
-          if (minCompilerVersion) {
-            compilerVersion = minCompilerVersion > latestStableVersion
-              ? versions[versions.length - 1].version
-              : latestStableVersion;
+        versions.forEach((compilerConfig) => {
+          if (compilerConfig.latestStable) {
+            latestStableVersion = compilerConfig.version;
           }
-
-          // Skip empty and already initialized nodes
-          if (
-            node.textContent.trim() === '' ||
-            node.getAttribute('data-kotlin-runcode-initialized') === 'true'
-          ) {
-            return;
-          }
-
-          instances.push(new ExecutableCode(node, { compilerVersion, highlightOnly }));
         });
 
-        return instances;
+        let compilerVersion = latestStableVersion;
+
+        if (minCompilerVersion) {
+          compilerVersion = minCompilerVersion > latestStableVersion
+            ? versions[versions.length - 1].version
+            : latestStableVersion;
+        }
+
+        // Skip empty and already initialized nodes
+        if (
+          node.textContent.trim() === '' ||
+          node.getAttribute('data-kotlin-runcode-initialized') === 'true'
+        ) {
+          return;
+        }
+
+        instances.push(new ExecutableCode(node, {
+          compilerVersion,
+          highlightOnly
+        }));
       });
+
+      return instances;
+    });
   }
 }
