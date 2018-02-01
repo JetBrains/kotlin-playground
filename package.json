@@ -23,6 +23,7 @@
     "ci-publish": "^1.3.0",
     "codemirror": "https://github.com/codemirror/CodeMirror.git#f3e6d7ea61d0a69b57cad1ff8134fe07e8b28112",
     "css-loader": "0.28.4",
+    "debounce": "^1.1.0",
     "deepmerge": "^1.5.0",
     "es6-map": "^0.1.5",
     "github-markdown-css": "^2.8.0",

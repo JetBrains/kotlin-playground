@@ -23,7 +23,7 @@ module.exports =  (params = {}) => {
     output: {
       path: path.resolve(__dirname, 'dist'),
       filename: '[name].js',
-      library: 'KotlinRunCode',
+      library: libraryName,
       libraryTarget: 'umd',
       libraryExport: 'default'
     },
