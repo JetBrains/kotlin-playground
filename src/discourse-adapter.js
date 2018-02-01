@@ -9,11 +9,16 @@ const Selectors = {
 };
 
 const DEBOUNCE_TIME = 300;
-const kotlinRunCodeGlobalObject = window[__LIBRARY_NAME__];
+
 
 export default function () {
+  const kotlinRunCodeGlobalObject = window[__LIBRARY_NAME__];
   const textarea = document.querySelector(Selectors.PREVIEW_TEXTAREA);
   const previewPanel = document.querySelector(Selectors.PREVIEW_PANEL);
+
+  if (!textarea || !previewPanel) {
+    return;
+  }
 
   textarea.addEventListener('keydown', debounce(() => {
     const previewCodeBlocks = previewPanel.querySelectorAll(Selectors.KOTLIN_CODE_BLOCK);
