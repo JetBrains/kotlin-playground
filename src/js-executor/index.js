@@ -36,13 +36,11 @@ class JsExecutor {
     document.body.appendChild(iframe);
     this.iframe = iframe;
     const iframeHead = this.iframe.contentWindow.document.head;
-    Array.from(jsLibs).forEach(
-      lib => {
-        const script = document.createElement('script');
-        script.src = lib;
-        iframeHead.appendChild(script);
-      }
-    );
+    for (let lib of jsLibs) {
+      const script = document.createElement('script');
+      script.src = lib;
+      iframeHead.appendChild(script);
+    }
     const kotlinScript = document.createElement('script');
     kotlinScript.src = API_URLS.KOTLIN_JS + `${this.kotlinVersion}/kotlin.js`;
     iframeHead.appendChild(kotlinScript);
