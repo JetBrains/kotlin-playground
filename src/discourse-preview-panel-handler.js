@@ -1,3 +1,6 @@
+/**
+ * This will handle user input changes and render editor in the preview panel
+ */
 import debounce from 'debounce';
 
 import { arrayFrom } from './utils';
@@ -9,7 +12,6 @@ const Selectors = {
 };
 
 const DEBOUNCE_TIME = 300;
-
 
 export default function () {
   const kotlinRunCodeGlobalObject = window[__LIBRARY_NAME__];
