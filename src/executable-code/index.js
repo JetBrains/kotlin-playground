@@ -37,21 +37,22 @@ export default class ExecutableCode {
 
     /*
       additionalLibs - setting additional JS-library
+      Setting JQuery as default JS library
      */
     let additionalLibs;
     targetNode.style.display = 'none';
     targetNode.setAttribute(INITED_ATTRIBUTE_NAME, 'true');
-    if (jsLibs !== null && targetPlatform === "js") {
-      // setting JQuery as default JS library
+    if (targetPlatform === "js") {
       additionalLibs = new Set(API_URLS.JQUERY.split());
-      let checkUrl = new RegExp("https?://.+\.js$");
-      jsLibs
-        .replace(" ", "")
-        .split(",")
-        .filter(lib => checkUrl.test(lib))
-        .forEach(lib => additionalLibs.add(lib));
+      if (jsLibs !== null) {
+        let checkUrl = new RegExp("https?://.+\.js$");
+        jsLibs
+          .replace(" ", "")
+          .split(",")
+          .filter(lib => checkUrl.test(lib))
+          .forEach(lib => additionalLibs.add(lib));
+      }
     }
-
     const mountNode = document.createElement('div');
     insertAfter(mountNode, targetNode);
 
