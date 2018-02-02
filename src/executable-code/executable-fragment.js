@@ -19,24 +19,21 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
       'directives': directives
     });
 
-    instance.on('click', '.fold-button', (event) => {
-      instance.update({folded: !instance.state.folded});
-    });
-
-    return instance;
-  }
-
-  constructor() {
-    super();
-    this.arrayClasses = [];
-    this.initialized = false;
-    this.state = {
+    instance.arrayClasses = [];
+    instance.initialized = false;
+    instance.state = {
       code: '',
       foldButtonHover: false,
       folded: true,
       output: null,
     };
-    this.codemirror = new CodeMirror();
+    instance.codemirror = new CodeMirror();
+
+    instance.on('click', '.fold-button', (event) => {
+      instance.update({folded: !instance.state.folded});
+    });
+
+    return instance;
   }
 
   get isShouldBeFolded() {
