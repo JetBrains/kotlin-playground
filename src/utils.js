@@ -97,7 +97,7 @@ export function waitForNode(selector, callback) {
   const select = document.querySelector;
 
   const interval = setInterval(() => {
-    const node = select(select);
+    const node = select(selector);
     if (node) {
       clearInterval(interval);
       callback(node);
