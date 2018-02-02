@@ -5,7 +5,7 @@ import debounce from 'debounce';
 
 import { arrayFrom } from './utils';
 
-const Selectors = {
+export const Selectors = {
   PREVIEW_PANEL: '.d-editor-preview',
   PREVIEW_TEXTAREA: '.d-editor-input.ember-text-area',
   KOTLIN_CODE_BLOCK: '.lang-run-kotlin',

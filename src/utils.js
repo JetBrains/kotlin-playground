@@ -22,7 +22,7 @@ export function getConfigFromElement(element, mergeWithDefaults = false) {
 
   const attrs = arrayFrom(element.attributes)
     .map((attr) => {
-      return { name: attr.name, value: attr.value }
+      return {name: attr.name, value: attr.value}
     })
     .filter(option => option.name.indexOf('data-') !== -1)
     .reduce((acc, attr) => {
@@ -32,7 +32,7 @@ export function getConfigFromElement(element, mergeWithDefaults = false) {
     }, {});
 
   return mergeWithDefaults
-    ? merge.all([ defaultConfig, attrs || {} ])
+    ? merge.all([defaultConfig, attrs || {}])
     : attrs;
 }
 
@@ -89,3 +89,18 @@ export function countLines(string) {
   return (string.match(/\n/g) || []).length;
 }
 
+/**
+ * @param {string} selector
+ * @param {Function<Node>} callback
+ */
+export function waitForNode(selector, callback) {
+  const select = document.querySelector;
+
+  const interval = setInterval(() => {
+    const node = select(select);
+    if (node) {
+      clearInterval(interval);
+      callback(node);
+    }
+  }, 100);
+}

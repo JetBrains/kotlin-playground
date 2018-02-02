@@ -1,6 +1,9 @@
 import ExecutableCode from './executable-code';
-import { getCurrentScript, getConfigFromElement } from './utils';
-import discoursePreviewPanelHandler from './discourse-preview-panel-handler';
+import { getCurrentScript, getConfigFromElement, waitForNode } from './utils';
+import {
+  default as discoursePreviewPanelHandler,
+  Selectors as DiscourseSelectors
+} from './discourse-preview-panel-handler';
 
 /**
  * @param {string} selector
@@ -31,7 +34,8 @@ const { selector, discourseSelector } = config;
 if (selector || discourseSelector) {
   document.addEventListener('DOMContentLoaded', () => {
     if (discourseSelector) {
-      create.discourse(discourseSelector);
+      create(discourseSelector);
+      waitForNode(DiscourseSelectors.PREVIEW_PANEL, () => discoursePreviewPanelHandler());
     } else {
       create(selector);
     }
