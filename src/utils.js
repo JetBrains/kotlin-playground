@@ -94,10 +94,8 @@ export function countLines(string) {
  * @param {Function<Node>} callback
  */
 export function waitForNode(selector, callback) {
-  const select = document.querySelector;
-
   const interval = setInterval(() => {
-    const node = select(selector);
+    const node = document.querySelector(selector);
     if (node) {
       clearInterval(interval);
       callback(node);
