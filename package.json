@@ -1,6 +1,6 @@
 {
   "name": "kotlin-runcode",
-  "version": "1.0.18",
+  "version": "1.0.20",
   "description": "Self-contained component to embed in websites for running Kotlin code",
   "keywords": [
     "kotlin",
@@ -21,8 +21,9 @@
     "babel-plugin-transform-runtime": "6.23.0",
     "babel-preset-es2015": "6.24.1",
     "ci-publish": "^1.3.0",
-    "codemirror": "5.27.2",
+    "codemirror": "https://github.com/codemirror/CodeMirror.git#f3e6d7ea61d0a69b57cad1ff8134fe07e8b28112",
     "css-loader": "0.28.4",
+    "debounce": "^1.1.0",
     "deepmerge": "^1.5.0",
     "es6-map": "^0.1.5",
     "es6-set": "^0.1.5",
