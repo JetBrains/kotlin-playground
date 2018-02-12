@@ -5,6 +5,7 @@
 Self-contained component to embed in websites for running Kotlin code. It converts 
 HTML code blocks to editable and runnable editor.
 
+See examples [here](https://jetbrains.github.io/kotlin-runcode/examples/)
 ## Usage
 
 ### Quickly from CDN
@@ -15,7 +16,16 @@ Insert `<script>` tag into the page and specify code blocks selector to attach v
 <script src="https://unpkg.com/kotlin-runcode@1/dist/runcode.min.js" data-selector="code"></script>
 ```
 
-Selector option is required.
+If you want to init KotlinRunCode manually - omit `data-selector` attribute and call it when it's needed:
+
+```html
+<script src="https://unpkg.com/kotlin-runcode@1/dist/runcode.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  KotlinRunCode('.code-blocks-selector');
+});
+</script>
+```
 
 ### Manually from NPM
 
@@ -93,15 +103,15 @@ If you want to highlight a specific area to focus on a specific sample, use `//s
 
 ```html
 <code>
-fun main(name: String) {
-   println("Hello $name")
-}
-
 //sampleStart
 fun sum(a: Int, b: Int): Int {
   return a + b
 }
 //sampleEnd
+
+fun main(args: Array<String>) {
+  print(sum(-1, 8))
+}
 </code>
 ```
 
