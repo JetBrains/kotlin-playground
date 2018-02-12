@@ -10,7 +10,8 @@ import 'codemirror/mode/xml/xml';
 import 'codemirror/mode/javascript/javascript';
 import 'codemirror/mode/shell/shell';
 import merge from 'deepmerge';
-import defaultConfig from '../config';
+import Set from 'es6-set/polyfill';
+import defaultConfig, {API_URLS} from '../config';
 import {arrayFrom, getConfigFromElement, insertAfter} from '../utils';
 import WebDemoApi from "../webdemo-api";
 import TargetPlatform from '../target-platform'
@@ -24,27 +25,44 @@ export default class ExecutableCode {
    * @param {string|HTMLElement} target
    * @param {KotlinRunCodeConfig} [config]
    */
-  constructor(target, config = {})   {
+  constructor(target, config = {}) {
     const targetNode = typeof target === 'string' ? document.querySelector(target) : target;
     const targetNodeStyle = targetNode.getAttribute('style');
     const highlightOnly = targetNode.hasAttribute('data-highlight-only');
     let targetPlatform = targetNode.getAttribute('data-target-platform');
+    let jsLibs = targetNode.getAttribute('data-js-libs');
     targetPlatform = targetPlatform !== null ? targetPlatform : "java";
     const code = targetNode.textContent.replace(/^\s+|\s+$/g, '');
     const cfg = merge(defaultConfig, config);
 
+    /*
+      additionalLibs - setting additional JS-library
+      Setting JQuery as default JS library
+     */
+    let additionalLibs;
     targetNode.style.display = 'none';
     targetNode.setAttribute(INITED_ATTRIBUTE_NAME, 'true');
-
+    if (targetPlatform === "js") {
+      additionalLibs = new Set(API_URLS.JQUERY.split());
+      if (jsLibs !== null) {
+        let checkUrl = new RegExp("https?://.+\.js$");
+        jsLibs
+          .replace(" ", "")
+          .split(",")
+          .filter(lib => checkUrl.test(lib))
+          .forEach(lib => additionalLibs.add(lib));
+      }
+    }
     const mountNode = document.createElement('div');
     insertAfter(mountNode, targetNode);
 
-    const view = ExecutableFragment.render(mountNode, { highlightOnly });
+    const view = ExecutableFragment.render(mountNode, {highlightOnly});
     view.update({
       code: code,
       compilerVersion: cfg.compilerVersion,
       highlightOnly: highlightOnly,
-      targetPlatform: TargetPlatform.getById(targetPlatform)
+      targetPlatform: TargetPlatform.getById(targetPlatform),
+      jsLibs: additionalLibs
     });
 
     this.config = cfg;

@@ -44,37 +44,47 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 ```
 
-### Configuration
-
-TODO
-
 ### Configure specific code block
 
 Following HTML attributes are supported.
 - `data-min-compiler-version`. Minimal target Kotlin compiler version:
+
    ```html
     <code data-min-compiler-version="1.1">
-    fun sayHello(name: String) {
-       println("Hello $name")
-    }
+    /*
+    Your code here
+    */
     </code>
     ```
   To see all available versions please [visit](https://try.kotlinlang.org/kotlinServer?type=getKotlinVersions)
 - `data-target-platform`. target platform: `js` or `java` - (default).
+
   ```html
    <code data-target-platform="js">
-   fun sayHello(name: String) {
-      println("Hello $name")
-   }
+    /*
+    Your code here
+    */
    </code>
    ```
-- `data-highlight-only`. Disable run-button:
+- `data-highlight-only`. Disable run-button.  Read-only code.
+
   ```html
   <code data-highlight-only>
-  fun sayHello(name: String) {
-     println("Hello $name")
-  }
+    /*
+    Your code here
+    */
   </code>
+
+- `data-js-libs`. Add additional JavaScript library. This attribute supports more than 1 library.  
+You're supposed to separate each library with delimiter a comma `,` . 
+**JQuery** library setting as default.
+ 
+  ```html
+  <code data-js-libs="https://my-awesome-js-lib/lib.min.js"> 
+    /*
+    Your code here
+    */
+   </code>
   ```
 
 **Make editable only part of the code**

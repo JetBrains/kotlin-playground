@@ -42,9 +42,8 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
 
   update(state) {
     let sample;
-
-    if (state.compilerVersion && state.targetPlatform === TargetPlatform.JS) {
-      this.jsExecutor = getJsExecutor(state.compilerVersion)
+    if(state.compilerVersion && state.targetPlatform === TargetPlatform.JS) {
+      this.jsExecutor = getJsExecutor(state.compilerVersion, state.jsLibs)
     }
 
     if (state.code) {
@@ -165,7 +164,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
           const jsCode = state.jsCode;
           delete state.jsCode;
           try {
-            const codeOutput = this.jsExecutor.executeJsCode(jsCode, this.state.compilerVersion);
+            const codeOutput = this.jsExecutor.executeJsCode(jsCode, this.state.jsLibs);
             state.output = `<span class="standard-output">${codeOutput}</span>`;
           } catch (e) {
             state.output = `<span class="error-output">Unhandled JavaScript exception</span>`
