@@ -1,25 +1,26 @@
 [![official JetBrains project](http://jb.gg/badges/official-plastic.svg)](https://confluence.jetbrains.com/display/ALL/JetBrains+on+GitHub)
 
-# Kotlin Run Code
+# Run Kotlin Code
 
-Self-contained component to embed in websites for running Kotlin code. It converts 
-HTML code blocks to editable and runnable editor.
+Component that creates Kotlin-aware editors capable of running code from HTML block elements.
 
-See examples [here](https://jetbrains.github.io/kotlin-runcode/examples/)
-## Usage
+[Examples](https://jetbrains.github.io/kotlin-runcode/examples/)
 
-### Quickly from CDN
+## Installation
 
-Insert `<script>` tag into the page and specify code blocks selector to attach via `data-selector` HTML attribute.
+### Use our CDN
+
+Insert a `<script>` element into your page and specify what elements should be converted in its `data-selector` attribute.
 
 ```html
 <script src="https://unpkg.com/kotlin-runcode@1/dist/runcode.min.js" data-selector="code"></script>
 ```
 
-If you want to init KotlinRunCode manually - omit `data-selector` attribute and call it when it's needed:
+Or, if you need to separate process of loading/conversion, omit the `data-selector` attribute and use a second `<script>` element like this:
 
 ```html
 <script src="https://unpkg.com/kotlin-runcode@1/dist/runcode.min.js"></script>
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
   KotlinRunCode('.code-blocks-selector');
@@ -27,15 +28,15 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 ```
 
-### Manually from NPM
+### Host your own instance
 
-Install KotlinRunCode as dependency.
+Install KotlinRunCode as dependency via NPM.
 
 ```bash
 npm install kotlin-runcode -S
 ```
 
-Use it in your code.
+And then just use it in your code.
 
 ```js
 // ES5
@@ -54,10 +55,12 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 ```
 
-### Configure specific code block
+### Customizing editors
 
-Following HTML attributes are supported.
-- `data-min-compiler-version`. Minimal target Kotlin compiler version:
+
+Use the following attributes on elements that are converted to editors to adjust their behavior.
+
+- `data-min-compiler-version`: Minimum target Kotlin [compiler version](https://try.kotlinlang.org/kotlinServer?type=getKotlinVersions):
 
    ```html
     <code data-min-compiler-version="1.1">
@@ -66,8 +69,8 @@ Following HTML attributes are supported.
     */
     </code>
     ```
-  To see all available versions please [visit](https://try.kotlinlang.org/kotlinServer?type=getKotlinVersions)
-- `data-target-platform`. target platform: `js` or `java` - (default).
+  
+- `data-target-platform`: target platform: `js` or `java` (default).
 
   ```html
    <code data-target-platform="js">
@@ -76,7 +79,7 @@ Following HTML attributes are supported.
     */
    </code>
    ```
-- `data-highlight-only`. Disable run-button.  Read-only code.
+- `data-highlight-only`: Read-only mode, with only highlighting.
 
   ```html
   <code data-highlight-only>
@@ -84,11 +87,26 @@ Following HTML attributes are supported.
     Your code here
     */
   </code>
+  ```
+  
+  Or, you can make only a part of code read-only by placing it between `//sampleStart` and `//sampleEnd` markers:
 
-- `data-js-libs`. Add additional JavaScript library. This attribute supports more than 1 library.  
-You're supposed to separate each library with delimiter a comma `,` . 
-**JQuery** library setting as default.
- 
+  ```html
+  <code>
+  //sampleStart
+  fun sum(a: Int, b: Int): Int {
+    return a + b
+  }
+  //sampleEnd
+  
+  fun main(args: Array<String>) {
+    print(sum(-1, 8))
+  }
+  </code>
+  ```
+
+- `data-js-libs`: By default component loads jQuery and makes it available to the code running in the editor. If you need any additional JS libraries, specify them as comma-separated list in this attribute.
+
   ```html
   <code data-js-libs="https://my-awesome-js-lib/lib.min.js"> 
     /*
@@ -97,48 +115,17 @@ You're supposed to separate each library with delimiter a comma `,` .
    </code>
   ```
 
-**Make editable only part of the code**
+### Supported keyboard shortcuts
 
-If you want to highlight a specific area to focus on a specific sample, use `//sampleStart` and `//sampleEnd` markers:
+  - Ctrl+Space		   — code completion
+  - Ctrl+Alt+L/Cmd+Alt+L   — format code
+  - Shift+Tab		   — decrease indent
 
-```html
-<code>
-//sampleStart
-fun sum(a: Int, b: Int): Int {
-  return a + b
-}
-//sampleEnd
 
-fun main(args: Array<String>) {
-  print(sum(-1, 8))
-}
-</code>
-```
+## Develop and contribute
 
-### Helper
+1. Fork & clone [our repository](https://github.com/JetBrains/kotlin-runcode).
+2. Install required dependencies `npm install`.
+3. `npm start` to start local development server at http://localhost:9000, or `npm start -- --env.webDemoUrl=http://localhost:6666` if you want a different port.
+4. `npm run build` to create production bundles.
 
-Kotlin run-code supports several options for helping.
-
-  **For OS X**
-  
-  - Cmd-Alt-L   — formatting code
-  - Shift-Tab   — indent less
-  - Cmd-Alt-L   — auto formatting code
-  - Ctrl-Space  — autocomplete 
-  
-  **For Windows and other**
-  
-  - Ctrl-Alt-L  — formatting code
-  - Shift-Tab   — indent less
-  - Ctrl-Alt-L  — auto formatting code
-  - Ctrl-Space  — autocomplete 
- 
-
-## Development
-
-1. Fork & clone a repository ([how to](https://help.github.com/articles/fork-a-repo)).
-2. Install dependencies `npm install`.
-3. Following commands are available:
-   - `npm start` to run a local development server at http://localhost:9000.
-      - Custom WebDemo URL - `npm start -- --env.webDemoUrl=http://localhost:6666`. 
-   - `npm run build` to build a production bundle.
