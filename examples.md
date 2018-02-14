@@ -19,7 +19,7 @@
 
 ## Automatic initialization
 
-Add `<script>` tag into the page and specify code blocks selector to attach via `data-selector` HTML attribute.
+Insert a `<script>` element into your page and specify what elements should be converted in its `data-selector` attribute.
 ```html
 <script src="https://unpkg.com/kotlin-runcode@1/dist/runcode.min.js" data-selector=".kotlin-code"></script>
 ```
@@ -27,8 +27,11 @@ Add `<script>` tag into the page and specify code blocks selector to attach via 
 For instance following block of Kotlin code:
 
 ```txt
-fun sum(a: Int, b: Int): Int {
-  return a + b
+class Contact(val id: Int, var email: String) 
+
+fun main(args: Array<String>) {
+   val contact = Contact(1, "mary@gmail.com")
+   println(contact.id)                   
 }
 ```
 
@@ -37,8 +40,11 @@ Turns into:
 <div class="kotlin-code">
 
 ```kotlin
-fun sum(a: Int, b: Int): Int {
-  return a + b
+class Contact(val id: Int, var email: String) 
+
+fun main(args: Array<String>) {
+   val contact = Contact(1, "mary@gmail.com")
+   println(contact.id)                   
 }
 ```
 
@@ -49,8 +55,8 @@ You can also change target platform or disable run button using `data-highlight-
 <div class="kotlin-code" data-highlight-only>
 
 ```kotlin
-fun sum(a: Int, b: Int): Int {
-  return a + b
+fun main(args: Array<String>) {
+  println("Hello World!")
 }
 ```
 
@@ -61,6 +67,10 @@ fun sum(a: Int, b: Int): Int {
 ```kotlin
 fun sum(a: Int, b: Int): Int {
   return a + b
+}
+
+fun main(args: Array<String>) {
+  print(sum(-1, 8))
 }
 ```
 
