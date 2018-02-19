@@ -89,9 +89,25 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 ```
 
-<button onclick="KotlinRunCode('.kotlin-code-2'); this.disabled = true">Create</button>
+<div>
 
-<div class="kotlin-code-2">
+```text
+//sampleStart
+fun sum(a: Int, b: Int): Int {
+  return a + b
+}
+//sampleEnd
+
+fun main(args: Array<String>) {
+  print(sum(-1, 8))
+}
+```
+
+</div>
+
+<button onclick="KotlinRunCode('.kotlin-code-2'); this.disabled = true; document.getElementById('kotlin-example').style.display = 'block';">Create</button>
+
+<div id="kotlin-example" class="kotlin-code-2" style="display: none;">
 
 ```text
 //sampleStart
