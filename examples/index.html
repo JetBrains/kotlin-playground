@@ -16,31 +16,41 @@
 <body class="markdown-body">
 <h1>KotlinRunCode demo</h1>
 <h2>Automatic initialization</h2>
-<p>Add <code>&lt;script&gt;</code> tag into the page and specify code blocks selector to attach via <code>data-selector</code> HTML attribute.</p>
+<p>Insert a <code>&lt;script&gt;</code> element into your page and specify what elements should be converted in its <code>data-selector</code> attribute.</p>
 <pre><code class="hljs language-html"><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"https://unpkg.com/kotlin-runcode@1/dist/runcode.min.js"</span> <span class="hljs-attr">data-selector</span>=<span class="hljs-string">".kotlin-code"</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
 </code></pre>
 <p>For instance following block of Kotlin code:</p>
-<pre><code class="hljs language-txt">fun sum(a: Int, b: Int): Int {
-  return a + b
+<pre><code class="hljs language-txt">class Contact(val id: Int, var email: String) 
+
+fun main(args: Array&lt;String&gt;) {
+   val contact = Contact(1, &quot;mary@gmail.com&quot;)
+   println(contact.id)                   
 }
 </code></pre>
 <p>Turns into:</p>
 <div class="kotlin-code">
-<pre><code class="hljs language-kotlin"><span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">sum</span><span class="hljs-params">(a: <span class="hljs-type">Int</span>, b: <span class="hljs-type">Int</span>)</span></span>: <span class="hljs-built_in">Int</span> {
-  <span class="hljs-keyword">return</span> a + b
+<pre><code class="hljs language-kotlin"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Contact</span></span>(<span class="hljs-keyword">val</span> id: <span class="hljs-built_in">Int</span>, <span class="hljs-keyword">var</span> email: String) 
+
+<span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">main</span><span class="hljs-params">(args: <span class="hljs-type">Array</span>&lt;<span class="hljs-type">String</span>&gt;)</span></span> {
+   <span class="hljs-keyword">val</span> contact = Contact(<span class="hljs-number">1</span>, <span class="hljs-string">"mary@gmail.com"</span>)
+   println(contact.id)                   
 }
 </code></pre>
 </div>
 <p>You can also change target platform or disable run button using <code>data-highlight-only</code> and <code>data-target-platform</code> attributes</p>
 <div class="kotlin-code" data-highlight-only>
-<pre><code class="hljs language-kotlin"><span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">sum</span><span class="hljs-params">(a: <span class="hljs-type">Int</span>, b: <span class="hljs-type">Int</span>)</span></span>: <span class="hljs-built_in">Int</span> {
-  <span class="hljs-keyword">return</span> a + b
+<pre><code class="hljs language-kotlin"><span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">main</span><span class="hljs-params">(args: <span class="hljs-type">Array</span>&lt;<span class="hljs-type">String</span>&gt;)</span></span> {
+  println(<span class="hljs-string">"Hello World!"</span>)
 }
 </code></pre>
 </div>
 <div class="kotlin-code" data-target-platform="js">
 <pre><code class="hljs language-kotlin"><span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">sum</span><span class="hljs-params">(a: <span class="hljs-type">Int</span>, b: <span class="hljs-type">Int</span>)</span></span>: <span class="hljs-built_in">Int</span> {
   <span class="hljs-keyword">return</span> a + b
+}
+
+<span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">main</span><span class="hljs-params">(args: <span class="hljs-type">Array</span>&lt;<span class="hljs-type">String</span>&gt;)</span></span> {
+  print(sum(<span class="hljs-number">-1</span>, <span class="hljs-number">8</span>))
 }
 </code></pre>
 </div>
@@ -53,8 +63,20 @@
 });
 </span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
 </code></pre>
-<p><button onclick="KotlinRunCode('.kotlin-code-2'); this.disabled = true">Create</button></p>
-<div class="kotlin-code-2">
+<div>
+<pre><code class="hljs language-text">//sampleStart
+fun sum(a: Int, b: Int): Int {
+  return a + b
+}
+//sampleEnd
+
+fun main(args: Array&lt;String&gt;) {
+  print(sum(-1, 8))
+}
+</code></pre>
+</div>
+<p><button onclick="KotlinRunCode('.kotlin-code-2'); this.disabled = true; document.getElementById('kotlin-example').style.display = 'block';">Create</button></p>
+<div id="kotlin-example" class="kotlin-code-2" style="display: none;">
 <pre><code class="hljs language-text">//sampleStart
 fun sum(a: Int, b: Int): Int {
   return a + b
