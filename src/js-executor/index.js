@@ -35,15 +35,12 @@ class JsExecutor {
     iframe.className = "k2js-iframe";
     document.body.appendChild(iframe);
     this.iframe = iframe;
-    const iframeHead = this.iframe.contentWindow.document.head;
+    let iframeDoc = this.iframe.contentDocument || this.iframe.document;
+    const kotlinScript = API_URLS.KOTLIN_JS + `${this.kotlinVersion}/kotlin.js`;
+    iframeDoc.write("<script src='" + kotlinScript + "'></script>");
     for (let lib of jsLibs) {
-      const script = document.createElement('script');
-      script.src = lib;
-      iframeHead.appendChild(script);
+      iframeDoc.write("<script src='" + lib + "'></script>");
     }
-    const kotlinScript = document.createElement('script');
-    kotlinScript.src = API_URLS.KOTLIN_JS + `${this.kotlinVersion}/kotlin.js`;
-    iframeHead.appendChild(kotlinScript);
     this._initializeKotlin();
   }
 }
