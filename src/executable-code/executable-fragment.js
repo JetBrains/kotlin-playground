@@ -165,7 +165,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
           delete state.jsCode;
           try {
             const codeOutput = this.jsExecutor.executeJsCode(jsCode, this.state.jsLibs);
-            state.output = `<span class="standard-output">${codeOutput}</span>`;
+            codeOutput ? state.output = `<span class="standard-output">${codeOutput}</span>` : state.output = ""
           } catch (e) {
             state.output = `<span class="error-output">Unhandled JavaScript exception</span>`
           }
