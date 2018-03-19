@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>KotlinRunCode examples</title>
+  <title>Kotlin-Playground examples</title>
   <link rel="stylesheet" href="examples.css">
   <link rel="stylesheet" href="examples-highlight.css">
   <style>
@@ -11,13 +11,13 @@
 		margin: 50px auto;
 	}
   </style>
-  <script src="https://unpkg.com/kotlin-runcode@1/dist/runcode.min.js" data-selector=".kotlin-code"></script>
+  <script src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" data-selector=".kotlin-code"></script>
 </head>
 <body class="markdown-body">
-<h1>KotlinRunCode demo</h1>
+<h1>Kotlin-Playground demo</h1>
 <h2>Automatic initialization</h2>
 <p>Insert a <code>&lt;script&gt;</code> element into your page and specify what elements should be converted in its <code>data-selector</code> attribute.</p>
-<pre><code class="hljs language-html"><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"https://unpkg.com/kotlin-runcode@1/dist/runcode.min.js"</span> <span class="hljs-attr">data-selector</span>=<span class="hljs-string">".kotlin-code"</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
+<pre><code class="hljs language-html"><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"https://unpkg.com/kotlin-playground@1/dist/playground.min.js"</span> <span class="hljs-attr">data-selector</span>=<span class="hljs-string">".kotlin-code"</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
 </code></pre>
 <p>For instance following block of Kotlin code:</p>
 <pre><code class="hljs language-txt">class Contact(val id: Int, var email: String) 
@@ -55,11 +55,11 @@ fun main(args: Array&lt;String&gt;) {
 </code></pre>
 </div>
 <h2>Manual initialization</h2>
-<p>If you want to init KotlinRunCode manually - omit <code>data-selector</code> attribute and call it when it's needed:</p>
-<pre><code class="hljs language-html"><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"https://unpkg.com/kotlin-runcode@1/dist/runcode.min.js"</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
+<p>If you want to init Kotlin-Playground manually - omit <code>data-selector</code> attribute and call it when it's needed:</p>
+<pre><code class="hljs language-html"><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"https://unpkg.com/kotlin-playground@1/dist/playground.min.js"</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
 <span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span><span class="javascript">
 <span class="hljs-built_in">document</span>.addEventListener(<span class="hljs-string">'DOMContentLoaded'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
-  KotlinRunCode(<span class="hljs-string">'.code-blocks-selector'</span>);
+  KotlinPlayground(<span class="hljs-string">'.code-blocks-selector'</span>);
 });
 </span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
 </code></pre>
@@ -75,7 +75,7 @@ fun main(args: Array&lt;String&gt;) {
 }
 </code></pre>
 </div>
-<p><button onclick="KotlinRunCode('.kotlin-code-2'); this.disabled = true; document.getElementById('kotlin-example').style.display = 'block';">Create</button></p>
+<p><button onclick="KotlinPlayground('.kotlin-code-2'); this.disabled = true; document.getElementById('kotlin-example').style.display = 'block';">Create</button></p>
 <div id="kotlin-example" class="kotlin-code-2" style="display: none;">
 <pre><code class="hljs language-text">//sampleStart
 fun sum(a: Int, b: Int): Int {

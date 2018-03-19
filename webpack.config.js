@@ -5,7 +5,7 @@ const HtmlPlugin = require('html-webpack-plugin');
 module.exports =  (params = {}) => {
   const isProduction = params.production;
   const env = isProduction ? 'production' : 'development';
-  const mainEntryName = isProduction ? 'runcode.min' : 'runcode';
+  const mainEntryName = isProduction ? 'playground.min' : 'playground';
   const isServer = process.argv[1].includes('webpack-dev-server');
   const libraryName = 'KotlinRunCode';
   const webDemoUrl = params.webDemoUrl || 'https://try.kotlinlang.org';

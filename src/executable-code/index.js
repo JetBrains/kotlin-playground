@@ -18,12 +18,12 @@ import TargetPlatform from '../target-platform'
 import ExecutableFragment from './executable-fragment';
 import '../styles.scss';
 
-const INITED_ATTRIBUTE_NAME = 'data-kotlin-runcode-initialized';
+const INITED_ATTRIBUTE_NAME = 'data-kotlin-playground-initialized';
 
 export default class ExecutableCode {
   /**
    * @param {string|HTMLElement} target
-   * @param {KotlinRunCodeConfig} [config]
+   * @param {KotlinPlayGroundConfig} [config]
    */
   constructor(target, config = {}) {
     const targetNode = typeof target === 'string' ? document.querySelector(target) : target;
@@ -71,7 +71,7 @@ export default class ExecutableCode {
     this.targetNodeStyle = targetNodeStyle;
     this.view = view;
 
-    targetNode.KotlinRunCode = this;
+    targetNode.KotlinPlayground = this;
   }
 
   destroy() {
@@ -87,7 +87,7 @@ export default class ExecutableCode {
     }
 
     targetNode.removeAttribute(INITED_ATTRIBUTE_NAME);
-    delete targetNode.KotlinRunCode;
+    delete targetNode.KotlinPlayground;
   }
 
   isInited() {
@@ -142,7 +142,7 @@ export default class ExecutableCode {
         // Skip empty and already initialized nodes
         if (
           node.textContent.trim() === '' ||
-          node.getAttribute('data-kotlin-runcode-initialized') === 'true'
+          node.getAttribute('data-kotlin-playground-initialized') === 'true'
         ) {
           return;
         }

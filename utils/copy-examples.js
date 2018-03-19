@@ -7,7 +7,7 @@ cp('-R', `${projectDir}/dist/examples`, projectDir);
 
 sed(
   '-i',
-  '../runcode.js',
-  'https://unpkg.com/kotlin-runcode@1/dist/runcode.min.js',
+  '../playground.js',
+  'https://unpkg.com/kotlin-playground@1/dist/playground.min.js',
   `${projectDir}/examples/index.html`
 );
