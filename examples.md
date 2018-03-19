@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>KotlinRunCode examples</title>
+  <title>Kotlin Playground examples</title>
   <link rel="stylesheet" href="examples.css">
   <link rel="stylesheet" href="examples-highlight.css">
   <style>
@@ -11,17 +11,17 @@
 		margin: 50px auto;
 	}
   </style>
-  <script src="../runcode.js" data-selector=".kotlin-code"></script>
+  <script src="../playground.js" data-selector=".kotlin-code"></script>
 </head>
 <body class="markdown-body">
 
-# KotlinRunCode demo
+# Kotlin Playground demo
 
 ## Automatic initialization
 
 Insert a `<script>` element into your page and specify what elements should be converted in its `data-selector` attribute.
 ```html
-<script src="https://unpkg.com/kotlin-runcode@1/dist/runcode.min.js" data-selector=".kotlin-code"></script>
+<script src="https://unpkg.com/kotlin-playground@1" data-selector=".kotlin-code"></script>
 ```
 
 For instance following block of Kotlin code:
@@ -78,13 +78,13 @@ fun main(args: Array<String>) {
 
 ## Manual initialization
 
-If you want to init KotlinRunCode manually - omit `data-selector` attribute and call it when it's needed:
+If you want to init Kotlin Playground manually - omit `data-selector` attribute and call it when it's needed:
 
 ```html
-<script src="https://unpkg.com/kotlin-runcode@1/dist/runcode.min.js"></script>
+<script src="https://unpkg.com/kotlin-playground@1"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-  KotlinRunCode('.code-blocks-selector');
+  KotlinPlayground('.code-blocks-selector');
 });
 </script>
 ```
@@ -105,7 +105,7 @@ fun main(args: Array<String>) {
 
 </div>
 
-<button onclick="KotlinRunCode('.kotlin-code-2'); this.disabled = true; document.getElementById('kotlin-example').style.display = 'block';">Create</button>
+<button onclick="KotlinPlayground('.kotlin-code-2'); this.disabled = true; document.getElementById('kotlin-example').style.display = 'block';">Create</button>
 
 <div id="kotlin-example" class="kotlin-code-2" style="display: none;">
 

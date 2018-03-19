@@ -1,5 +1,5 @@
 {
-  "name": "kotlin-runcode",
+  "name": "kotlin-playground",
   "version": "1.0.26",
   "description": "Self-contained component to embed in websites for running Kotlin code",
   "keywords": [
@@ -8,8 +8,8 @@
   ],
   "author": "JetBrains",
   "license": "Apache-2.0",
-  "repository": "JetBrains/kotlin-runcode",
-  "main": "dist/runcode.js",
+  "repository": "JetBrains/kotlin-playground",
+  "main": "dist/playground.js",
   "files": [
     "dist"
   ],
