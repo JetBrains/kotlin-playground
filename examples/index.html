@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Kotlin-Playground examples</title>
+  <title>Kotlin Playground examples</title>
   <link rel="stylesheet" href="examples.css">
   <link rel="stylesheet" href="examples-highlight.css">
   <style>
@@ -14,26 +14,26 @@
   <script src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" data-selector=".kotlin-code"></script>
 </head>
 <body class="markdown-body">
-<h1>Kotlin-Playground demo</h1>
+<h1>Kotlin Playground demo</h1>
 <h2>Automatic initialization</h2>
 <p>Insert a <code>&lt;script&gt;</code> element into your page and specify what elements should be converted in its <code>data-selector</code> attribute.</p>
 <pre><code class="hljs language-html"><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"https://unpkg.com/kotlin-playground@1/dist/playground.min.js"</span> <span class="hljs-attr">data-selector</span>=<span class="hljs-string">".kotlin-code"</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
 </code></pre>
 <p>For instance following block of Kotlin code:</p>
-<pre><code class="hljs language-txt">class Contact(val id: Int, var email: String) 
+<pre><code class="hljs language-txt">class Contact(val id: Int, var email: String)
 
 fun main(args: Array&lt;String&gt;) {
    val contact = Contact(1, &quot;mary@gmail.com&quot;)
-   println(contact.id)                   
+   println(contact.id)
 }
 </code></pre>
 <p>Turns into:</p>
 <div class="kotlin-code">
-<pre><code class="hljs language-kotlin"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Contact</span></span>(<span class="hljs-keyword">val</span> id: <span class="hljs-built_in">Int</span>, <span class="hljs-keyword">var</span> email: String) 
+<pre><code class="hljs language-kotlin"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Contact</span></span>(<span class="hljs-keyword">val</span> id: <span class="hljs-built_in">Int</span>, <span class="hljs-keyword">var</span> email: String)
 
 <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">main</span><span class="hljs-params">(args: <span class="hljs-type">Array</span>&lt;<span class="hljs-type">String</span>&gt;)</span></span> {
    <span class="hljs-keyword">val</span> contact = Contact(<span class="hljs-number">1</span>, <span class="hljs-string">"mary@gmail.com"</span>)
-   println(contact.id)                   
+   println(contact.id)
 }
 </code></pre>
 </div>
@@ -55,7 +55,7 @@ fun main(args: Array&lt;String&gt;) {
 </code></pre>
 </div>
 <h2>Manual initialization</h2>
-<p>If you want to init Kotlin-Playground manually - omit <code>data-selector</code> attribute and call it when it's needed:</p>
+<p>If you want to init Kotlin Playground manually - omit <code>data-selector</code> attribute and call it when it's needed:</p>
 <pre><code class="hljs language-html"><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"https://unpkg.com/kotlin-playground@1/dist/playground.min.js"</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
 <span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span><span class="javascript">
 <span class="hljs-built_in">document</span>.addEventListener(<span class="hljs-string">'DOMContentLoaded'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{

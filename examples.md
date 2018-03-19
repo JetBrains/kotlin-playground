@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Kotlin-Playground examples</title>
+  <title>Kotlin Playground examples</title>
   <link rel="stylesheet" href="examples.css">
   <link rel="stylesheet" href="examples-highlight.css">
   <style>
@@ -15,7 +15,7 @@
 </head>
 <body class="markdown-body">
 
-# Kotlin-Playground demo
+# Kotlin Playground demo
 
 ## Automatic initialization
 
@@ -78,7 +78,7 @@ fun main(args: Array<String>) {
 
 ## Manual initialization
 
-If you want to init Kotlin-Playground manually - omit `data-selector` attribute and call it when it's needed:
+If you want to init Kotlin Playground manually - omit `data-selector` attribute and call it when it's needed:
 
 ```html
 <script src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js"></script>
