@@ -21,7 +21,7 @@
 
 Insert a `<script>` element into your page and specify what elements should be converted in its `data-selector` attribute.
 ```html
-<script src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" data-selector=".kotlin-code"></script>
+<script src="https://unpkg.com/kotlin-playground@1" data-selector=".kotlin-code"></script>
 ```
 
 For instance following block of Kotlin code:
@@ -81,7 +81,7 @@ fun main(args: Array<String>) {
 If you want to init Kotlin Playground manually - omit `data-selector` attribute and call it when it's needed:
 
 ```html
-<script src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js"></script>
+<script src="https://unpkg.com/kotlin-playground@1"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
   KotlinPlayground('.code-blocks-selector');

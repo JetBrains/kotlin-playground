@@ -8,6 +8,6 @@ cp('-R', `${projectDir}/dist/examples`, projectDir);
 sed(
   '-i',
   '../playground.js',
-  'https://unpkg.com/kotlin-playground@1/dist/playground.min.js',
+  'https://unpkg.com/kotlin-playground@1',
   `${projectDir}/examples/index.html`
 );

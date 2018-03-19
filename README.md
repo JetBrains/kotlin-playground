@@ -13,13 +13,13 @@ Component that creates Kotlin-aware editors capable of running code from HTML bl
 Insert a `<script>` element into your page and specify what elements should be converted in its `data-selector` attribute.
 
 ```html
-<script src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" data-selector="code"></script>
+<script src="https://unpkg.com/kotlin-playground@1" data-selector="code"></script>
 ```
 
 Or, if you need to separate process of loading/conversion, omit the `data-selector` attribute and use a second `<script>` element like this:
 
 ```html
-<script src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js"></script>
+<script src="https://unpkg.com/kotlin-playground@1"></script>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
