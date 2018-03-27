@@ -142,7 +142,7 @@ $font-family-mono: 'Liberation Mono', Consolas, Menlo, Courier, monospace !globa
 
 .error-output {
   white-space: pre;
-  color: #ff0000 !important;
+  color: #ff0000;
   min-height: 1.4em;
   margin: 0;
   vertical-align: top;
@@ -150,10 +150,41 @@ $font-family-mono: 'Liberation Mono', Consolas, Menlo, Courier, monospace !globa
 
 .standard-output {
   white-space: pre;
-  color: #000 !important;
+  color: #000;
   min-height: 1.4em;
   margin: 0;
   vertical-align: top;
+}
+
+.test-output {
+  white-space: pre;
+  color: #4ca01f;
+  min-height: 1.4em;
+  vertical-align: top;
+  margin-left: 20px;
+}
+
+.test-fail {
+  white-space: pre;
+  color: #ff0000;
+  min-height: 1.4em;
+  margin-left: 20px;
+  vertical-align: top;
+}
+
+.test-icon {
+  margin-top: 3px;
+  width: 15px;
+  height: 15px;
+  position: absolute;
+}
+
+.test-icon.ok {
+  background-image: url('img/ok.svg')
+}
+
+.test-icon.fail {
+  background-image: url('img/fail.svg')
 }
 
 .stacktrace-element {

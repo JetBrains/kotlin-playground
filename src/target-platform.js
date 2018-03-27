@@ -10,6 +10,8 @@ class TargetPlatform {
         return TargetPlatform.JS;
       case "java":
         return TargetPlatform.JAVA;
+      case "junit":
+        return TargetPlatform.JUNIT;
       default:
         throw Error("Unknown platform " + id);
     }
@@ -18,5 +20,6 @@ class TargetPlatform {
 
 TargetPlatform.JS = new TargetPlatform('js', 'JavaScript');
 TargetPlatform.JAVA = new TargetPlatform('java', 'JVM');
+TargetPlatform.JUNIT = new TargetPlatform('junit', 'JUnit');
 
 export default TargetPlatform

@@ -149,8 +149,10 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
     this.update({
       waitingForOutput: true
     });
-    if (this.state.targetPlatform === TargetPlatform.JAVA) {
-      WebDemoApi.executeKotlinCode(this.getCode(), this.state.compilerVersion).then(
+
+    if (this.state.targetPlatform === TargetPlatform.JAVA || this.state.targetPlatform === TargetPlatform.JUNIT) {
+      let platform = this.state.targetPlatform;
+      WebDemoApi.executeKotlinCode(this.getCode(), this.state.compilerVersion, platform).then(
         state => {
           state.waitingForOutput = false;
           this.update(state);
