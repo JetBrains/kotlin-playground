@@ -70,7 +70,7 @@ Use the following attributes on elements that are converted to editors to adjust
     </code>
     ```
   
-- `data-target-platform`: target platform: `js` or `java` (default).
+- `data-target-platform`: target platform: `junit`, `js` or `java` (default).
 
   ```html
    <code data-target-platform="js">
