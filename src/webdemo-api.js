@@ -154,19 +154,21 @@ function getOutputResults(output) {
 
 function getJunitResults(data) {
   let result = "";
-  let listOfResults = data.TestStringTemplates ? arrayFrom(data.TestStringTemplates) : [];
-  listOfResults.forEach(test => {
-    switch (test.status) {
-      case "FAIL":
-        result = result + `<span class="test-icon fail"></span><div class="test-fail">${test.status} ${test.methodName}: ${test.comparisonFailure.message}</div>`;
-        break;
-      case "ERROR":
-        result = result + `<span class="test-icon fail"></span><div class="test-fail">${test.status} ${test.methodName}: ${test.comparisonFailure.message}</div>`;
-        break;
-      case "OK":
-        result = result + `<span class="test-icon ok"></span><div class="test-output">${test.status} ${test.methodName}</div>`;
-        break;
-    }
-  });
+  for (let testClass in data) {
+    let listOfResults = arrayFrom(data[testClass]);
+    listOfResults.forEach(test => {
+      switch (test.status) {
+        case "FAIL":
+          result = result + `<span class="test-icon fail"></span><div class="test-fail">${test.status} ${test.methodName}: ${test.comparisonFailure.message}</div>`;
+          break;
+        case "ERROR":
+          result = result + `<span class="test-icon fail"></span><div class="test-fail">${test.status} ${test.methodName}: ${test.comparisonFailure.message}</div>`;
+          break;
+        case "OK":
+          result = result + `<span class="test-icon ok"></span><div class="test-output">${test.status} ${test.methodName}</div>`;
+          break;
+      }
+    });
+  }
   return result;
 }
