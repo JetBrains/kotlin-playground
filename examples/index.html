@@ -54,6 +54,27 @@ fun main(args: Array&lt;String&gt;) {
 }
 </code></pre>
 </div>
+<p>Use <code>data-target-platform</code> attribute with value <code>junit</code> for creating examples with tests:</p>
+<div class="kotlin-code" data-target-platform="junit">
+<pre><code class="hljs language-kotlin"><span class="hljs-keyword">import</span> org.junit.Test
+<span class="hljs-keyword">import</span> org.junit.Assert
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">TestLambdas</span></span>() {
+    <span class="hljs-meta">@Test</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">contains</span><span class="hljs-params">()</span></span> {
+        Assert.assertTrue(<span class="hljs-string">"The result should be true if the collection contains an even number"</span>, 
+                          containsEven(listOf(<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">126</span>, <span class="hljs-number">555</span>)))
+    }
+
+    <span class="hljs-meta">@Test</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">notContains</span><span class="hljs-params">()</span></span> {
+        Assert.assertFalse(<span class="hljs-string">"The result should be false if the collection doesn't contain an even number"</span>,
+                           containsEven(listOf(<span class="hljs-number">43</span>, <span class="hljs-number">33</span>)))
+    }
+}
+<span class="hljs-comment">//sampleStart</span>
+<span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">containsEven</span><span class="hljs-params">(collection: <span class="hljs-type">Collection</span>&lt;<span class="hljs-type">Int</span>&gt;)</span></span>: <span class="hljs-built_in">Boolean</span> = collection.any { it % <span class="hljs-number">2</span> == <span class="hljs-number">0</span> }
+<span class="hljs-comment">//sampleEnd</span>
+</code></pre>
+</div>
 <h2>Manual initialization</h2>
 <p>If you want to init Kotlin Playground manually - omit <code>data-selector</code> attribute and call it when it's needed:</p>
 <pre><code class="hljs language-html"><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"https://unpkg.com/kotlin-playground@1"</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
