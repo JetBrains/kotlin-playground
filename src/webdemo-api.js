@@ -2,7 +2,7 @@ import 'whatwg-fetch';
 import URLSearchParams from 'url-search-params';
 import TargetPlatform from "./target-platform";
 import {API_URLS} from "./config";
-import {arrayFrom} from "./utils";
+import {arrayFrom, convertToHtmlTag} from "./utils";
 
 /**
  * @typedef {Object} KotlinVersion
@@ -159,10 +159,10 @@ function getJunitResults(data) {
     listOfResults.forEach(test => {
       switch (test.status) {
         case "FAIL":
-          result = result + `<span class="test-icon fail"></span><div class="test-fail">${test.status} ${test.methodName}: ${test.comparisonFailure.message}</div>`;
+          result = result + `<span class="test-icon fail"></span><div class="test-fail">${test.status} ${test.methodName}: ${convertToHtmlTag(test.comparisonFailure.message)}</div>`;
           break;
         case "ERROR":
-          result = result + `<span class="test-icon fail"></span><div class="test-fail">${test.status} ${test.methodName}: ${test.comparisonFailure.message}</div>`;
+          result = result + `<span class="test-icon fail"></span><div class="test-fail">${test.status} ${test.methodName}: ${convertToHtmlTag(test.comparisonFailure.message)}</div>`;
           break;
         case "OK":
           result = result + `<span class="test-icon ok"></span><div class="test-output">${test.status} ${test.methodName}</div>`;
