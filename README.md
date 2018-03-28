@@ -104,7 +104,8 @@ Use the following attributes on elements that are converted to editors to adjust
   }
   </code>
   ```
-
+  Also if you want to hide code snippet just set the attribute `folded-button` to `false` value.
+  
 - `data-js-libs`: By default component loads jQuery and makes it available to the code running in the editor. If you need any additional JS libraries, specify them as comma-separated list in this attribute.
 
   ```html
