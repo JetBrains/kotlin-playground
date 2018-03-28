@@ -59,6 +59,31 @@ fun main(args: Array&lt;String&gt;) {
 <pre><code class="hljs language-kotlin"><span class="hljs-keyword">import</span> org.junit.Test
 <span class="hljs-keyword">import</span> org.junit.Assert
 
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">TestExtensionFunctions</span></span>() {
+    <span class="hljs-meta">@Test</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">testIntExtension</span><span class="hljs-params">()</span></span> {
+        Assert.assertEquals(<span class="hljs-string">"Rational number creation error: "</span>, RationalNumber(<span class="hljs-number">4</span>, <span class="hljs-number">1</span>), <span class="hljs-number">4.</span>r())
+    }
+
+    <span class="hljs-meta">@Test</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">testPairExtension</span><span class="hljs-params">()</span></span> {
+        Assert.assertEquals(<span class="hljs-string">"Rational number creation error: "</span>, RationalNumber(<span class="hljs-number">2</span>, <span class="hljs-number">3</span>), Pair(<span class="hljs-number">2</span>, <span class="hljs-number">3</span>).r())
+    }
+}
+<span class="hljs-comment">//sampleStart</span>
+<span class="hljs-comment">/*
+Then implement extension functions Int.r() and Pair.r() and make them convert Int and Pair to RationalNumber.
+*/</span>
+<span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-built_in">Int</span>.<span class="hljs-title">r</span><span class="hljs-params">()</span></span>: RationalNumber = RationalNumber(<span class="hljs-keyword">this</span>, <span class="hljs-number">2</span>)
+<span class="hljs-function"><span class="hljs-keyword">fun</span> Pair<span class="hljs-type">&lt;Int, Int&gt;</span>.<span class="hljs-title">r</span><span class="hljs-params">()</span></span>: RationalNumber = RationalNumber(first, second)
+
+<span class="hljs-keyword">data</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">RationalNumber</span></span>(<span class="hljs-keyword">val</span> numerator: <span class="hljs-built_in">Int</span>, <span class="hljs-keyword">val</span> denominator: <span class="hljs-built_in">Int</span>)
+<span class="hljs-comment">//sampleEnd</span>
+</code></pre>
+</div>
+<p>If you want to hide test classes in you code snippet just set the attribute <code>folded-button</code> to <code>false</code> value.</p>
+<div class="kotlin-code" data-target-platform="junit" folded-button="false">
+<pre><code class="hljs language-kotlin"><span class="hljs-keyword">import</span> org.junit.Test
+<span class="hljs-keyword">import</span> org.junit.Assert
+
 <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">TestLambdas</span></span>() {
     <span class="hljs-meta">@Test</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">contains</span><span class="hljs-params">()</span></span> {
         Assert.assertTrue(<span class="hljs-string">"The result should be true if the collection contains an even number"</span>, 
@@ -71,6 +96,10 @@ fun main(args: Array&lt;String&gt;) {
     }
 }
 <span class="hljs-comment">//sampleStart</span>
+<span class="hljs-comment">/*
+Pass a lambda to any function to check if the collection contains an even number.
+The function any gets a predicate as an argument and returns true if there is at least one element satisfying the predicate.
+*/</span>
 <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">containsEven</span><span class="hljs-params">(collection: <span class="hljs-type">Collection</span>&lt;<span class="hljs-type">Int</span>&gt;)</span></span>: <span class="hljs-built_in">Boolean</span> = collection.any { it % <span class="hljs-number">2</span> == <span class="hljs-number">0</span> }
 <span class="hljs-comment">//sampleEnd</span>
 </code></pre>
