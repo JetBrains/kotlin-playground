@@ -68,14 +68,31 @@ export function insertAfter(newNode, referenceNode) {
  */
 export function unEscapeString(string) {
   const tagsToReplace = {
-    "&": "&amp;",
     "<": "&amp;lt;",
     ">": "&amp;gt;",
+    "&": "&amp;",
     " ": "%20"
   };
   let unEscapedString = string;
   Object.keys(tagsToReplace).forEach(function (key) {
-    unEscapedString = unEscapedString.replace(tagsToReplace[key], key)
+    unEscapedString = unEscapedString.replace(new RegExp(tagsToReplace[key], 'g'), key)
+  });
+  return unEscapedString
+}
+
+/**
+ * convert all `<` and `>` to `&lt;` and `&gt;`
+ * @param string
+ * @returns {*}
+ */
+export function convertToHtmlTag(string) {
+  const tagsToReplace = {
+    "&lt;": "&amp;lt;",
+    "&gt;": "&amp;gt;",
+  };
+  let unEscapedString = string;
+  Object.keys(tagsToReplace).forEach(function (key) {
+    unEscapedString = unEscapedString.replace(new RegExp(tagsToReplace[key], 'g'), key)
   });
   return unEscapedString
 }
