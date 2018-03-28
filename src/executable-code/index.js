@@ -31,6 +31,7 @@ export default class ExecutableCode {
     const highlightOnly = targetNode.hasAttribute('data-highlight-only');
     let targetPlatform = targetNode.getAttribute('data-target-platform');
     let jsLibs = targetNode.getAttribute('data-js-libs');
+    let isFoldedButton = targetNode.getAttribute('folded-button') !== "false";
     targetPlatform = targetPlatform !== null ? targetPlatform : "java";
     const code = targetNode.textContent.replace(/^\s+|\s+$/g, '');
     const cfg = merge(defaultConfig, config);
@@ -62,7 +63,8 @@ export default class ExecutableCode {
       compilerVersion: cfg.compilerVersion,
       highlightOnly: highlightOnly,
       targetPlatform: TargetPlatform.getById(targetPlatform),
-      jsLibs: additionalLibs
+      jsLibs: additionalLibs,
+      isFoldedButton: isFoldedButton
     });
 
     this.config = cfg;

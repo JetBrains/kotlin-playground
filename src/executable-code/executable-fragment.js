@@ -76,7 +76,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
     }
 
     this.state = merge.all([this.state, state, {
-      isShouldBeFolded: this.isShouldBeFolded
+      isShouldBeFolded: this.isShouldBeFolded && state.isFoldedButton
     }]);
 
     super.update(this.state);
