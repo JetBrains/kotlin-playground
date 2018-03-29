@@ -12,6 +12,8 @@ import ComplectionView from "../complection-view";
 
 const SAMPLE_START = '//sampleStart';
 const SAMPLE_END = '//sampleEnd';
+const TASK_PLACEHOLDER_OPEN = "<taskWindow>";
+const TASK_PLACEHOLDER_CLOSE = "</taskWindow>";
 
 export default class ExecutableFragment extends ExecutableCodeTemplate {
   static render(element, options = {}) {
@@ -128,6 +130,36 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
     for (let i = 0; i < this.codemirror.lineCount(); i++) {
       this.codemirror.indentLine(i)
     }
+
+    let taskRanges = this.getTaskRanges();
+    this.codemirror.setValue(this.codemirror.getValue()
+      .replace(new RegExp(TASK_PLACEHOLDER_OPEN, 'g'), "")
+      .replace(new RegExp(TASK_PLACEHOLDER_CLOSE, 'g'), ""));
+
+    taskRanges.forEach(task => {
+      this.codemirror.markText({line: task.line, ch: task.ch}, {line: task.line, ch: task.ch + task.length}, {
+        className: "taskWindow",
+        startStyle: "taskWindow-start",
+        endStyle: "taskWindow-end",
+        handleMouseEvents: true
+      });
+    });
+  }
+
+  getTaskRanges(){
+    let textRanges = [];
+    let fileContentLines = this.codemirror.getValue().split("\n");
+    for (let i = 0; i < fileContentLines.length; i++) {
+      let line = fileContentLines[i];
+      while (line.includes(TASK_PLACEHOLDER_OPEN)) {
+        let taskWindowStart = line.indexOf(TASK_PLACEHOLDER_OPEN);
+        line = line.replace(TASK_PLACEHOLDER_OPEN, "");
+        let taskWindowEnd = line.indexOf(TASK_PLACEHOLDER_CLOSE);
+        line = line.replace(TASK_PLACEHOLDER_CLOSE, "");
+        textRanges.push({ line: i, ch: taskWindowStart, length: taskWindowEnd - taskWindowStart});
+      }
+    }
+    return textRanges;
   }
 
   onFoldButtonMouseEnter() {
