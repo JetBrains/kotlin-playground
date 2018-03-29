@@ -7,13 +7,13 @@ import ExecutableCodeTemplate from './executable-fragment.monk';
 import WebDemoApi from '../webdemo-api';
 import TargetPlatform from "../target-platform";
 import getJsExecutor from "../js-executor"
-import {countLines, unEscapeString} from "../utils";
+import {countLines, escapeRegExp, unEscapeString} from "../utils";
 import ComplectionView from "../complection-view";
 
 const SAMPLE_START = '//sampleStart';
 const SAMPLE_END = '//sampleEnd';
-const TASK_PLACEHOLDER_OPEN = "<taskWindow>";
-const TASK_PLACEHOLDER_CLOSE = "</taskWindow>";
+const MARK_PLACEHOLDER_OPEN = "[mark]";
+const MARK_PLACEHOLDER_CLOSE = "[/mark]";
 
 export default class ExecutableFragment extends ExecutableCodeTemplate {
   static render(element, options = {}) {
@@ -133,8 +133,8 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
 
     let taskRanges = this.getTaskRanges();
     this.codemirror.setValue(this.codemirror.getValue()
-      .replace(new RegExp(TASK_PLACEHOLDER_OPEN, 'g'), "")
-      .replace(new RegExp(TASK_PLACEHOLDER_CLOSE, 'g'), ""));
+      .replace(new RegExp(escapeRegExp(MARK_PLACEHOLDER_OPEN), 'g'), "")
+      .replace(new RegExp(escapeRegExp(MARK_PLACEHOLDER_CLOSE), 'g'), ""));
 
     taskRanges.forEach(task => {
       this.codemirror.markText({line: task.line, ch: task.ch}, {line: task.line, ch: task.ch + task.length}, {
@@ -151,11 +151,11 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
     let fileContentLines = this.codemirror.getValue().split("\n");
     for (let i = 0; i < fileContentLines.length; i++) {
       let line = fileContentLines[i];
-      while (line.includes(TASK_PLACEHOLDER_OPEN)) {
-        let taskWindowStart = line.indexOf(TASK_PLACEHOLDER_OPEN);
-        line = line.replace(TASK_PLACEHOLDER_OPEN, "");
-        let taskWindowEnd = line.indexOf(TASK_PLACEHOLDER_CLOSE);
-        line = line.replace(TASK_PLACEHOLDER_CLOSE, "");
+      while (line.includes(MARK_PLACEHOLDER_OPEN)) {
+        let taskWindowStart = line.indexOf(MARK_PLACEHOLDER_OPEN);
+        line = line.replace(MARK_PLACEHOLDER_OPEN, "");
+        let taskWindowEnd = line.indexOf(MARK_PLACEHOLDER_CLOSE);
+        line = line.replace(MARK_PLACEHOLDER_CLOSE, "");
         textRanges.push({ line: i, ch: taskWindowStart, length: taskWindowEnd - taskWindowStart});
       }
     }

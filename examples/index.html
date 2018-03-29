@@ -80,7 +80,7 @@ Then implement extension functions Int.r() and Pair.r() and make them convert In
 </code></pre>
 </div>
 <p>If you want to hide test classes in you code snippet just set the attribute <code>folded-button</code> to <code>false</code> value.</p>
-<p>Also you can create the marker: just put your text between <code>&lt;taskWindow&gt;Your text&lt;/taskWindow&gt;</code> selector.</p>
+<p>Also you can mark arbitrary code by putting it between <code>[mark]your code[/mark]</code>.</p>
 <div class="kotlin-code" data-target-platform="junit" folded-button="false">
 <pre><code class="hljs language-kotlin"><span class="hljs-keyword">import</span> org.junit.Test
 <span class="hljs-keyword">import</span> org.junit.Assert
@@ -101,7 +101,7 @@ Then implement extension functions Int.r() and Pair.r() and make them convert In
 Pass a lambda to any function to check if the collection contains an even number.
 The function any gets a predicate as an argument and returns true if there is at least one element satisfying the predicate.
 */</span>
-<span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">containsEven</span><span class="hljs-params">(collection: <span class="hljs-type">Collection</span>&lt;<span class="hljs-type">Int</span>&gt;)</span></span>: <span class="hljs-built_in">Boolean</span> = collection.any {&lt;taskWindow&gt;TODO()&lt;/taskWindow&gt;}
+<span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">containsEven</span><span class="hljs-params">(collection: <span class="hljs-type">Collection</span>&lt;<span class="hljs-type">Int</span>&gt;)</span></span>: <span class="hljs-built_in">Boolean</span> = collection.any {[mark]TODO()[/mark]}
 <span class="hljs-comment">//sampleEnd</span>
 </code></pre>
 </div>
