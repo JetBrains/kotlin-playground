@@ -2,6 +2,7 @@ import 'whatwg-fetch';
 import URLSearchParams from 'url-search-params';
 import TargetPlatform from "./target-platform";
 import {API_URLS} from "./config";
+import {arrayFrom, convertToHtmlTag} from "./utils";
 
 /**
  * @typedef {Object} KotlinVersion
@@ -53,29 +54,31 @@ export default class WebDemoApi {
    *
    * @param code            - string
    * @param compilerVersion - string kotlin compiler
+   * @param platform        - TargetPlatform
    * @returns {*|PromiseLike<T>|Promise<T>}
    */
-  static executeKotlinCode(code, compilerVersion) {
-    return executeCode(API_URLS.COMPILE, code, compilerVersion, TargetPlatform.JAVA).then(function (data) {
-      let output;
-      if (data.text !== undefined) {
-        output = data.text.replace("<outStream>", "<span class=\"standard-output\">")
-          .replace("</outStream>", "</span>")
-          .replace("<errStream>", "<span class=\"error-output\">")
-          .replace("</errStream>", "</span>");
-      } else {
-        output = "";
+  static executeKotlinCode(code, compilerVersion, platform) {
+    return executeCode(API_URLS.COMPILE, code, compilerVersion, platform).then(function (data) {
+      let output = "";
+      switch (platform) {
+        case TargetPlatform.JAVA:
+          if (data.text) output = getOutputResults(data.text);
+          break;
+        case TargetPlatform.JUNIT:
+          if (data.testResults) output = getJunitResults(data.testResults);
+          break;
       }
-
+      let exceptions = null;
       if (data.exception != null) {
-        data.exception.causes = getExceptionCauses(data.exception);
-        data.exception.cause = undefined;
+        exceptions = data.exception;
+        exceptions.causes = getExceptionCauses(data.exception);
+        exceptions.cause = undefined;
       }
 
       return {
         errors: data.errors["File.kt"],
         output: output,
-        exception: data.exception
+        exception: exceptions
       }
     })
   }
@@ -140,4 +143,32 @@ function executeCode(url, code, compilerVersion, targetPlatform, options) {
       'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
     }
   }).then(response => response.json())
+}
+
+function getOutputResults(output) {
+  return output.replace("<outStream>", "<span class=\"standard-output\">")
+    .replace("</outStream>", "</span>")
+    .replace("<errStream>", "<span class=\"error-output\">")
+    .replace("</errStream>", "</span>")
+}
+
+function getJunitResults(data) {
+  let result = "";
+  for (let testClass in data) {
+    let listOfResults = arrayFrom(data[testClass]);
+    listOfResults.forEach(test => {
+      switch (test.status) {
+        case "FAIL":
+          result = result + `<span class="test-icon fail"></span><div class="test-fail">${test.status} ${test.methodName}: ${convertToHtmlTag(test.comparisonFailure.message)}</div>`;
+          break;
+        case "ERROR":
+          result = result + `<span class="test-icon fail"></span><div class="test-fail">${test.status} ${test.methodName}: ${convertToHtmlTag(test.exception.message)}</div>`;
+          break;
+        case "OK":
+          result = result + `<span class="test-icon ok"></span><div class="test-output">${test.status} ${test.methodName}</div>`;
+          break;
+      }
+    });
+  }
+  return result;
 }

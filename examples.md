@@ -76,6 +76,67 @@ fun main(args: Array<String>) {
 
 </div>
 
+Use `data-target-platform` attribute with value `junit` for creating examples with tests:
+
+<div class="kotlin-code" data-target-platform="junit">
+
+```kotlin
+import org.junit.Test
+import org.junit.Assert
+
+class TestExtensionFunctions() {
+    @Test fun testIntExtension() {
+        Assert.assertEquals("Rational number creation error: ", RationalNumber(4, 1), 4.r())
+    }
+
+    @Test fun testPairExtension() {
+        Assert.assertEquals("Rational number creation error: ", RationalNumber(2, 3), Pair(2, 3).r())
+    }
+}
+//sampleStart
+/*
+Then implement extension functions Int.r() and Pair.r() and make them convert Int and Pair to RationalNumber.
+*/
+fun Int.r(): RationalNumber = RationalNumber(this, 2)
+fun Pair<Int, Int>.r(): RationalNumber = RationalNumber(first, second)
+
+data class RationalNumber(val numerator: Int, val denominator: Int)
+//sampleEnd
+```
+</div>
+
+If you want to hide test classes in you code snippet just set the attribute `folded-button` to `false` value.
+
+Also you can mark arbitrary code by putting it between `[mark]your code[/mark]`.
+
+<div class="kotlin-code" data-target-platform="junit" folded-button="false">
+
+```kotlin
+import org.junit.Test
+import org.junit.Assert
+
+class TestLambdas() {
+    @Test fun contains() {
+        Assert.assertTrue("The result should be true if the collection contains an even number", 
+                          containsEven(listOf(1, 2, 3, 126, 555)))
+    }
+
+    @Test fun notContains() {
+        Assert.assertFalse("The result should be false if the collection doesn't contain an even number",
+                           containsEven(listOf(43, 33)))
+    }
+}
+//sampleStart
+/*
+Pass a lambda to any function to check if the collection contains an even number.
+The function any gets a predicate as an argument and returns true if there is at least one element satisfying the predicate.
+*/
+fun containsEven(collection: Collection<Int>): Boolean = collection.any {[mark]TODO()[/mark]}
+//sampleEnd
+```
+
+</div>
+
 ## Manual initialization
 
 If you want to init Kotlin Playground manually - omit `data-selector` attribute and call it when it's needed:

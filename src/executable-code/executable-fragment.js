@@ -8,10 +8,13 @@ import WebDemoApi from '../webdemo-api';
 import TargetPlatform from "../target-platform";
 import getJsExecutor from "../js-executor"
 import {countLines, unEscapeString} from "../utils";
+import escapeStringRegexp from "escape-string-regexp"
 import ComplectionView from "../complection-view";
 
 const SAMPLE_START = '//sampleStart';
 const SAMPLE_END = '//sampleEnd';
+const MARK_PLACEHOLDER_OPEN = "[mark]";
+const MARK_PLACEHOLDER_CLOSE = "[/mark]";
 
 export default class ExecutableFragment extends ExecutableCodeTemplate {
   static render(element, options = {}) {
@@ -76,7 +79,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
     }
 
     this.state = merge.all([this.state, state, {
-      isShouldBeFolded: this.isShouldBeFolded
+      isShouldBeFolded: this.isShouldBeFolded && state.isFoldedButton
     }]);
 
     super.update(this.state);
@@ -128,6 +131,36 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
     for (let i = 0; i < this.codemirror.lineCount(); i++) {
       this.codemirror.indentLine(i)
     }
+
+    let taskRanges = this.getTaskRanges();
+    this.codemirror.setValue(this.codemirror.getValue()
+      .replace(new RegExp(escapeStringRegexp(MARK_PLACEHOLDER_OPEN), 'g'), "")
+      .replace(new RegExp(escapeStringRegexp(MARK_PLACEHOLDER_CLOSE), 'g'), ""));
+
+    taskRanges.forEach(task => {
+      this.codemirror.markText({line: task.line, ch: task.ch}, {line: task.line, ch: task.ch + task.length}, {
+        className: "taskWindow",
+        startStyle: "taskWindow-start",
+        endStyle: "taskWindow-end",
+        handleMouseEvents: true
+      });
+    });
+  }
+
+  getTaskRanges(){
+    let textRanges = [];
+    let fileContentLines = this.codemirror.getValue().split("\n");
+    for (let i = 0; i < fileContentLines.length; i++) {
+      let line = fileContentLines[i];
+      while (line.includes(MARK_PLACEHOLDER_OPEN)) {
+        let taskWindowStart = line.indexOf(MARK_PLACEHOLDER_OPEN);
+        line = line.replace(MARK_PLACEHOLDER_OPEN, "");
+        let taskWindowEnd = line.indexOf(MARK_PLACEHOLDER_CLOSE);
+        line = line.replace(MARK_PLACEHOLDER_CLOSE, "");
+        textRanges.push({ line: i, ch: taskWindowStart, length: taskWindowEnd - taskWindowStart});
+      }
+    }
+    return textRanges;
   }
 
   onFoldButtonMouseEnter() {
@@ -149,8 +182,10 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
     this.update({
       waitingForOutput: true
     });
-    if (this.state.targetPlatform === TargetPlatform.JAVA) {
-      WebDemoApi.executeKotlinCode(this.getCode(), this.state.compilerVersion).then(
+
+    if (this.state.targetPlatform === TargetPlatform.JAVA || this.state.targetPlatform === TargetPlatform.JUNIT) {
+      let platform = this.state.targetPlatform;
+      WebDemoApi.executeKotlinCode(this.getCode(), this.state.compilerVersion, platform).then(
         state => {
           state.waitingForOutput = false;
           this.update(state);

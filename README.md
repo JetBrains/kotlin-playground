@@ -70,7 +70,7 @@ Use the following attributes on elements that are converted to editors to adjust
     </code>
     ```
   
-- `data-target-platform`: target platform: `js` or `java` (default).
+- `data-target-platform`: target platform: `junit`, `js` or `java` (default).
 
   ```html
    <code data-target-platform="js">
@@ -104,7 +104,8 @@ Use the following attributes on elements that are converted to editors to adjust
   }
   </code>
   ```
-
+  Also if you want to hide code snippet just set the attribute `folded-button` to `false` value.
+  
 - `data-js-libs`: By default component loads jQuery and makes it available to the code running in the editor. If you need any additional JS libraries, specify them as comma-separated list in this attribute.
 
   ```html

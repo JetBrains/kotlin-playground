@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+  <title>icons_all_sprite</title>
+  <g id="Layer_4" data-name="Layer 4">
+    <g style="isolation: isolate">
+      <circle cx="7.5" cy="7.5" r="6.5" fill="#e05219"/>
+    </g>
+    <polygon points="10.328 9.621 8.207 7.5 10.328 5.379 9.621 4.672 7.5 6.793 5.379 4.672 4.672 5.379 6.793 7.5 4.672 9.621 5.379 10.328 7.5 8.207 9.621 10.328 10.328 9.621" fill="#fff"/>
+  </g>
+</svg>
