@@ -105,7 +105,9 @@ data class RationalNumber(val numerator: Int, val denominator: Int)
 ```
 </div>
 
-If you want to hide test classes in you code snippet just set the attribute `folded-button` to `false` value. 
+If you want to hide test classes in you code snippet just set the attribute `folded-button` to `false` value.
+
+Also you can create the marker: just put your text between `<taskWindow>Your text</taskWindow>` selector. 
 
 <div class="kotlin-code" data-target-platform="junit" folded-button="false">
 
@@ -129,7 +131,7 @@ class TestLambdas() {
 Pass a lambda to any function to check if the collection contains an even number.
 The function any gets a predicate as an argument and returns true if there is at least one element satisfying the predicate.
 */
-fun containsEven(collection: Collection<Int>): Boolean = collection.any { it % 2 == 0 }
+fun containsEven(collection: Collection<Int>): Boolean = collection.any {<taskWindow>TODO()</taskWindow>}
 //sampleEnd
 ```
 
