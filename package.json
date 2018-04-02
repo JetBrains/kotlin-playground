@@ -1,6 +1,6 @@
 {
   "name": "kotlin-playground",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Self-contained component to embed in websites for running Kotlin code",
   "keywords": [
     "kotlin",
