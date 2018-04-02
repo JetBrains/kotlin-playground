@@ -34,7 +34,7 @@ const { selector, discourseSelector } = config;
 if (selector || discourseSelector) {
   document.addEventListener('DOMContentLoaded', () => {
     if (discourseSelector) {
-      create(discourseSelector);
+      create.discourse(discourseSelector);
       waitForNode(DiscourseSelectors.PREVIEW_PANEL, () => discoursePreviewPanelHandler());
     } else {
       create(selector);
