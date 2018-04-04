@@ -15,6 +15,7 @@ const SAMPLE_START = '//sampleStart';
 const SAMPLE_END = '//sampleEnd';
 const MARK_PLACEHOLDER_OPEN = "[mark]";
 const MARK_PLACEHOLDER_CLOSE = "[/mark]";
+const CANVAS_PLACEHOLDER_OUTPUT_CLASS = ".js-code-output-canvas-placeholder";
 
 export default class ExecutableFragment extends ExecutableCodeTemplate {
   static render(element, options = {}) {
@@ -45,8 +46,9 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
 
   update(state) {
     let sample;
-    if(state.compilerVersion && state.targetPlatform === TargetPlatform.JS) {
-      this.jsExecutor = getJsExecutor(state.compilerVersion, state.jsLibs)
+    let platform = state.targetPlatform;
+    if (state.compilerVersion && (platform === TargetPlatform.JS || platform === TargetPlatform.CANVAS)) {
+      this.jsExecutor = getJsExecutor(state.compilerVersion, state.jsLibs, this.getCurrentNode(platform), platform)
     }
 
     if (state.code) {
@@ -147,7 +149,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
     });
   }
 
-  getTaskRanges(){
+  getTaskRanges() {
     let textRanges = [];
     let fileContentLines = this.codemirror.getValue().split("\n");
     for (let i = 0; i < fileContentLines.length; i++) {
@@ -157,7 +159,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
         line = line.replace(MARK_PLACEHOLDER_OPEN, "");
         let taskWindowEnd = line.indexOf(MARK_PLACEHOLDER_CLOSE);
         line = line.replace(MARK_PLACEHOLDER_CLOSE, "");
-        textRanges.push({ line: i, ch: taskWindowStart, length: taskWindowEnd - taskWindowStart});
+        textRanges.push({line: i, ch: taskWindowStart, length: taskWindowEnd - taskWindowStart});
       }
     }
     return textRanges;
@@ -182,9 +184,8 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
     this.update({
       waitingForOutput: true
     });
-
-    if (this.state.targetPlatform === TargetPlatform.JAVA || this.state.targetPlatform === TargetPlatform.JUNIT) {
-      let platform = this.state.targetPlatform;
+    let platform = this.state.targetPlatform;
+    if (platform === TargetPlatform.JAVA || platform === TargetPlatform.JUNIT) {
       WebDemoApi.executeKotlinCode(this.getCode(), this.state.compilerVersion, platform).then(
         state => {
           state.waitingForOutput = false;
@@ -193,15 +194,17 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
         () => this.update({waitingForOutput: false})
       )
     } else {
-      WebDemoApi.translateKotlinToJs(this.getCode(), this.state.compilerVersion).then(
+      if (platform === TargetPlatform.CANVAS) this.jsExecutor.reloadIframeScripts(this.state.jsLibs, this.getCurrentNode(platform));
+      WebDemoApi.translateKotlinToJs(this.getCode(), this.state.compilerVersion, platform).then(
         state => {
           state.waitingForOutput = false;
           const jsCode = state.jsCode;
           delete state.jsCode;
           try {
-            const codeOutput = this.jsExecutor.executeJsCode(jsCode, this.state.jsLibs);
+            const codeOutput = this.jsExecutor.executeJsCode(jsCode, this.state.jsLibs, platform, this.getCurrentNode(platform));
             codeOutput ? state.output = `<span class="standard-output">${codeOutput}</span>` : state.output = ""
           } catch (e) {
+            console.error(e);
             state.output = `<span class="error-output">Unhandled JavaScript exception</span>`
           }
           state.exception = null;
@@ -211,6 +214,12 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
       )
 
     }
+  }
+
+  getCurrentNode(platform){
+    return platform === TargetPlatform.JS
+      ? document.body
+      : this.nodes[0].querySelector(CANVAS_PLACEHOLDER_OUTPUT_CLASS);
   }
 
   getCode() {
@@ -323,7 +332,9 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
 
       function processingCompletionsList(results) {
         callback({
-          list: results.map(result => { return new ComplectionView(result)}),
+          list: results.map(result => {
+            return new ComplectionView(result)
+          }),
           from: {line: cur.line, ch: token.start},
           to: {line: cur.line, ch: token.end}
         })

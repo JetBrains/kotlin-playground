@@ -38,10 +38,11 @@ export default class WebDemoApi {
    *
    * @param code            - string
    * @param compilerVersion - string kotlin compiler
+   * @param platform        - TargetPlatform
    * @returns {*|PromiseLike<T>|Promise<T>}
    */
-  static translateKotlinToJs(code, compilerVersion) {
-    return executeCode(API_URLS.COMPILE, code, compilerVersion, TargetPlatform.JS).then(function (data) {
+  static translateKotlinToJs(code, compilerVersion, platform) {
+    return executeCode(API_URLS.COMPILE, code, compilerVersion, platform).then(function (data) {
       return {
         errors: data.errors["File.kt"],
         jsCode: data.jsCode
