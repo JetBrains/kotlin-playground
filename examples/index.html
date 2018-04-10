@@ -105,6 +105,81 @@ The function any gets a predicate as an argument and returns true if there is at
 <span class="hljs-comment">//sampleEnd</span>
 </code></pre>
 </div>
+<p>Use <code>data-target-platform</code> attribute with value <code>canvas</code> for working with canvas in Kotlin:</p>
+<div class="kotlin-code" data-target-platform="canvas">
+<pre><code class="hljs language-kotlin"><span class="hljs-keyword">package</span> fancylines
+
+
+<span class="hljs-keyword">import</span> jquery.*
+<span class="hljs-keyword">import</span> org.w3c.dom.CanvasRenderingContext2D
+<span class="hljs-keyword">import</span> org.w3c.dom.HTMLCanvasElement
+<span class="hljs-keyword">import</span> kotlin.browser.document
+<span class="hljs-keyword">import</span> kotlin.browser.window
+<span class="hljs-keyword">import</span> kotlin.js.Math
+
+
+
+<span class="hljs-keyword">val</span> canvas = initalizeCanvas()
+<span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">initalizeCanvas</span><span class="hljs-params">()</span></span>: HTMLCanvasElement {
+    <span class="hljs-keyword">val</span> canvas = document.createElement(<span class="hljs-string">"canvas"</span>) <span class="hljs-keyword">as</span> HTMLCanvasElement
+    <span class="hljs-keyword">val</span> context = canvas.getContext(<span class="hljs-string">"2d"</span>) <span class="hljs-keyword">as</span> CanvasRenderingContext2D
+    context.canvas.width  = window.innerWidth.toInt();
+    context.canvas.height = window.innerHeight.toInt();
+    document.body!!.appendChild(canvas)
+    <span class="hljs-keyword">return</span> canvas
+}
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">FancyLines</span></span>() {
+    <span class="hljs-keyword">val</span> context = canvas.getContext(<span class="hljs-string">"2d"</span>) <span class="hljs-keyword">as</span> CanvasRenderingContext2D
+    <span class="hljs-keyword">val</span> height = canvas.height
+    <span class="hljs-keyword">val</span> width = canvas.width
+    <span class="hljs-keyword">var</span> x = width * Math.random()
+    <span class="hljs-keyword">var</span> y = height * Math.random()
+    <span class="hljs-keyword">var</span> hue = <span class="hljs-number">0</span>;
+
+    <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">line</span><span class="hljs-params">()</span></span> {
+        context.save();
+
+        context.beginPath();
+
+        context.lineWidth = <span class="hljs-number">20.0</span> * Math.random();
+        context.moveTo(x, y);
+
+        x = width * Math.random();
+        y = height * Math.random();
+
+        context.bezierCurveTo(width * Math.random(), height * Math.random(),
+                width * Math.random(), height * Math.random(), x, y);
+
+        hue += (Math.random() * <span class="hljs-number">10</span>).toInt();
+
+        context.strokeStyle = <span class="hljs-string">"hsl(<span class="hljs-variable">$hue</span>, 50%, 50%)"</span>;
+
+        context.shadowColor = <span class="hljs-string">"white"</span>;
+        context.shadowBlur = <span class="hljs-number">10.0</span>;
+
+        context.stroke();
+
+        context.restore();
+    }
+
+    <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">blank</span><span class="hljs-params">()</span></span> {
+        context.fillStyle = <span class="hljs-string">"rgba(255,255,1,0.1)"</span>;
+        context.fillRect(<span class="hljs-number">0.0</span>, <span class="hljs-number">0.0</span>, width.toDouble(), height.toDouble());
+    }
+
+    <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">run</span><span class="hljs-params">()</span></span> {
+        window.setInterval({ line() }, <span class="hljs-number">40</span>);
+        window.setInterval({ blank() }, <span class="hljs-number">100</span>);
+    }
+}
+<span class="hljs-comment">//sampleStart</span>
+<span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">main</span><span class="hljs-params">(args: <span class="hljs-type">Array</span>&lt;<span class="hljs-type">String</span>&gt;)</span></span> {
+     FancyLines().run()
+}
+<span class="hljs-comment">//sampleEnd</span>
+</code></pre>
+</div>
 <h2>Manual initialization</h2>
 <p>If you want to init Kotlin Playground manually - omit <code>data-selector</code> attribute and call it when it's needed:</p>
 <pre><code class="hljs language-html"><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"https://unpkg.com/kotlin-playground@1"</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>

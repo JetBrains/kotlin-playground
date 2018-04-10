@@ -43,7 +43,7 @@ export default class ExecutableCode {
     let additionalLibs;
     targetNode.style.display = 'none';
     targetNode.setAttribute(INITED_ATTRIBUTE_NAME, 'true');
-    if (targetPlatform === "js") {
+    if (targetPlatform === "js" || targetPlatform === "canvas") {
       additionalLibs = new Set(API_URLS.JQUERY.split());
       if (jsLibs !== null) {
         let checkUrl = new RegExp("https?://.+\.js$");

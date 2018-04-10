@@ -76,6 +76,7 @@ fun main(args: Array<String>) {
 
 </div>
 
+
 Use `data-target-platform` attribute with value `junit` for creating examples with tests:
 
 <div class="kotlin-code" data-target-platform="junit">
@@ -136,6 +137,87 @@ fun containsEven(collection: Collection<Int>): Boolean = collection.any {[mark]T
 ```
 
 </div>
+
+Use `data-target-platform` attribute with value `canvas` for working with canvas in Kotlin:
+
+<div class="kotlin-code" data-target-platform="canvas">
+
+```kotlin
+package fancylines
+
+
+import jquery.*
+import org.w3c.dom.CanvasRenderingContext2D
+import org.w3c.dom.HTMLCanvasElement
+import kotlin.browser.document
+import kotlin.browser.window
+import kotlin.js.Math
+
+
+
+val canvas = initalizeCanvas()
+fun initalizeCanvas(): HTMLCanvasElement {
+    val canvas = document.createElement("canvas") as HTMLCanvasElement
+    val context = canvas.getContext("2d") as CanvasRenderingContext2D
+    context.canvas.width  = window.innerWidth.toInt();
+    context.canvas.height = window.innerHeight.toInt();
+    document.body!!.appendChild(canvas)
+    return canvas
+}
+
+class FancyLines() {
+    val context = canvas.getContext("2d") as CanvasRenderingContext2D
+    val height = canvas.height
+    val width = canvas.width
+    var x = width * Math.random()
+    var y = height * Math.random()
+    var hue = 0;
+
+    fun line() {
+        context.save();
+
+        context.beginPath();
+
+        context.lineWidth = 20.0 * Math.random();
+        context.moveTo(x, y);
+
+        x = width * Math.random();
+        y = height * Math.random();
+
+        context.bezierCurveTo(width * Math.random(), height * Math.random(),
+                width * Math.random(), height * Math.random(), x, y);
+
+        hue += (Math.random() * 10).toInt();
+
+        context.strokeStyle = "hsl($hue, 50%, 50%)";
+
+        context.shadowColor = "white";
+        context.shadowBlur = 10.0;
+
+        context.stroke();
+
+        context.restore();
+    }
+
+    fun blank() {
+        context.fillStyle = "rgba(255,255,1,0.1)";
+        context.fillRect(0.0, 0.0, width.toDouble(), height.toDouble());
+    }
+
+    fun run() {
+        window.setInterval({ line() }, 40);
+        window.setInterval({ blank() }, 100);
+    }
+}
+//sampleStart
+fun main(args: Array<String>) {
+     FancyLines().run()
+}
+//sampleEnd
+```
+
+</div>
+
 
 ## Manual initialization
 

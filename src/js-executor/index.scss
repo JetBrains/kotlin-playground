@@ -1,3 +1,10 @@
 .k2js-iframe {
   display: none;
+  padding-top: 2px
+}
+iframe {
+  border: none;
+  background: white;
+  width: 100%;
+  z-index: 10
 }
