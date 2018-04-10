@@ -48,7 +48,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
     let sample;
     let platform = state.targetPlatform;
     if (state.compilerVersion && (platform === TargetPlatform.JS || platform === TargetPlatform.CANVAS)) {
-      this.jsExecutor = getJsExecutor(state.compilerVersion, state.jsLibs, this.getCurrentNode(platform), platform)
+      this.jsExecutor = getJsExecutor(state.compilerVersion, state.jsLibs, this.getNodeForMountIframe(platform), platform)
     }
 
     if (state.code) {
@@ -194,14 +194,14 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
         () => this.update({waitingForOutput: false})
       )
     } else {
-      if (platform === TargetPlatform.CANVAS) this.jsExecutor.reloadIframeScripts(this.state.jsLibs, this.getCurrentNode(platform));
+      if (platform === TargetPlatform.CANVAS) this.jsExecutor.reloadIframeScripts(this.state.jsLibs, this.getNodeForMountIframe(platform));
       WebDemoApi.translateKotlinToJs(this.getCode(), this.state.compilerVersion, platform).then(
         state => {
           state.waitingForOutput = false;
           const jsCode = state.jsCode;
           delete state.jsCode;
           try {
-            const codeOutput = this.jsExecutor.executeJsCode(jsCode, this.state.jsLibs, platform, this.getCurrentNode(platform));
+            const codeOutput = this.jsExecutor.executeJsCode(jsCode, this.state.jsLibs, platform, this.getNodeForMountIframe(platform));
             codeOutput ? state.output = `<span class="standard-output">${codeOutput}</span>` : state.output = ""
           } catch (e) {
             console.error(e);
@@ -216,7 +216,11 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
     }
   }
 
-  getCurrentNode(platform){
+  /**
+   * @param {TargetPlatform} platform
+   * @return {HTMLElement}
+   */
+  getNodeForMountIframe(platform){
     return platform === TargetPlatform.JS
       ? document.body
       : this.nodes[0].querySelector(CANVAS_PLACEHOLDER_OUTPUT_CLASS);
