@@ -39,6 +39,9 @@
                       </div>
                   </div>
               {% endif %}
+              {% if (openConsole) %}
+                <div class="console-close" :onclick={{ this.onConsoleCloseButtonEnter.bind(this) }}></div>
+              {% endif %}
           {% endif %}
         </div>
     </div>

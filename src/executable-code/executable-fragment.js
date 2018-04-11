@@ -177,27 +177,37 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
     }
   }
 
+  onConsoleCloseButtonEnter() {
+    if (this.state.targetPlatform === TargetPlatform.CANVAS) {
+      this.jsExecutor.reloadIframeScripts(this.state.jsLibs, this.getNodeForMountIframe(TargetPlatform.CANVAS));
+    }
+    this.update({output: "", openConsole: false});
+  }
+
   execute() {
     if (this.state.waitingForOutput) {
       return
     }
     this.update({
-      waitingForOutput: true
+      waitingForOutput: true,
+      openConsole: false
     });
     let platform = this.state.targetPlatform;
     if (platform === TargetPlatform.JAVA || platform === TargetPlatform.JUNIT) {
       WebDemoApi.executeKotlinCode(this.getCode(), this.state.compilerVersion, platform).then(
         state => {
           state.waitingForOutput = false;
+          state.openConsole = true;
           this.update(state);
         },
-        () => this.update({waitingForOutput: false})
+        () => this.update({waitingForOutput: false, openConsole: true})
       )
     } else {
       if (platform === TargetPlatform.CANVAS) this.jsExecutor.reloadIframeScripts(this.state.jsLibs, this.getNodeForMountIframe(platform));
       WebDemoApi.translateKotlinToJs(this.getCode(), this.state.compilerVersion, platform).then(
         state => {
           state.waitingForOutput = false;
+          state.openConsole = true;
           const jsCode = state.jsCode;
           delete state.jsCode;
           try {
@@ -208,6 +218,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
             state.output = `<span class="error-output">Unhandled JavaScript exception</span>`
           }
           state.exception = null;
+          state.openConsole = true;
           this.update(state);
         },
         () => this.update({waitingForOutput: false})
@@ -220,7 +231,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
    * @param {TargetPlatform} platform
    * @return {HTMLElement}
    */
-  getNodeForMountIframe(platform){
+  getNodeForMountIframe(platform) {
     return platform === TargetPlatform.JS
       ? document.body
       : this.nodes[0].querySelector(CANVAS_PLACEHOLDER_OUTPUT_CLASS);
