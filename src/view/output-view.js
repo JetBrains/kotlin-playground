@@ -14,9 +14,11 @@ export function processingJVMOutput(output) {
 
 export function processingJUnitResults(data) {
   let result = "";
+  let totalTime = 0;
   for (let testClass in data) {
     let listOfResults = arrayFrom(data[testClass]);
     listOfResults.forEach(test => {
+      totalTime = totalTime + (test.executionTime / 1000);
       switch (test.status) {
         case "FAIL":
           result = result + `<span class="test-icon fail"></span><div class="test-fail">${test.status} ${test.methodName}: ${convertToHtmlTag(test.comparisonFailure.message)}</div>`;
@@ -30,7 +32,8 @@ export function processingJUnitResults(data) {
       }
     });
   }
-  return result;
+  let testTime = `<div class="test-time">Total test time: ${totalTime}s</div>`;
+  return testTime + result;
 }
 
 export function getException(exception) {

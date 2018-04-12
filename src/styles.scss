@@ -199,6 +199,14 @@ $font-family-mono: 'Liberation Mono', Consolas, Menlo, Courier, monospace !globa
   background-image: url('img/fail.svg')
 }
 
+.test-time {
+  float: right;
+  font-size: 10px;
+  color: #949494;
+  margin-right: 10px;
+  margin-top: -10px;
+}
+
 .stacktrace-element {
   margin-left: 20px;
 }
