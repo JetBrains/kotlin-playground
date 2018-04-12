@@ -1,14 +1,14 @@
 import {arrayFrom, convertToHtmlTag} from "../utils";
 
 
-export function getOutputResults(output) {
+export function processingJVMOutput(output) {
   return output.replace("<outStream>", "<span class=\"standard-output\">")
     .replace("</outStream>", "</span>")
     .replace("<errStream>", "<span class=\"error-output\">")
     .replace("</errStream>", "</span>")
 }
 
-export function getJunitResults(data) {
+export function processingJUnitResults(data) {
   let result = "";
   for (let testClass in data) {
     let listOfResults = arrayFrom(data[testClass]);

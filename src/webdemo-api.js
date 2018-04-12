@@ -2,7 +2,7 @@ import 'whatwg-fetch';
 import URLSearchParams from 'url-search-params';
 import TargetPlatform from "./target-platform";
 import {API_URLS} from "./config";
-import {getExceptionCauses, getJunitResults, getOutputResults} from "./view/output-view";
+import {getExceptionCauses, processingJUnitResults, processingJVMOutput} from "./view/output-view";
 
 /**
  * @typedef {Object} KotlinVersion
@@ -63,10 +63,10 @@ export default class WebDemoApi {
       let output = "";
       switch (platform) {
         case TargetPlatform.JAVA:
-          if (data.text) output = getOutputResults(data.text);
+          if (data.text) output = processingJVMOutput(data.text);
           break;
         case TargetPlatform.JUNIT:
-          if (data.testResults) output = getJunitResults(data.testResults);
+          if (data.testResults) output = processingJUnitResults(data.testResults);
           break;
       }
       let exceptions = null;
