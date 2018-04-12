@@ -3,6 +3,7 @@ import {arrayFrom, convertToHtmlTag} from "../utils";
 
 const ACCESS_CONTROL_EXCEPTION = "java.security.AccessControlException";
 const SECURITY_MESSAGE = "Access control exception due to security reasons in web playground";
+const UNHANDLED_JS_EXCEPTION = "Unhandled JavaScript exception";
 
 export function processingJVMOutput(output) {
   return output.replace("<outStream>", "<span class=\"standard-output\">")
@@ -51,6 +52,15 @@ export function getExceptionCauses(exception) {
   }
 }
 
+export function showJsException(exception) {
+  if (exception.stack != null) {
+    let userStackTrace = exception.stack.toString().substr(0, exception.stack.toString().indexOf("at eval (<anonymous>)"));
+    return `${UNHANDLED_JS_EXCEPTION}: ${exception.message} \n ${userStackTrace}`;
+  } else {
+    return UNHANDLED_JS_EXCEPTION;
+  }
+}
+
 /**
  * Override exception message: append default security message.
  * Cut stack trace array - use only last stack trace element
@@ -64,7 +74,7 @@ function getSecurityException(exception) {
     } else {
       exception.message = SECURITY_MESSAGE
     }
-    exception.stackTrace = exception.stackTrace.slice(exception.stackTrace.length  - 1)
+    exception.stackTrace = exception.stackTrace.slice(exception.stackTrace.length - 1)
   }
   return exception
 }
