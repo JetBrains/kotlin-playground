@@ -2,7 +2,7 @@ import 'whatwg-fetch';
 import URLSearchParams from 'url-search-params';
 import TargetPlatform from "./target-platform";
 import {API_URLS} from "./config";
-import {arrayFrom, convertToHtmlTag} from "./utils";
+import {getExceptionCauses, getJunitResults, getOutputResults} from "./view/output-view";
 
 /**
  * @typedef {Object} KotlinVersion
@@ -102,13 +102,6 @@ export default class WebDemoApi {
   }
 }
 
-function getExceptionCauses(exception) {
-  if (exception.cause !== undefined && exception.cause != null) {
-    return [exception.cause].concat(getExceptionCauses(exception.cause))
-  } else {
-    return []
-  }
-}
 
 function executeCode(url, code, compilerVersion, targetPlatform, options) {
   const projectJson = JSON.stringify({
@@ -144,32 +137,4 @@ function executeCode(url, code, compilerVersion, targetPlatform, options) {
       'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
     }
   }).then(response => response.json())
-}
-
-function getOutputResults(output) {
-  return output.replace("<outStream>", "<span class=\"standard-output\">")
-    .replace("</outStream>", "</span>")
-    .replace("<errStream>", "<span class=\"error-output\">")
-    .replace("</errStream>", "</span>")
-}
-
-function getJunitResults(data) {
-  let result = "";
-  for (let testClass in data) {
-    let listOfResults = arrayFrom(data[testClass]);
-    listOfResults.forEach(test => {
-      switch (test.status) {
-        case "FAIL":
-          result = result + `<span class="test-icon fail"></span><div class="test-fail">${test.status} ${test.methodName}: ${convertToHtmlTag(test.comparisonFailure.message)}</div>`;
-          break;
-        case "ERROR":
-          result = result + `<span class="test-icon fail"></span><div class="test-fail">${test.status} ${test.methodName}: ${convertToHtmlTag(test.exception.message)}</div>`;
-          break;
-        case "OK":
-          result = result + `<span class="test-icon ok"></span><div class="test-output">${test.status} ${test.methodName}</div>`;
-          break;
-      }
-    });
-  }
-  return result;
 }
