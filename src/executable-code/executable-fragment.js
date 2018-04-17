@@ -375,7 +375,24 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
 
     this.codemirror.on("change", codemirror => {
       this.removeStyles()
-    })
+    });
+
+    /**
+     * Select marker's placeholder on mouse click
+     */
+    this.codemirror.on("mousedown", (codemirror, event) => {
+      let position = codemirror.coordsChar({left: event.pageX, top: event.pageY});
+      if (position.line !== 0 || position.ch !== 0) {
+        let markers = codemirror.findMarksAt(position);
+        let todoMarker = markers.find(marker => marker.className === "taskWindow");
+        if (todoMarker != null) {
+          let markerPosition = todoMarker.find();
+          codemirror.setSelection(markerPosition.from, markerPosition.to);
+          codemirror.focus();
+          event.preventDefault();
+        }
+      }
+    });
   }
 
   destroy() {
