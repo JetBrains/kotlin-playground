@@ -139,13 +139,6 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
       .replace(new RegExp(escapeStringRegexp(MARK_PLACEHOLDER_OPEN), 'g'), "")
       .replace(new RegExp(escapeStringRegexp(MARK_PLACEHOLDER_CLOSE), 'g'), ""));
 
-    if (taskRanges.length > 0) {
-      let firstTask = taskRanges[0];
-      this.codemirror.setSelection(
-        {line: firstTask.line, ch: firstTask.ch},
-        {line: firstTask.line, ch: firstTask.ch + firstTask.length});
-    }
-
     taskRanges.forEach(task => {
       this.codemirror.markText({line: task.line, ch: task.ch}, {line: task.line, ch: task.ch + task.length}, {
         className: "taskWindow",
