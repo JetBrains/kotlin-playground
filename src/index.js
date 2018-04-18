@@ -71,5 +71,5 @@ function addObserverIfDesiredNodeAvailable() {
 addObserverIfDesiredNodeAvailable();
 
 function validateNodes(node) {
-  return Array.prototype.slice.call(node.getElementsByTagName("code")).filter(node => node.className === "lang-run-kotlin").length > 0
+  return node.getElementsByClassName("lang-run-kotlin").length > 0;
 }
