@@ -42,14 +42,23 @@ if (selector || discourseSelector) {
   });
 }
 
-let target = document.documentElement || document.body;
-let configObserver = {attributes: true, childList: true, subtree: true, attributeFilter : ['class']};
-
-new MutationObserver(function (mutations, observer) {
-  let isRunnable = false;
-  mutations.forEach(function (mutation) {
-    if (mutation.target.className === "lang-run-kotlin") isRunnable = true;
-  });
-  if (isRunnable) create(DiscourseSelectors.KOTLIN_CODE_BLOCK);
-  observer.disconnect();
-}).observe(target, configObserver);
+function addObserverIfDesiredNodeAvailable() {
+  let node = document.body;
+  if(!node) {
+    window.setTimeout(addObserverIfDesiredNodeAvailable,500);
+    return;
+  }
+  let configObserver = {attributes: true, childList: true, subtree: true, attributeFilter : ['class']};
+  new MutationObserver(function (mutations) {
+    let isRunnable = false;
+    mutations.forEach(function (mutation) {
+      if (Array.prototype.slice.call(mutation.addedNodes).filter(node => node.className === "lang-run-kotlin").length > 0){
+        isRunnable = true;
+      }
+    });
+    if (isRunnable) {
+      create(DiscourseSelectors.KOTLIN_CODE_BLOCK);
+    }
+  }).observe(node, configObserver);
+}
+addObserverIfDesiredNodeAvailable();
