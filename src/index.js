@@ -1,5 +1,5 @@
 import ExecutableCode from './executable-code';
-import { getCurrentScript, getConfigFromElement, waitForNode } from './utils';
+import {getConfigFromElement, getCurrentScript, waitForNode} from './utils';
 import {
   default as discoursePreviewPanelHandler,
   Selectors as DiscourseSelectors
@@ -41,3 +41,15 @@ if (selector || discourseSelector) {
     }
   });
 }
+
+let target = document.documentElement || document.body;
+let configObserver = {attributes: true, childList: true, subtree: true, attributeFilter : ['class']};
+
+new MutationObserver(function (mutations, observer) {
+  let isRunnable = false;
+  mutations.forEach(function (mutation) {
+    if (mutation.target.className === "lang-run-kotlin") isRunnable = true;
+  });
+  if (isRunnable) create(DiscourseSelectors.KOTLIN_CODE_BLOCK);
+  observer.disconnect();
+}).observe(target, configObserver);
