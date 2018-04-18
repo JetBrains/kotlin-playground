@@ -63,7 +63,7 @@ function addObserverIfDesiredNodeAvailable() {
       });
     });
     if (isRunnable) {
-      create(DiscourseSelectors.KOTLIN_CODE_BLOCK);
+      create.discourse(DiscourseSelectors.KOTLIN_CODE_BLOCK);
     }
   }).observe(node, configObserver);
 }
