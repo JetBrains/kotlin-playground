@@ -29,7 +29,7 @@ create.discourse = function (selector) {
 // Auto initialization via data-selector <script> attribute
 const currentScript = getCurrentScript();
 const config = getConfigFromElement(currentScript);
-const { selector, discourseSelector } = config;
+const {selector, discourseSelector} = config;
 
 if (selector || discourseSelector) {
   document.addEventListener('DOMContentLoaded', () => {
@@ -44,21 +44,32 @@ if (selector || discourseSelector) {
 
 function addObserverIfDesiredNodeAvailable() {
   let node = document.body;
-  if(!node) {
-    window.setTimeout(addObserverIfDesiredNodeAvailable,500);
+  if (!node) {
+    window.setTimeout(addObserverIfDesiredNodeAvailable, 500);
     return;
   }
-  let configObserver = {attributes: true, childList: true, subtree: true, attributeFilter : ['class']};
+  let configObserver = {
+    attributes: true,
+    childList: true,
+    attributeFilter: ['class']
+  };
   new MutationObserver(function (mutations) {
     let isRunnable = false;
     mutations.forEach(function (mutation) {
-      if (Array.prototype.slice.call(mutation.addedNodes).filter(node => node.className === "lang-run-kotlin").length > 0){
-        isRunnable = true;
-      }
+      Array.prototype.slice.call(mutation.addedNodes).forEach(node => {
+        if (validateNodes(node)) {
+          isRunnable = true;
+        }
+      });
     });
     if (isRunnable) {
       create(DiscourseSelectors.KOTLIN_CODE_BLOCK);
     }
   }).observe(node, configObserver);
 }
+
 addObserverIfDesiredNodeAvailable();
+
+function validateNodes(node) {
+  return Array.prototype.slice.call(node.getElementsByTagName("code")).filter(node => node.className === "lang-run-kotlin").length > 0
+}
