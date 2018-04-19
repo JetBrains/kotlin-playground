@@ -42,39 +42,31 @@ if (selector || discourseSelector) {
   });
 }
 
-function addObserverIfDesiredNodeAvailable() {
-  let node = document.body;
-  if (!node) {
-    window.setTimeout(addObserverIfDesiredNodeAvailable, 500);
-    return;
-  }
-  let configObserver = {
-    attributes: true,
-    childList: true,
-    attributeFilter: ['class']
-  };
-  new MutationObserver(function (mutations) {
-    let isRunnable = false;
-    mutations.forEach(function (mutation) {
-      Array.prototype.slice.call(mutation.addedNodes).forEach(node => {
-        if (validateNodes(node)) {
-          isRunnable = true;
-        }
-      });
-    });
-    if (isRunnable) {
-      console.log("init discourse playground");
-      create.discourse(DiscourseSelectors.KOTLIN_CODE_BLOCK);
+const configObserver = { attributes: true, childList: true, attributeFilter: ['class']};
+const discourseHost = "discuss.kotlinlang.org";
+
+function waitForDiscourseDocument() {
+  const interval = setInterval(() => {
+    const node =  document.body;
+    if (node) {
+      clearInterval(interval);
+      observer.observe(node, configObserver);
     }
-  }).observe(node, configObserver);
+  }, 500);
 }
 
-addObserverIfDesiredNodeAvailable();
+export const observer = new MutationObserver(function (mutations) {
+  let isRunnable = false;
+  mutations.forEach(function (mutation) {
+    Array.prototype.slice.call(mutation.addedNodes).forEach(node => {
+      if (validateNodes(node)) isRunnable = true;
+    });
+  });
+  if (isRunnable) create.discourse(DiscourseSelectors.KOTLIN_CODE_BLOCK);
+});
 
 function validateNodes(node) {
-  if (node.nodeType === Node.ELEMENT_NODE) {
-    let countOfDiscoursePlayground = document.getElementsByClassName("lang-run-kotlin").length;
-    return countOfDiscoursePlayground > 0;
-  }
-  return false
+  return node.nodeType === Node.ELEMENT_NODE && document.getElementsByClassName(DiscourseSelectors.KOTLIN_CODE_BLOCK.substring(1)).length > 0;
 }
+
+if (window.location.host === discourseHost) waitForDiscourseDocument();
