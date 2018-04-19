@@ -63,6 +63,7 @@ function addObserverIfDesiredNodeAvailable() {
       });
     });
     if (isRunnable) {
+      console.log("init discourse playground");
       create.discourse(DiscourseSelectors.KOTLIN_CODE_BLOCK);
     }
   }).observe(node, configObserver);
@@ -71,5 +72,5 @@ function addObserverIfDesiredNodeAvailable() {
 addObserverIfDesiredNodeAvailable();
 
 function validateNodes(node) {
-  return node.getElementsByClassName("lang-run-kotlin").length > 0;
+  return node !== Node.TEXT_NODE && node.getElementsByClassName("lang-run-kotlin").length > 0;
 }
