@@ -72,5 +72,9 @@ function addObserverIfDesiredNodeAvailable() {
 addObserverIfDesiredNodeAvailable();
 
 function validateNodes(node) {
-  return node !== Node.TEXT_NODE && node.getElementsByClassName("lang-run-kotlin").length > 0;
+  if (node.nodeType !== Node.TEXT_NODE) {
+    let countOfDiscoursePlayground = node.getElementsByClassName("lang-run-kotlin").length;
+    return countOfDiscoursePlayground > 0;
+  }
+  return false
 }
