@@ -16,7 +16,6 @@ import {arrayFrom, getConfigFromElement, insertAfter} from '../utils';
 import WebDemoApi from "../webdemo-api";
 import TargetPlatform from '../target-platform'
 import ExecutableFragment from './executable-fragment';
-import observer from "../index"
 import '../styles.scss';
 
 const INITED_ATTRIBUTE_NAME = 'data-kotlin-playground-initialized';
@@ -81,7 +80,6 @@ export default class ExecutableCode {
     this.config = null;
     this.node = null;
     this.view.destroy();
-    observer.disconnect();
     const targetNode = this.targetNode;
 
     if (this.targetNodeStyle !== null) {
