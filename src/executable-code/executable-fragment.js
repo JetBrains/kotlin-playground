@@ -302,6 +302,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
       readOnly: readOnly,
       lineNumbers: false,
       mode: 'text/x-kotlin',
+      theme: 'idea',
       indentUnit: 4,
       viewportMargin: Infinity,
       foldGutter: true,
