@@ -98,6 +98,22 @@ export function convertToHtmlTag(string) {
 }
 
 /**
+ * Convert all `<` and `>` to `&lt;` and `&gt;`
+ * @param string
+ * @returns {*}
+ */
+export function processingHtmlTags(string) {
+  const tagsToReplace = {
+    "&lt;": "<",
+    "&gt;": ">"
+  };
+  let unEscapedString = string;
+  Object.keys(tagsToReplace).forEach(function (key) {
+    unEscapedString = unEscapedString.replace(new RegExp(tagsToReplace[key], 'g'), key)
+  });
+  return unEscapedString
+}
+/**
  * Getting count of lines
  * @param string
  * @returns {number}

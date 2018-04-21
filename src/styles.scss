@@ -147,6 +147,7 @@ $font-family-mono: 'Liberation Mono', Consolas, Menlo, Courier, monospace !globa
 }
 
 .code-output {
+  white-space: pre-wrap;
   font-family: $font-family-mono;
   overflow: auto;
   padding-left: 10px;

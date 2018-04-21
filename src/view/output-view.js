@@ -1,15 +1,18 @@
-import {arrayFrom, convertToHtmlTag} from "../utils";
+import {arrayFrom, convertToHtmlTag, processingHtmlTags} from "../utils";
 
 
 const ACCESS_CONTROL_EXCEPTION = "java.security.AccessControlException";
 const SECURITY_MESSAGE = "Access control exception due to security reasons in web playground";
 const UNHANDLED_JS_EXCEPTION = "Unhandled JavaScript exception";
+const ANGLE_BRACKETS_LEFT_HTML = "&lt;";
+const ANGLE_BRACKETS_RIGHT_HTML = "&gt;";
 
 export function processingJVMOutput(output) {
-  return output.replace("<outStream>", "<span class=\"standard-output\">")
-    .replace("</outStream>", "</span>")
-    .replace("<errStream>", "<span class=\"error-output\">")
-    .replace("</errStream>", "</span>")
+  let processedOutput = processingHtmlTags(output);
+  return processedOutput.replace(`${ANGLE_BRACKETS_LEFT_HTML}outStream${ANGLE_BRACKETS_RIGHT_HTML}`, "<span class=\"standard-output\">")
+    .replace(`${ANGLE_BRACKETS_LEFT_HTML}/outStream${ANGLE_BRACKETS_RIGHT_HTML}`, "</span>")
+    .replace(`${ANGLE_BRACKETS_LEFT_HTML}errStream${ANGLE_BRACKETS_RIGHT_HTML}`, "<span class=\"error-output\">")
+    .replace(`${ANGLE_BRACKETS_LEFT_HTML}/errStream${ANGLE_BRACKETS_RIGHT_HTML}`, "</span>");
 }
 
 export function processingJUnitResults(data) {
