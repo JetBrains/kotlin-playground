@@ -9,7 +9,7 @@ import TargetPlatform from "../target-platform";
 import getJsExecutor from "../js-executor"
 import {countLines, unEscapeString} from "../utils";
 import escapeStringRegexp from "escape-string-regexp"
-import ComplectionView from "../complection-view";
+import ComplectionView from "../view/complection-view";
 import {showJsException} from "../view/output-view";
 
 const SAMPLE_START = '//sampleStart';
