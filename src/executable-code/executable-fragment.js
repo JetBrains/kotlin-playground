@@ -202,7 +202,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
           delete state.jsCode;
           try {
             const codeOutput = this.jsExecutor.executeJsCode(jsCode, this.state.jsLibs, platform, this.getNodeForMountIframe(platform));
-            codeOutput ? state.output = `<span class="standard-output">${codeOutput}</span>` : state.output = ""
+            codeOutput && platform === TargetPlatform.JS ? state.output = `<span class="standard-output">${codeOutput}</span>` : state.output = "";
           } catch (e) {
             console.error(e);
             state.output = `<span class="error-output">Unhandled JavaScript exception</span>`
