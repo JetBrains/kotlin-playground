@@ -99,6 +99,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
     if (this.state.folded) {
       this.codemirror.setOption("lineNumbers", false);
       this.codemirror.setValue(sample);
+      this.markPlaceHolders();
     } else {
       this.codemirror.setOption("lineNumbers", true);
       this.codemirror.setValue(this.prefix + sample + this.suffix);
@@ -133,7 +134,9 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
     for (let i = 0; i < this.codemirror.lineCount(); i++) {
       this.codemirror.indentLine(i)
     }
+  }
 
+  markPlaceHolders(){
     let taskRanges = this.getTaskRanges();
     this.codemirror.setValue(this.codemirror.getValue()
       .replace(new RegExp(escapeStringRegexp(MARK_PLACEHOLDER_OPEN), 'g'), "")
