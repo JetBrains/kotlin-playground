@@ -2,7 +2,7 @@ import 'whatwg-fetch';
 import URLSearchParams from 'url-search-params';
 import TargetPlatform from "./target-platform";
 import {API_URLS} from "./config";
-import {getException, getExceptionCauses, processingJUnitResults, processingJVMOutput} from "./view/output-view";
+import {findSecurityException, getExceptionCauses, processingJVMOutput, processJUnitResults} from "./view/output-view";
 
 /**
  * @typedef {Object} KotlinVersion
@@ -66,12 +66,12 @@ export default class WebDemoApi {
           if (data.text) output = processingJVMOutput(data.text);
           break;
         case TargetPlatform.JUNIT:
-          if (data.testResults) output = processingJUnitResults(data.testResults);
+          if (data.testResults) output = processJUnitResults(data.testResults);
           break;
       }
       let exceptions = null;
       if (data.exception != null) {
-        exceptions = getException(data.exception);
+        exceptions = findSecurityException(data.exception);
         exceptions.causes = getExceptionCauses(exceptions);
         exceptions.cause = undefined;
       }

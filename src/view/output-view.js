@@ -15,7 +15,7 @@ export function processingJVMOutput(output) {
     .replace(`${ANGLE_BRACKETS_LEFT_HTML}/errStream${ANGLE_BRACKETS_RIGHT_HTML}`, "</span>");
 }
 
-export function processingJUnitResults(data) {
+export function processJUnitResults(data) {
   let result = "";
   let totalTime = 0;
   for (let testClass in data) {
@@ -39,7 +39,12 @@ export function processingJUnitResults(data) {
   return testTime + result;
 }
 
-export function getException(exception) {
+/**
+ * Check the security exception in the exception tree.
+ * @param exception - json object that describes an exception
+ * @returns {Object} add default security message to exception object if security exception is found
+ */
+export function findSecurityException(exception) {
   let currentException = exception;
   while (currentException != null) {
     if (currentException.fullName === ACCESS_CONTROL_EXCEPTION) {
@@ -70,8 +75,8 @@ export function showJsException(exception) {
 /**
  * Override exception message: append default security message.
  * Cut stack trace array - use only last stack trace element
- * @param exception
- * @returns updated exception
+ * @param exception - json object that describes an exception
+ * @returns {Object} exception with default security message
  */
 function getSecurityException(exception) {
   if (exception.stackTrace != null) {
