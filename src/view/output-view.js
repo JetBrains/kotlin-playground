@@ -21,20 +21,17 @@ export function processJUnitResults(data) {
   let totalTime = 0;
   for (let testClass in data) {
     let listOfResults = arrayFrom(data[testClass]);
-    listOfResults.forEach(test => {
-      totalTime = totalTime + (test.executionTime / 1000);
-      switch (test.status) {
+     result = result + listOfResults.reduce((previousTest, currentTest) => {
+      totalTime = totalTime + (currentTest.executionTime / 1000);
+      switch (currentTest.status) {
         case "FAIL":
-          result = result + `<span class="test-icon fail"></span><div class="test-fail">${test.status} ${test.methodName}: ${convertToHtmlTag(test.comparisonFailure.message)}</div>`;
-          break;
+          return previousTest + `<span class="test-icon fail"></span><div class="test-fail">${currentTest.status} ${currentTest.methodName}: ${convertToHtmlTag(currentTest.comparisonFailure.message)}</div>`;
         case "ERROR":
-          result = result + `<span class="test-icon fail"></span><div class="test-fail">${test.status} ${test.methodName}: ${convertToHtmlTag(test.exception.message)}</div>`;
-          break;
+          return previousTest + `<span class="test-icon fail"></span><div class="test-fail">${currentTest.status} ${currentTest.methodName}: ${convertToHtmlTag(currentTest.exception.message)}</div>`;
         case "OK":
-          result = result + `<span class="test-icon ok"></span><div class="test-output">${test.status} ${test.methodName}</div>`;
-          break;
+          return previousTest + `<span class="test-icon ok"></span><div class="test-output">${currentTest.status} ${currentTest.methodName}</div>`;
       }
-    });
+    }, "");
   }
   let testTime = `<div class="test-time">Total test time: ${totalTime}s</div>`;
   return testTime + result;
