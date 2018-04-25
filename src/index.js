@@ -41,32 +41,3 @@ if (selector || discourseSelector) {
     }
   });
 }
-
-const configObserver = { attributes: true, childList: true, attributeFilter: ['class']};
-const discourseHost = "discuss.kotlinlang.org";
-
-function waitForDiscourseDocument() {
-  const interval = setInterval(() => {
-    const node =  document.body;
-    if (node) {
-      clearInterval(interval);
-      observer.observe(node, configObserver);
-    }
-  }, 500);
-}
-
-export const observer = new MutationObserver(function (mutations) {
-  let isRunnable = false;
-  mutations.forEach(function (mutation) {
-    Array.prototype.slice.call(mutation.addedNodes).forEach(node => {
-      if (validateNodes(node)) isRunnable = true;
-    });
-  });
-  if (isRunnable) create.discourse(DiscourseSelectors.KOTLIN_CODE_BLOCK);
-});
-
-function validateNodes(node) {
-  return node.nodeType === Node.ELEMENT_NODE && document.getElementsByClassName(DiscourseSelectors.KOTLIN_CODE_BLOCK.substring(1)).length > 0;
-}
-
-if (window.location.host === discourseHost) waitForDiscourseDocument();
