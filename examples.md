@@ -30,8 +30,8 @@ For instance following block of Kotlin code:
 class Contact(val id: Int, var email: String) 
 
 fun main(args: Array<String>) {
-   val contact = Contact(1, "mary@gmail.com")
-   println(contact.id)                   
+    val contact = Contact(1, "mary@gmail.com")
+    println(contact.id)                   
 }
 ```
 
@@ -43,8 +43,8 @@ Turns into:
 class Contact(val id: Int, var email: String) 
 
 fun main(args: Array<String>) {
-   val contact = Contact(1, "mary@gmail.com")
-   println(contact.id)                   
+    val contact = Contact(1, "mary@gmail.com")
+    println(contact.id)                   
 }
 ```
 
@@ -56,7 +56,7 @@ You can also change target platform or disable run button using `data-highlight-
 
 ```kotlin
 fun main(args: Array<String>) {
-  println("Hello World!")
+    println("Hello World!")
 }
 ```
 
@@ -66,11 +66,11 @@ fun main(args: Array<String>) {
 
 ```kotlin
 fun sum(a: Int, b: Int): Int {
-  return a + b
+    return a + b
 }
 
 fun main(args: Array<String>) {
-  print(sum(-1, 8))
+    print(sum(-1, 8))
 }
 ```
 
@@ -237,12 +237,12 @@ document.addEventListener('DOMContentLoaded', function() {
 ```text
 //sampleStart
 fun sum(a: Int, b: Int): Int {
-  return a + b
+    return a + b
 }
 //sampleEnd
 
 fun main(args: Array<String>) {
-  print(sum(-1, 8))
+    print(sum(-1, 8))
 }
 ```
 
@@ -255,12 +255,12 @@ fun main(args: Array<String>) {
 ```text
 //sampleStart
 fun sum(a: Int, b: Int): Int {
-  return a + b
+    return a + b
 }
 //sampleEnd
 
 fun main(args: Array<String>) {
-  print(sum(-1, 8))
+    print(sum(-1, 8))
 }
 ```
 
