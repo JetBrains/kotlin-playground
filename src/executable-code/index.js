@@ -29,6 +29,7 @@ export default class ExecutableCode {
     const targetNode = typeof target === 'string' ? document.querySelector(target) : target;
     const targetNodeStyle = targetNode.getAttribute('style');
     const highlightOnly = targetNode.hasAttribute('data-highlight-only');
+    const editorTheme = targetNode.hasAttribute('theme') ? targetNode.getAttribute('theme') : "default";
     let targetPlatform = targetNode.getAttribute('data-target-platform');
     let jsLibs = targetNode.getAttribute('data-js-libs');
     let isFoldedButton = targetNode.getAttribute('folded-button') !== "false";
@@ -60,6 +61,7 @@ export default class ExecutableCode {
     const view = ExecutableFragment.render(mountNode, {highlightOnly});
     view.update({
       code: code,
+      theme: editorTheme,
       compilerVersion: cfg.compilerVersion,
       highlightOnly: highlightOnly,
       targetPlatform: TargetPlatform.getById(targetPlatform),
