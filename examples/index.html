@@ -37,13 +37,18 @@ fun main(args: Array&lt;String&gt;) {
 }
 </code></pre>
 </div>
-<p>You can also change target platform or disable run button using <code>data-highlight-only</code> and <code>data-target-platform</code> attributes</p>
-<div class="kotlin-code" data-highlight-only>
+<p>You can also change the playground theme or disable run button using <code>theme</code> and <code>data-highlight-only</code> attributes.</p>
+<pre><code class="hljs language-html"><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"kotlin-code"</span> <span class="hljs-attr">theme</span>=<span class="hljs-string">"idea"</span> <span class="hljs-attr">data-highlight-only</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+</code></pre>
+<div class="kotlin-code" data-highlight-only theme="idea">
 <pre><code class="hljs language-kotlin"><span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">main</span><span class="hljs-params">(args: <span class="hljs-type">Array</span>&lt;<span class="hljs-type">String</span>&gt;)</span></span> {
   println(<span class="hljs-string">"Hello World!"</span>)
 }
 </code></pre>
 </div>
+<p>Set another target platform with attribute <code>data-target-platform</code>.</p>
+<pre><code class="hljs language-html"><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"kotlin-code"</span> <span class="hljs-attr">data-target-platform</span>=<span class="hljs-string">"js"</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+</code></pre>
 <div class="kotlin-code" data-target-platform="js">
 <pre><code class="hljs language-kotlin"><span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">sum</span><span class="hljs-params">(a: <span class="hljs-type">Int</span>, b: <span class="hljs-type">Int</span>)</span></span>: <span class="hljs-built_in">Int</span> {
   <span class="hljs-keyword">return</span> a + b
@@ -81,6 +86,8 @@ Then implement extension functions Int.r() and Pair.r() and make them convert In
 </div>
 <p>If you want to hide test classes in you code snippet just set the attribute <code>folded-button</code> to <code>false</code> value.</p>
 <p>Also you can mark arbitrary code by putting it between <code>[mark]your code[/mark]</code>.</p>
+<pre><code class="hljs language-html"><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"kotlin-code"</span> <span class="hljs-attr">data-target-platform</span>=<span class="hljs-string">"junit"</span> <span class="hljs-attr">folded-button</span>=<span class="hljs-string">"false"</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+</code></pre>
 <div class="kotlin-code" data-target-platform="junit" folded-button="false">
 <pre><code class="hljs language-kotlin"><span class="hljs-keyword">import</span> org.junit.Test
 <span class="hljs-keyword">import</span> org.junit.Assert

@@ -50,9 +50,12 @@ fun main(args: Array<String>) {
 
 </div>
 
-You can also change target platform or disable run button using `data-highlight-only` and `data-target-platform` attributes
+You can also change the playground theme or disable run button using `theme` and `data-highlight-only` attributes.
 
-<div class="kotlin-code" data-highlight-only>
+```html
+<div class="kotlin-code" theme="idea" data-highlight-only></div>
+``` 
+<div class="kotlin-code" data-highlight-only theme="idea">
 
 ```kotlin
 fun main(args: Array<String>) {
@@ -62,6 +65,11 @@ fun main(args: Array<String>) {
 
 </div>
 
+Set another target platform with attribute `data-target-platform`.
+
+```html
+<div class="kotlin-code" data-target-platform="js"></div>
+```
 <div class="kotlin-code" data-target-platform="js">
 
 ```kotlin
@@ -109,6 +117,10 @@ data class RationalNumber(val numerator: Int, val denominator: Int)
 If you want to hide test classes in you code snippet just set the attribute `folded-button` to `false` value.
 
 Also you can mark arbitrary code by putting it between `[mark]your code[/mark]`.
+
+```html
+<div class="kotlin-code" data-target-platform="junit" folded-button="false"></div>
+```
 
 <div class="kotlin-code" data-target-platform="junit" folded-button="false">
 
