@@ -121,14 +121,15 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
           inclusiveRight: true
         }
       );
+      this.codemirror.operation(() => {
+        for (let i = 0; i < countLines(this.prefix); i++) {
+          this.codemirror.addLineClass(i, "background", 'unmodifiable-line')
+        }
 
-      for (let i = 0; i < countLines(this.prefix); i++) {
-        this.codemirror.addLineClass(i, "background", 'unmodifiable-line')
-      }
-
-      for (let i = this.codemirror.lineCount() - countLines(this.suffix); i < this.codemirror.lineCount(); i++) {
-        this.codemirror.addLineClass(i, "background", 'unmodifiable-line')
-      }
+        for (let i = this.codemirror.lineCount() - countLines(this.suffix); i < this.codemirror.lineCount(); i++) {
+          this.codemirror.addLineClass(i, "background", 'unmodifiable-line')
+        }
+      })
     }
 
     for (let i = 0; i < this.codemirror.lineCount(); i++) {
