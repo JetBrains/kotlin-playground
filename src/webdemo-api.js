@@ -2,7 +2,14 @@ import 'whatwg-fetch';
 import URLSearchParams from 'url-search-params';
 import TargetPlatform from "./target-platform";
 import {API_URLS} from "./config";
-import {findSecurityException, getExceptionCauses, processingJVMOutput, processJUnitResults} from "./view/output-view";
+import flatten from 'flatten'
+import {
+  findSecurityException,
+  getExceptionCauses,
+  processErrors,
+  processJUnitResults,
+  processJVMOutput
+} from "./view/output-view";
 
 /**
  * @typedef {Object} KotlinVersion
@@ -43,8 +50,12 @@ export default class WebDemoApi {
    */
   static translateKotlinToJs(code, compilerVersion, platform) {
     return executeCode(API_URLS.COMPILE, code, compilerVersion, platform).then(function (data) {
+      let output = "";
+      let errors = flatten(Object.values(data.errors));
+      if (errors.length > 0) output = processErrors(errors);
       return {
-        errors: data.errors["File.kt"],
+        output: output,
+        errors: errors,
         jsCode: data.jsCode
       }
     })
@@ -61,13 +72,18 @@ export default class WebDemoApi {
   static executeKotlinCode(code, compilerVersion, platform) {
     return executeCode(API_URLS.COMPILE, code, compilerVersion, platform).then(function (data) {
       let output = "";
-      switch (platform) {
-        case TargetPlatform.JAVA:
-          if (data.text) output = processingJVMOutput(data.text);
-          break;
-        case TargetPlatform.JUNIT:
-          if (data.testResults) output = processJUnitResults(data.testResults);
-          break;
+      let errors = flatten(Object.values(data.errors));
+      if (errors.length > 0) {
+        output = processErrors(errors);
+      } else {
+        switch (platform) {
+          case TargetPlatform.JAVA:
+            if (data.text) output = processJVMOutput(data.text);
+            break;
+          case TargetPlatform.JUNIT:
+            if (data.testResults) output = processJUnitResults(data.testResults);
+            break;
+        }
       }
       let exceptions = null;
       if (data.exception != null) {
@@ -75,9 +91,8 @@ export default class WebDemoApi {
         exceptions.causes = getExceptionCauses(exceptions);
         exceptions.cause = undefined;
       }
-
       return {
-        errors: data.errors["File.kt"],
+        errors: errors,
         output: output,
         exception: exceptions
       }

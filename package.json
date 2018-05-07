@@ -29,6 +29,7 @@
     "es6-set": "^0.1.5",
     "escape-html": "^1.0.3",
     "escape-string-regexp": "^1.0.5",
+    "flatten": "^1.0.2",
     "github-markdown-css": "^2.8.0",
     "html-webpack-plugin": "^2.30.1",
     "markdown-it": "^8.3.2",

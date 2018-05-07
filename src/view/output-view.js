@@ -8,7 +8,7 @@ const UNHANDLED_JS_EXCEPTION = "Unhandled JavaScript exception";
 const ANGLE_BRACKETS_LEFT_HTML = "&lt;";
 const ANGLE_BRACKETS_RIGHT_HTML = "&gt;";
 
-export function processingJVMOutput(output) {
+export function processJVMOutput(output) {
   let processedOutput = escapeHtml(output);
   return processedOutput.replace(`${ANGLE_BRACKETS_LEFT_HTML}outStream${ANGLE_BRACKETS_RIGHT_HTML}`, "<span class=\"standard-output\">")
     .replace(`${ANGLE_BRACKETS_LEFT_HTML}/outStream${ANGLE_BRACKETS_RIGHT_HTML}`, "</span>")
@@ -25,16 +25,23 @@ export function processJUnitResults(data) {
       totalTime = totalTime + (currentTest.executionTime / 1000);
       switch (currentTest.status) {
         case "FAIL":
-          return previousTest + `<span class="test-icon fail"></span><div class="test-fail">${currentTest.status} ${currentTest.methodName}: ${convertToHtmlTag(currentTest.comparisonFailure.message)}</div>`;
+          return previousTest + `<span class="icon fail"></span><div class="test-fail">${currentTest.status} ${currentTest.methodName}: ${convertToHtmlTag(currentTest.comparisonFailure.message)}</div>`;
         case "ERROR":
-          return previousTest + `<span class="test-icon fail"></span><div class="test-fail">${currentTest.status} ${currentTest.methodName}: ${convertToHtmlTag(currentTest.exception.message)}</div>`;
+          return previousTest + `<span class="icon fail"></span><div class="test-fail">${currentTest.status} ${currentTest.methodName}: ${convertToHtmlTag(currentTest.exception.message)}</div>`;
         case "OK":
-          return previousTest + `<span class="test-icon ok"></span><div class="test-output">${currentTest.status} ${currentTest.methodName}</div>`;
+          return previousTest + `<span class="icon ok"></span><div class="test-output">${currentTest.status} ${currentTest.methodName}</div>`;
       }
     }, "");
   }
   let testTime = `<div class="test-time">Total test time: ${totalTime}s</div>`;
   return testTime + result;
+}
+
+export function processErrors(errors) {
+  return errors
+    .filter(err => err.severity === "ERROR")
+    .reduce((a,b) => {return a + `<span class="icon attention"></span><div class="test-fail">${convertToHtmlTag(b.message)}</div>`}
+    , "");
 }
 
 /**

@@ -185,18 +185,22 @@ $font-family-mono: 'Liberation Mono', Consolas, Menlo, Courier, monospace !globa
   vertical-align: top;
 }
 
-.test-icon {
-  margin-top: 3px;
+.icon {
+  margin-top: 2px;
   width: 15px;
   height: 15px;
   position: absolute;
 }
 
-.test-icon.ok {
+.icon.attention {
+  background-image: url('img/attention.svg')
+}
+
+.icon.ok {
   background-image: url('img/ok.svg')
 }
 
-.test-icon.fail {
+.icon.fail {
   background-image: url('img/fail.svg')
 }
 

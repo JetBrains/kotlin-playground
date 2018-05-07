@@ -202,8 +202,10 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
           const jsCode = state.jsCode;
           delete state.jsCode;
           try {
-            const codeOutput = this.jsExecutor.executeJsCode(jsCode, this.state.jsLibs, platform, this.getNodeForMountIframe(platform));
-            codeOutput ? state.output = `<span class="standard-output">${codeOutput}</span>` : state.output = ""
+            if (state.errors.length === 0) {
+              const codeOutput = this.jsExecutor.executeJsCode(jsCode, this.state.jsLibs, platform, this.getNodeForMountIframe(platform));
+              codeOutput ? state.output = `<span class="standard-output">${codeOutput}</span>` : state.output
+            }
           } catch (e) {
             let exceptionOutput = showJsException(e);
             state.output = `<span class="error-output">${exceptionOutput}</span>`;
