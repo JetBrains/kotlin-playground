@@ -128,14 +128,19 @@ export default class ExecutableCode {
         const config = getConfigFromElement(node, true);
         const minCompilerVersion = config.minCompilerVersion;
         let latestStableVersion = null;
+        let compilerVersion = null;
+        let listOfVersions = versions.map(version => version.version);
 
-        versions.forEach((compilerConfig) => {
-          if (compilerConfig.latestStable) {
-            latestStableVersion = compilerConfig.version;
-          }
-        });
-
-        let compilerVersion = latestStableVersion;
+        if (listOfVersions.includes(config.version)){
+          compilerVersion = config.version;
+        } else {
+          versions.forEach((compilerConfig) => {
+            if (compilerConfig.latestStable) {
+              latestStableVersion = compilerConfig.version;
+            }
+          });
+          compilerVersion = latestStableVersion;
+        }
 
         if (minCompilerVersion) {
           compilerVersion = minCompilerVersion > latestStableVersion
