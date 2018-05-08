@@ -107,7 +107,7 @@ $font-family-mono: 'Liberation Mono', Consolas, Menlo, Courier, monospace !globa
   width: 13px;
   margin-top: 2px;
   margin-left: 2px;
-  background: url("http://try.kotlinlang.org/static/images/icons_all_sprite.png") no-repeat -150px -500px;
+  background: url("https://try.kotlinlang.org/static/images/icons_all_sprite.svg") no-repeat -150px -500px;
 }
 
 .WARNINGgutter {
@@ -115,17 +115,17 @@ $font-family-mono: 'Liberation Mono', Consolas, Menlo, Courier, monospace !globa
   width: 13px;
   margin-top: 2px;
   margin-left: 2px;
-  background: url("http://try.kotlinlang.org/static/images/icons_all_sprite.png") no-repeat -150px -600px;
+  background: url("https://try.kotlinlang.org/static/images/icons_all_sprite.svg") no-repeat -150px -600px;
 }
 
 @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
   .ERRORgutter {
-    background-image: url("http://try.kotlinlang.org/static/images/icons_all_sprite@2x.png");
+    background-image: url("https://try.kotlinlang.org/static/images/icons_all_sprite@2x.png");
     background-size: 250px 900px;
   }
 
   .WARNINGgutter {
-    background-image: url("http://try.kotlinlang.org/static/images/icons_all_sprite@2x.png");
+    background-image: url("https://try.kotlinlang.org/static/images/icons_all_sprite@2x.png");
     background-size: 250px 900px;
   }
 }
@@ -346,25 +346,25 @@ li.CodeMirror-hint-active {
 }
 
 .icon {
-  background: url("http://try.kotlinlang.org/static/images/icons_all_sprite.svg");
+  background: url("https://try.kotlinlang.org/static/images/icons_all_sprite.svg");
 }
 
 .icon.class {
-  background: url("http://try.kotlinlang.org/static/images/completion_class.svg");
+  background: url("https://try.kotlinlang.org/static/images/completion_class.svg");
 }
 
 .icon.package {
-  background: url("http://try.kotlinlang.org/static/images/completion_package.svg");
+  background: url("https://try.kotlinlang.org/static/images/completion_package.svg");
 }
 
 .icon.method {
-  background: url("http://try.kotlinlang.org/static/images/completion_method.svg");
+  background: url("https://try.kotlinlang.org/static/images/completion_method.svg");
 }
 
 .icon.genericValue {
-  background: url("http://try.kotlinlang.org/static/images/completion_generic.svg")
+  background: url("https://try.kotlinlang.org/static/images/completion_generic.svg")
 }
 
 .icon.property {
-  background: url("http://try.kotlinlang.org/static/images/completion_property.svg");
+  background: url("https://try.kotlinlang.org/static/images/completion_property.svg");
 }

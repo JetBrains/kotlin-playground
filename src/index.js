@@ -1,5 +1,5 @@
 import ExecutableCode from './executable-code';
-import { getCurrentScript, getConfigFromElement, waitForNode } from './utils';
+import {getConfigFromElement, getCurrentScript, waitForNode} from './utils';
 import {
   default as discoursePreviewPanelHandler,
   Selectors as DiscourseSelectors
@@ -29,7 +29,7 @@ create.discourse = function (selector) {
 // Auto initialization via data-selector <script> attribute
 const currentScript = getCurrentScript();
 const config = getConfigFromElement(currentScript);
-const { selector, discourseSelector } = config;
+const {selector, discourseSelector} = config;
 
 if (selector || discourseSelector) {
   document.addEventListener('DOMContentLoaded', () => {

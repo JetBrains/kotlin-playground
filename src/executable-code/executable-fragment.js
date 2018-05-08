@@ -100,6 +100,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
     if (this.state.folded) {
       this.codemirror.setOption("lineNumbers", false);
       this.codemirror.setValue(sample);
+      this.markPlaceHolders();
     } else {
       this.codemirror.setOption("lineNumbers", true);
       this.codemirror.setValue(this.prefix + sample + this.suffix);
@@ -121,20 +122,23 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
           inclusiveRight: true
         }
       );
+      this.codemirror.operation(() => {
+        for (let i = 0; i < countLines(this.prefix); i++) {
+          this.codemirror.addLineClass(i, "background", 'unmodifiable-line')
+        }
 
-      for (let i = 0; i < countLines(this.prefix); i++) {
-        this.codemirror.addLineClass(i, "background", 'unmodifiable-line')
-      }
-
-      for (let i = this.codemirror.lineCount() - countLines(this.suffix); i < this.codemirror.lineCount(); i++) {
-        this.codemirror.addLineClass(i, "background", 'unmodifiable-line')
-      }
+        for (let i = this.codemirror.lineCount() - countLines(this.suffix); i < this.codemirror.lineCount(); i++) {
+          this.codemirror.addLineClass(i, "background", 'unmodifiable-line')
+        }
+      })
     }
 
     for (let i = 0; i < this.codemirror.lineCount(); i++) {
       this.codemirror.indentLine(i)
     }
+  }
 
+  markPlaceHolders(){
     let taskRanges = this.getTaskRanges();
     this.codemirror.setValue(this.codemirror.getValue()
       .replace(new RegExp(escapeStringRegexp(MARK_PLACEHOLDER_OPEN), 'g'), "")
@@ -379,7 +383,24 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
 
     this.codemirror.on("change", codemirror => {
       this.removeStyles()
-    })
+    });
+
+    /**
+     * Select marker's placeholder on mouse click
+     */
+    this.codemirror.on("mousedown", (codemirror, event) => {
+      let position = codemirror.coordsChar({left: event.pageX, top: event.pageY});
+      if (position.line !== 0 || position.ch !== 0) {
+        let markers = codemirror.findMarksAt(position);
+        let todoMarker = markers.find(marker => marker.className === "taskWindow");
+        if (todoMarker != null) {
+          let markerPosition = todoMarker.find();
+          codemirror.setSelection(markerPosition.from, markerPosition.to);
+          codemirror.focus();
+          event.preventDefault();
+        }
+      }
+    });
   }
 
   destroy() {

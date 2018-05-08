@@ -23,8 +23,8 @@
 <pre><code class="hljs language-txt">class Contact(val id: Int, var email: String) 
 
 fun main(args: Array&lt;String&gt;) {
-   val contact = Contact(1, &quot;mary@gmail.com&quot;)
-   println(contact.id)                   
+    val contact = Contact(1, &quot;mary@gmail.com&quot;)
+    println(contact.id)                   
 }
 </code></pre>
 <p>Turns into:</p>
@@ -32,25 +32,25 @@ fun main(args: Array&lt;String&gt;) {
 <pre><code class="hljs language-kotlin"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Contact</span></span>(<span class="hljs-keyword">val</span> id: <span class="hljs-built_in">Int</span>, <span class="hljs-keyword">var</span> email: String) 
 
 <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">main</span><span class="hljs-params">(args: <span class="hljs-type">Array</span>&lt;<span class="hljs-type">String</span>&gt;)</span></span> {
-   <span class="hljs-keyword">val</span> contact = Contact(<span class="hljs-number">1</span>, <span class="hljs-string">"mary@gmail.com"</span>)
-   println(contact.id)                   
+    <span class="hljs-keyword">val</span> contact = Contact(<span class="hljs-number">1</span>, <span class="hljs-string">"mary@gmail.com"</span>)
+    println(contact.id)                   
 }
 </code></pre>
 </div>
 <p>You can also change target platform or disable run button using <code>data-highlight-only</code> and <code>data-target-platform</code> attributes</p>
 <div class="kotlin-code" data-highlight-only>
 <pre><code class="hljs language-kotlin"><span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">main</span><span class="hljs-params">(args: <span class="hljs-type">Array</span>&lt;<span class="hljs-type">String</span>&gt;)</span></span> {
-  println(<span class="hljs-string">"Hello World!"</span>)
+    println(<span class="hljs-string">"Hello World!"</span>)
 }
 </code></pre>
 </div>
 <div class="kotlin-code" data-target-platform="js">
 <pre><code class="hljs language-kotlin"><span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">sum</span><span class="hljs-params">(a: <span class="hljs-type">Int</span>, b: <span class="hljs-type">Int</span>)</span></span>: <span class="hljs-built_in">Int</span> {
-  <span class="hljs-keyword">return</span> a + b
+    <span class="hljs-keyword">return</span> a + b
 }
 
 <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">main</span><span class="hljs-params">(args: <span class="hljs-type">Array</span>&lt;<span class="hljs-type">String</span>&gt;)</span></span> {
-  print(sum(<span class="hljs-number">-1</span>, <span class="hljs-number">8</span>))
+    print(sum(<span class="hljs-number">-1</span>, <span class="hljs-number">8</span>))
 }
 </code></pre>
 </div>
@@ -192,12 +192,12 @@ The function any gets a predicate as an argument and returns true if there is at
 <div>
 <pre><code class="hljs language-text">//sampleStart
 fun sum(a: Int, b: Int): Int {
-  return a + b
+    return a + b
 }
 //sampleEnd
 
 fun main(args: Array&lt;String&gt;) {
-  print(sum(-1, 8))
+    print(sum(-1, 8))
 }
 </code></pre>
 </div>
@@ -205,12 +205,12 @@ fun main(args: Array&lt;String&gt;) {
 <div id="kotlin-example" class="kotlin-code-2" style="display: none;">
 <pre><code class="hljs language-text">//sampleStart
 fun sum(a: Int, b: Int): Int {
-  return a + b
+    return a + b
 }
 //sampleEnd
 
 fun main(args: Array&lt;String&gt;) {
-  print(sum(-1, 8))
+    print(sum(-1, 8))
 }
 </code></pre>
 </div>
