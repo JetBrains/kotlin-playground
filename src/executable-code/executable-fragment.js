@@ -9,7 +9,8 @@ import TargetPlatform from "../target-platform";
 import getJsExecutor from "../js-executor"
 import {countLines, unEscapeString} from "../utils";
 import escapeStringRegexp from "escape-string-regexp"
-import ComplectionView from "../complection-view";
+import CompletionView from "../view/completion-view";
+import {showJsException} from "../view/output-view";
 
 const SAMPLE_START = '//sampleStart';
 const SAMPLE_END = '//sampleEnd';
@@ -205,11 +206,14 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
           const jsCode = state.jsCode;
           delete state.jsCode;
           try {
-            const codeOutput = this.jsExecutor.executeJsCode(jsCode, this.state.jsLibs, platform, this.getNodeForMountIframe(platform));
-            codeOutput && platform === TargetPlatform.JS ? state.output = `<span class="standard-output">${codeOutput}</span>` : state.output = "";
+            if (state.errors.length === 0) {
+              const codeOutput = this.jsExecutor.executeJsCode(jsCode, this.state.jsLibs, platform, this.getNodeForMountIframe(platform));
+              codeOutput ? state.output = `<span class="standard-output">${codeOutput}</span>` : state.output
+            }
           } catch (e) {
+            let exceptionOutput = showJsException(e);
+            state.output = `<span class="error-output">${exceptionOutput}</span>`;
             console.error(e);
-            state.output = `<span class="error-output">Unhandled JavaScript exception</span>`
           }
           state.exception = null;
           this.update(state);
@@ -224,7 +228,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
    * @param {TargetPlatform} platform
    * @return {HTMLElement}
    */
-  getNodeForMountIframe(platform){
+  getNodeForMountIframe(platform) {
     return platform === TargetPlatform.JS
       ? document.body
       : this.nodes[0].querySelector(CANVAS_PLACEHOLDER_OUTPUT_CLASS);
@@ -325,7 +329,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
      * Register own helper for autocomplete.
      * Getting complections from try.kotlinlang.org.
      * {@see WebDemoApi}      - getting data from WebDemo
-     * {@see ComplectionView} - implementation completion view
+     * {@see CompletionView} - implementation completion view
      */
     CodeMirror.registerHelper('hint', 'kotlin', (mirror, callback) => {
       let cur = mirror.getCursor();
@@ -341,7 +345,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
       function processingCompletionsList(results) {
         callback({
           list: results.map(result => {
-            return new ComplectionView(result)
+            return new CompletionView(result)
           }),
           from: {line: cur.line, ch: token.start},
           to: {line: cur.line, ch: token.end}

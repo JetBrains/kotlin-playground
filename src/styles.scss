@@ -143,9 +143,11 @@ $font-family-mono: 'Liberation Mono', Consolas, Menlo, Courier, monospace !globa
 .output-wrapper {
   border-top: 1px solid #eee;
   min-height: 50px;
+  font-size: 14px;
 }
 
 .code-output {
+  white-space: pre-wrap;
   font-family: $font-family-mono;
   overflow: auto;
   padding-left: 10px;
@@ -153,7 +155,7 @@ $font-family-mono: 'Liberation Mono', Consolas, Menlo, Courier, monospace !globa
 }
 
 .error-output {
-  white-space: pre;
+  white-space: pre-wrap;
   color: #ff0000;
   min-height: 1.4em;
   margin: 0;
@@ -183,19 +185,31 @@ $font-family-mono: 'Liberation Mono', Consolas, Menlo, Courier, monospace !globa
   vertical-align: top;
 }
 
-.test-icon {
-  margin-top: 3px;
+.icon {
+  margin-top: 2px;
   width: 15px;
   height: 15px;
   position: absolute;
 }
 
-.test-icon.ok {
+.icon.attention {
+  background-image: url('img/attention.svg')
+}
+
+.icon.ok {
   background-image: url('img/ok.svg')
 }
 
-.test-icon.fail {
+.icon.fail {
   background-image: url('img/fail.svg')
+}
+
+.test-time {
+  float: right;
+  font-size: 10px;
+  color: #949494;
+  margin-right: 10px;
+  margin-top: -10px;
 }
 
 .stacktrace-element {

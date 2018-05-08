@@ -2,7 +2,14 @@ import 'whatwg-fetch';
 import URLSearchParams from 'url-search-params';
 import TargetPlatform from "./target-platform";
 import {API_URLS} from "./config";
-import {arrayFrom, convertToHtmlTag} from "./utils";
+import flatten from 'flatten'
+import {
+  findSecurityException,
+  getExceptionCauses,
+  processErrors,
+  processJUnitResults,
+  processJVMOutput
+} from "./view/output-view";
 
 /**
  * @typedef {Object} KotlinVersion
@@ -43,8 +50,12 @@ export default class WebDemoApi {
    */
   static translateKotlinToJs(code, compilerVersion, platform) {
     return executeCode(API_URLS.COMPILE, code, compilerVersion, platform).then(function (data) {
+      let output = "";
+      let errors = flatten(Object.values(data.errors));
+      if (errors.length > 0) output = processErrors(errors);
       return {
-        errors: data.errors["File.kt"],
+        output: output,
+        errors: errors,
         jsCode: data.jsCode
       }
     })
@@ -61,23 +72,27 @@ export default class WebDemoApi {
   static executeKotlinCode(code, compilerVersion, platform) {
     return executeCode(API_URLS.COMPILE, code, compilerVersion, platform).then(function (data) {
       let output = "";
-      switch (platform) {
-        case TargetPlatform.JAVA:
-          if (data.text) output = getOutputResults(data.text);
-          break;
-        case TargetPlatform.JUNIT:
-          if (data.testResults) output = getJunitResults(data.testResults);
-          break;
+      let errors = flatten(Object.values(data.errors));
+      if (errors.length > 0) {
+        output = processErrors(errors);
+      } else {
+        switch (platform) {
+          case TargetPlatform.JAVA:
+            if (data.text) output = processJVMOutput(data.text);
+            break;
+          case TargetPlatform.JUNIT:
+            if (data.testResults) output = processJUnitResults(data.testResults);
+            break;
+        }
       }
       let exceptions = null;
       if (data.exception != null) {
-        exceptions = data.exception;
-        exceptions.causes = getExceptionCauses(data.exception);
+        exceptions = findSecurityException(data.exception);
+        exceptions.causes = getExceptionCauses(exceptions);
         exceptions.cause = undefined;
       }
-
       return {
-        errors: data.errors["File.kt"],
+        errors: errors,
         output: output,
         exception: exceptions
       }
@@ -102,13 +117,6 @@ export default class WebDemoApi {
   }
 }
 
-function getExceptionCauses(exception) {
-  if (exception.cause !== undefined && exception.cause != null) {
-    return [exception.cause].concat(getExceptionCauses(exception.cause))
-  } else {
-    return []
-  }
-}
 
 function executeCode(url, code, compilerVersion, targetPlatform, options) {
   const projectJson = JSON.stringify({
@@ -144,32 +152,4 @@ function executeCode(url, code, compilerVersion, targetPlatform, options) {
       'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
     }
   }).then(response => response.json())
-}
-
-function getOutputResults(output) {
-  return output.replace("<outStream>", "<span class=\"standard-output\">")
-    .replace("</outStream>", "</span>")
-    .replace("<errStream>", "<span class=\"error-output\">")
-    .replace("</errStream>", "</span>")
-}
-
-function getJunitResults(data) {
-  let result = "";
-  for (let testClass in data) {
-    let listOfResults = arrayFrom(data[testClass]);
-    listOfResults.forEach(test => {
-      switch (test.status) {
-        case "FAIL":
-          result = result + `<span class="test-icon fail"></span><div class="test-fail">${test.status} ${test.methodName}: ${convertToHtmlTag(test.comparisonFailure.message)}</div>`;
-          break;
-        case "ERROR":
-          result = result + `<span class="test-icon fail"></span><div class="test-fail">${test.status} ${test.methodName}: ${convertToHtmlTag(test.exception.message)}</div>`;
-          break;
-        case "OK":
-          result = result + `<span class="test-icon ok"></span><div class="test-output">${test.status} ${test.methodName}</div>`;
-          break;
-      }
-    });
-  }
-  return result;
 }
