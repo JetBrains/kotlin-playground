@@ -27,6 +27,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
     instance.arrayClasses = [];
     instance.initialized = false;
     instance.state = {
+      theme: '',
       code: '',
       foldButtonHover: false,
       folded: true,
@@ -310,6 +311,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
       readOnly: readOnly,
       lineNumbers: false,
       mode: 'text/x-kotlin',
+      theme: options.theme,
       indentUnit: 4,
       viewportMargin: Infinity,
       foldGutter: true,

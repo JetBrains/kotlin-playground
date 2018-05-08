@@ -21,7 +21,7 @@
     "babel-plugin-transform-runtime": "6.23.0",
     "babel-preset-es2015": "6.24.1",
     "ci-publish": "^1.3.0",
-    "codemirror": "5.35.0",
+    "codemirror": "^5.37.0",
     "css-loader": "0.28.4",
     "debounce": "^1.1.0",
     "deepmerge": "^1.5.0",
