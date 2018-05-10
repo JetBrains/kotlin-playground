@@ -10,7 +10,7 @@ import getJsExecutor from "../js-executor"
 import {countLines, unEscapeString} from "../utils";
 import escapeStringRegexp from "escape-string-regexp"
 import CompletionView from "../view/completion-view";
-import {showJsException} from "../view/output-view";
+import {processErrors, showJsException} from "../view/output-view";
 
 const SAMPLE_START = '//sampleStart';
 const SAMPLE_END = '//sampleEnd';
@@ -139,7 +139,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
     }
   }
 
-  markPlaceHolders(){
+  markPlaceHolders() {
     let taskRanges = this.getTaskRanges();
     this.codemirror.setValue(this.codemirror.getValue()
       .replace(new RegExp(escapeStringRegexp(MARK_PLACEHOLDER_OPEN), 'g'), "")
@@ -207,9 +207,12 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
           const jsCode = state.jsCode;
           delete state.jsCode;
           try {
-            if (state.errors.length === 0) {
+            let errors = state.errors.filter(error => error.severity === "ERROR");
+            if (errors.length > 0){
+              state.output = processErrors(errors);
+            } else {
               const codeOutput = this.jsExecutor.executeJsCode(jsCode, this.state.jsLibs, platform, this.getNodeForMountIframe(platform));
-              codeOutput ? state.output = `<span class="standard-output">${codeOutput}</span>` : state.output
+              codeOutput ? state.output = `<span class="standard-output">${codeOutput}</span>` : state.output = "";
             }
           } catch (e) {
             let exceptionOutput = showJsException(e);

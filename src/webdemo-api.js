@@ -51,11 +51,10 @@ export default class WebDemoApi {
   static translateKotlinToJs(code, compilerVersion, platform) {
     return executeCode(API_URLS.COMPILE, code, compilerVersion, platform).then(function (data) {
       let output = "";
-      let errors = flatten(Object.values(data.errors));
-      if (errors.length > 0) output = processErrors(errors);
+      let errorsAndWarnings = flatten(Object.values(data.errors));
       return {
         output: output,
-        errors: errors,
+        errors: errorsAndWarnings,
         jsCode: data.jsCode
       }
     })
@@ -72,7 +71,8 @@ export default class WebDemoApi {
   static executeKotlinCode(code, compilerVersion, platform) {
     return executeCode(API_URLS.COMPILE, code, compilerVersion, platform).then(function (data) {
       let output = "";
-      let errors = flatten(Object.values(data.errors));
+      let errorsAndWarnings = flatten(Object.values(data.errors));
+      let errors = errorsAndWarnings.filter(error => error.severity === "ERROR");
       if (errors.length > 0) {
         output = processErrors(errors);
       } else {
@@ -92,7 +92,7 @@ export default class WebDemoApi {
         exceptions.cause = undefined;
       }
       return {
-        errors: errors,
+        errors: errorsAndWarnings,
         output: output,
         exception: exceptions
       }

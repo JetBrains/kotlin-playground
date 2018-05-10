@@ -39,8 +39,7 @@ export function processJUnitResults(data) {
 
 export function processErrors(errors) {
   return errors
-    .filter(err => err.severity === "ERROR")
-    .reduce((a,b) => {return a + `<span class="console-icon attention"></span><div class="test-fail">${convertToHtmlTag(b.message)}</div>`}
+    .reduce((acc,currentValue) => {return acc + `<span class="console-icon attention"></span><div class="test-fail">${convertToHtmlTag(currentValue.message)}</div>`}
     , "");
 }
 
