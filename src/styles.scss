@@ -186,22 +186,22 @@ $font-family-mono: 'Liberation Mono', Consolas, Menlo, Courier, monospace !globa
   vertical-align: top;
 }
 
-.icon {
+.console-icon {
   margin-top: 2px;
   width: 15px;
   height: 15px;
   position: absolute;
 }
 
-.icon.attention {
+.console-icon.attention {
   background-image: url('img/attention.svg')
 }
 
-.icon.ok {
+.console-icon.ok {
   background-image: url('img/ok.svg')
 }
 
-.icon.fail {
+.console-icon.fail {
   background-image: url('img/fail.svg')
 }
 

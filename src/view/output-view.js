@@ -25,11 +25,11 @@ export function processJUnitResults(data) {
       totalTime = totalTime + (currentTest.executionTime / 1000);
       switch (currentTest.status) {
         case "FAIL":
-          return previousTest + `<span class="icon fail"></span><div class="test-fail">${currentTest.status} ${currentTest.methodName}: ${convertToHtmlTag(currentTest.comparisonFailure.message)}</div>`;
+          return previousTest + `<span class="console-icon fail"></span><div class="test-fail">${currentTest.status} ${currentTest.methodName}: ${convertToHtmlTag(currentTest.comparisonFailure.message)}</div>`;
         case "ERROR":
-          return previousTest + `<span class="icon fail"></span><div class="test-fail">${currentTest.status} ${currentTest.methodName}: ${convertToHtmlTag(currentTest.exception.message)}</div>`;
+          return previousTest + `<span class="console-icon fail"></span><div class="test-fail">${currentTest.status} ${currentTest.methodName}: ${convertToHtmlTag(currentTest.exception.message)}</div>`;
         case "OK":
-          return previousTest + `<span class="icon ok"></span><div class="test-output">${currentTest.status} ${currentTest.methodName}</div>`;
+          return previousTest + `<span class="console-icon ok"></span><div class="test-output">${currentTest.status} ${currentTest.methodName}</div>`;
       }
     }, "");
   }
@@ -40,7 +40,7 @@ export function processJUnitResults(data) {
 export function processErrors(errors) {
   return errors
     .filter(err => err.severity === "ERROR")
-    .reduce((a,b) => {return a + `<span class="icon attention"></span><div class="test-fail">${convertToHtmlTag(b.message)}</div>`}
+    .reduce((a,b) => {return a + `<span class="console-icon attention"></span><div class="test-fail">${convertToHtmlTag(b.message)}</div>`}
     , "");
 }
 
