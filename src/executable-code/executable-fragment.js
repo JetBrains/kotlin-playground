@@ -147,9 +147,9 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
 
     taskRanges.forEach(task => {
       this.codemirror.markText({line: task.line, ch: task.ch}, {line: task.line, ch: task.ch + task.length}, {
-        className: "taskWindow",
-        startStyle: "taskWindow-start",
-        endStyle: "taskWindow-end",
+        className: "markPlaceholder",
+        startStyle: "markPlaceholder-start",
+        endStyle: "markPlaceholder-end",
         handleMouseEvents: true
       });
     });
@@ -161,11 +161,11 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
     for (let i = 0; i < fileContentLines.length; i++) {
       let line = fileContentLines[i];
       while (line.includes(MARK_PLACEHOLDER_OPEN)) {
-        let taskWindowStart = line.indexOf(MARK_PLACEHOLDER_OPEN);
+        let markPlaceHolderStart = line.indexOf(MARK_PLACEHOLDER_OPEN);
         line = line.replace(MARK_PLACEHOLDER_OPEN, "");
-        let taskWindowEnd = line.indexOf(MARK_PLACEHOLDER_CLOSE);
+        let markPlaceHolderEnd = line.indexOf(MARK_PLACEHOLDER_CLOSE);
         line = line.replace(MARK_PLACEHOLDER_CLOSE, "");
-        textRanges.push({line: i, ch: taskWindowStart, length: taskWindowEnd - taskWindowStart});
+        textRanges.push({line: i, ch: markPlaceHolderStart, length: markPlaceHolderEnd - markPlaceHolderStart});
       }
     }
     return textRanges;
@@ -397,7 +397,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
       let position = codemirror.coordsChar({left: event.pageX, top: event.pageY});
       if (position.line !== 0 || position.ch !== 0) {
         let markers = codemirror.findMarksAt(position);
-        let todoMarker = markers.find(marker => marker.className === "taskWindow");
+        let todoMarker = markers.find(marker => marker.className === "markPlaceholder");
         if (todoMarker != null) {
           let markerPosition = todoMarker.find();
           codemirror.setSelection(markerPosition.from, markerPosition.to);

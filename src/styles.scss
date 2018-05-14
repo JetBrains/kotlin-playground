@@ -56,16 +56,16 @@ $font-family-mono: 'Liberation Mono', Consolas, Menlo, Courier, monospace !globa
   background-color: #f7f7f7;
 }
 
-.taskWindow {
+.markPlaceholder {
   border-top: 1px solid #0000FF;
   border-bottom: 1px solid #0000FF;
 }
 
-.taskWindow-start {
+.markPlaceholder-start {
   border-left: 1px solid #0000FF;
 }
 
-.taskWindow-end {
+.markPlaceholder-end {
   border-right: 1px solid #0000FF;
 }
 .run-button {
