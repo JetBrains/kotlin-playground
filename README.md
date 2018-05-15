@@ -78,6 +78,15 @@ Use the following attributes on elements that are converted to editors to adjust
     */
     </code>
     ```
+  - `args`: Command line arguments.
+  
+    ```html
+    <code args="1 2 3">
+    /*
+    Your code here
+    */
+    </code>
+    ```
    
 - `data-target-platform`: target platform: `junit`, `canvas`, `js` or `java` (default).
 
