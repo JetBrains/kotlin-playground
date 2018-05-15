@@ -48,8 +48,8 @@ export default class WebDemoApi {
    * @param platform        - TargetPlatform
    * @returns {*|PromiseLike<T>|Promise<T>}
    */
-  static translateKotlinToJs(code, compilerVersion, platform) {
-    return executeCode(API_URLS.COMPILE, code, compilerVersion, platform).then(function (data) {
+  static translateKotlinToJs(code, compilerVersion, platform, args) {
+    return executeCode(API_URLS.COMPILE, code, compilerVersion, platform, args).then(function (data) {
       let output = "";
       let errorsAndWarnings = flatten(Object.values(data.errors));
       return {
@@ -68,8 +68,8 @@ export default class WebDemoApi {
    * @param platform        - TargetPlatform
    * @returns {*|PromiseLike<T>|Promise<T>}
    */
-  static executeKotlinCode(code, compilerVersion, platform) {
-    return executeCode(API_URLS.COMPILE, code, compilerVersion, platform).then(function (data) {
+  static executeKotlinCode(code, compilerVersion, platform, args) {
+    return executeCode(API_URLS.COMPILE, code, compilerVersion, platform, args).then(function (data) {
       let output = "";
       let errorsAndWarnings = flatten(Object.values(data.errors));
       let errors = errorsAndWarnings.filter(error => error.severity === "ERROR");
@@ -110,7 +110,7 @@ export default class WebDemoApi {
    */
   static getAutoCompletion(code, cursor, compilerVersion, platform, callback) {
     const parametres = {"line": cursor.line, "ch": cursor.ch};
-    executeCode(API_URLS.COMPLETE, code, compilerVersion, platform, parametres)
+    executeCode(API_URLS.COMPLETE, code, compilerVersion, platform, "", parametres)
       .then(data => {
         callback(data);
       })
@@ -118,11 +118,11 @@ export default class WebDemoApi {
 }
 
 
-function executeCode(url, code, compilerVersion, targetPlatform, options) {
+function executeCode(url, code, compilerVersion, targetPlatform, args, options) {
   const projectJson = JSON.stringify({
     "id": "",
     "name": "",
-    "args": "",
+    "args": args,
     "compilerVersion": compilerVersion,
     "confType": targetPlatform.id,
     "originUrl": null,
