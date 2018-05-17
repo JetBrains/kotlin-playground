@@ -14,10 +14,10 @@ $font-family-mono: 'Liberation Mono', Consolas, Menlo, Courier, monospace !globa
 
 .CodeMirror {
   height: auto;
+  font-size: 12px;
 
   pre {
-    font-size: 12px !important;
-    line-height: 16.8px !important;
+    line-height: 16.8px;
     margin-bottom: 0 !important;
   }
 }
@@ -68,6 +68,7 @@ $font-family-mono: 'Liberation Mono', Consolas, Menlo, Courier, monospace !globa
 .markPlaceholder-end {
   border-right: 1px solid #0000FF;
 }
+
 .run-button {
   position: absolute;
   z-index: 10;
