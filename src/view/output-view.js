@@ -1,10 +1,12 @@
 import {arrayFrom, convertToHtmlTag} from "../utils";
+import isEmptyObject from "is-empty-object"
 import escapeHtml from "escape-html"
 
 
 const ACCESS_CONTROL_EXCEPTION = "java.security.AccessControlException";
 const SECURITY_MESSAGE = "Access control exception due to security reasons in web playground";
 const UNHANDLED_JS_EXCEPTION = "Unhandled JavaScript exception";
+const NO_TEST_FOUND = "No tests methods are found";
 const ANGLE_BRACKETS_LEFT_HTML = "&lt;";
 const ANGLE_BRACKETS_RIGHT_HTML = "&gt;";
 
@@ -19,6 +21,7 @@ export function processJVMOutput(output) {
 export function processJUnitResults(data) {
   let result = "";
   let totalTime = 0;
+  if (isEmptyObject(data)) return NO_TEST_FOUND;
   for (let testClass in data) {
     let listOfResults = arrayFrom(data[testClass]);
      result = result + listOfResults.reduce((previousTest, currentTest) => {
