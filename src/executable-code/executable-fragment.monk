@@ -18,7 +18,9 @@
 
             <textarea></textarea>
         </div>
-
+        {% if (openConsole) %}
+          <div class="console-close" :onclick={{ this.onConsoleCloseButtonEnter.bind(this) }}></div>
+        {% endif %}
         <div class="js-code-output-canvas-placeholder">
           {% if (waitingForOutput) %}
               <div class="output-wrapper">
@@ -38,9 +40,6 @@
 
                       </div>
                   </div>
-              {% endif %}
-              {% if (openConsole) %}
-                <div class="console-close" :onclick={{ this.onConsoleCloseButtonEnter.bind(this) }}></div>
               {% endif %}
           {% endif %}
         </div>

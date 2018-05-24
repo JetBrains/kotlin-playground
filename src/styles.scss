@@ -177,16 +177,15 @@ $font-family-mono: 'Liberation Mono', Consolas, Menlo, Courier, monospace !globa
 }
 .console-close {
   position: absolute;
-  left: 50%;
-  z-index: 15;
-  transform: translate(-50%, 30%);
-  width: 21px;
-  height: 13px;
-  background-image: url('img/button_close.svg?fill=%23d4d4d4&selector=.data-fill');
+  right: 1px;
+  margin-top: 1px;
+  width: 16px;
+  height: 16px;
+  background: lightgrey url('img/close-console-icon.svg');
 }
 
 .console-close:hover {
-  background-image: url('img/button_close.svg?fill=%23f68322&selector=.data-fill');
+  background-color: grey;
 }
 
 
