@@ -1,7 +1,7 @@
 {% import Exception from './exception.monk' %}
 
 <div class="executable-fragment-wrapper">
-    <div class="executable-fragment">
+    <div class="executable-fragment {{ theme }}">
         <div class="code-area {{ folded ? '_folded' : '_unfolded' }}">
             {% if (isShouldBeFolded) %}
                 <div class="fold-button {{ foldButtonHover ? '_hover' : '' }}"
@@ -21,14 +21,14 @@
 
         <div class="js-code-output-canvas-placeholder">
           {% if (waitingForOutput) %}
-              <div class="output-wrapper">
+              <div class="output-wrapper {{ theme }}">
                   <div class="loading-indicator">
                       <div class="loader-icon"></div>
                   </div>
               </div>
           {% else %}
               {% if (output && output != "") || exception %}
-                  <div class="output-wrapper">
+                  <div class="output-wrapper {{ theme }}">
                       <div class="code-output">
                           {% unsafe output %}
 

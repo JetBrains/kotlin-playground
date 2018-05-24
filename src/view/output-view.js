@@ -10,9 +10,9 @@ const NO_TEST_FOUND = "No tests methods are found";
 const ANGLE_BRACKETS_LEFT_HTML = "&lt;";
 const ANGLE_BRACKETS_RIGHT_HTML = "&gt;";
 
-export function processJVMOutput(output) {
+export function processJVMOutput(output, theme) {
   let processedOutput = escapeHtml(output);
-  return processedOutput.replace(`${ANGLE_BRACKETS_LEFT_HTML}outStream${ANGLE_BRACKETS_RIGHT_HTML}`, "<span class=\"standard-output\">")
+  return processedOutput.replace(`${ANGLE_BRACKETS_LEFT_HTML}outStream${ANGLE_BRACKETS_RIGHT_HTML}`, `<span class="standard-output ${theme}">`)
     .replace(`${ANGLE_BRACKETS_LEFT_HTML}/outStream${ANGLE_BRACKETS_RIGHT_HTML}`, "</span>")
     .replace(`${ANGLE_BRACKETS_LEFT_HTML}errStream${ANGLE_BRACKETS_RIGHT_HTML}`, "<span class=\"error-output\">")
     .replace(`${ANGLE_BRACKETS_LEFT_HTML}/errStream${ANGLE_BRACKETS_RIGHT_HTML}`, "</span>");

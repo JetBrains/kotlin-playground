@@ -66,9 +66,11 @@ export default class WebDemoApi {
    * @param code            - string
    * @param compilerVersion - string kotlin compiler
    * @param platform        - TargetPlatform
+   * @param args            - command line arguments
+   * @param theme           - theme of editor
    * @returns {*|PromiseLike<T>|Promise<T>}
    */
-  static executeKotlinCode(code, compilerVersion, platform, args) {
+  static executeKotlinCode(code, compilerVersion, platform, args, theme) {
     return executeCode(API_URLS.COMPILE, code, compilerVersion, platform, args).then(function (data) {
       let output = "";
       let errorsAndWarnings = flatten(Object.values(data.errors));
@@ -78,7 +80,7 @@ export default class WebDemoApi {
       } else {
         switch (platform) {
           case TargetPlatform.JAVA:
-            if (data.text) output = processJVMOutput(data.text);
+            if (data.text) output = processJVMOutput(data.text, theme);
             break;
           case TargetPlatform.JUNIT:
             if (data.testResults) output = processJUnitResults(data.testResults);
