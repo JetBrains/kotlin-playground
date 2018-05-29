@@ -17,6 +17,7 @@ const SAMPLE_END = '//sampleEnd';
 const MARK_PLACEHOLDER_OPEN = "[mark]";
 const MARK_PLACEHOLDER_CLOSE = "[/mark]";
 const CANVAS_PLACEHOLDER_OUTPUT_CLASS = ".js-code-output-canvas-placeholder";
+const F9_KEY = 120;
 
 export default class ExecutableFragment extends ExecutableCodeTemplate {
   static render(element, options = {}) {
@@ -37,6 +38,12 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
 
     instance.on('click', '.fold-button', (event) => {
       instance.update({folded: !instance.state.folded});
+    });
+
+    instance.on('keyup', (event) => {
+      if (event.keyCode === F9_KEY && event.ctrlKey) {
+        instance.execute();
+      }
     });
 
     return instance;
