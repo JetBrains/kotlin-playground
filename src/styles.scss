@@ -179,6 +179,19 @@ $font-family-mono: 'Liberation Mono', Consolas, Menlo, Courier, monospace !globa
   vertical-align: top;
   margin-left: 20px;
 }
+.console-close {
+  position: absolute;
+  right: 1px;
+  margin-top: 1px;
+  width: 16px;
+  height: 16px;
+  background: lightgrey url('img/close-console-icon.svg');
+}
+
+.console-close:hover {
+  background-color: grey;
+}
+
 
 .test-fail {
   color: #ff0000;
