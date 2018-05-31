@@ -12,7 +12,7 @@ import 'codemirror/mode/shell/shell';
 import merge from 'deepmerge';
 import Set from 'es6-set/polyfill';
 import defaultConfig, {API_URLS} from '../config';
-import {arrayFrom, getConfigFromElement, insertAfter} from '../utils';
+import {arrayFrom, getConfigFromElement, insertAfter, THEMES} from '../utils';
 import WebDemoApi from "../webdemo-api";
 import TargetPlatform from '../target-platform'
 import ExecutableFragment from './executable-fragment';
@@ -29,7 +29,7 @@ export default class ExecutableCode {
     const targetNode = typeof target === 'string' ? document.querySelector(target) : target;
     const targetNodeStyle = targetNode.getAttribute('style');
     const highlightOnly = targetNode.hasAttribute('data-highlight-only');
-    const editorTheme = targetNode.hasAttribute('theme') ? targetNode.getAttribute('theme') : "default";
+    const editorTheme = targetNode.hasAttribute('theme') ? targetNode.getAttribute('theme') : THEMES.DEFAULT;
     const args = targetNode.hasAttribute('args') ? targetNode.getAttribute('args') : "";
     let targetPlatform = targetNode.getAttribute('data-target-platform');
     let jsLibs = targetNode.getAttribute('data-js-libs');

@@ -7,7 +7,7 @@ import ExecutableCodeTemplate from './executable-fragment.monk';
 import WebDemoApi from '../webdemo-api';
 import TargetPlatform from "../target-platform";
 import getJsExecutor from "../js-executor"
-import {countLines, unEscapeString} from "../utils";
+import {countLines, THEMES, unEscapeString} from "../utils";
 import escapeStringRegexp from "escape-string-regexp"
 import CompletionView from "../view/completion-view";
 import {processErrors, showJsException} from "../view/output-view";
@@ -130,13 +130,14 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
           inclusiveRight: true
         }
       );
+      let readOnlyLineClass = this.state.theme === THEMES.DARCULA ? "unmodifiable-line-dark" : "unmodifiable-line";
       this.codemirror.operation(() => {
         for (let i = 0; i < countLines(this.prefix); i++) {
-          this.codemirror.addLineClass(i, "background", 'unmodifiable-line')
+          this.codemirror.addLineClass(i, "background", readOnlyLineClass)
         }
 
         for (let i = this.codemirror.lineCount() - countLines(this.suffix); i < this.codemirror.lineCount(); i++) {
-          this.codemirror.addLineClass(i, "background", 'unmodifiable-line')
+          this.codemirror.addLineClass(i, "background", readOnlyLineClass)
         }
       })
     }
@@ -207,7 +208,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
     });
     let platform = this.state.targetPlatform;
     if (platform === TargetPlatform.JAVA || platform === TargetPlatform.JUNIT) {
-      WebDemoApi.executeKotlinCode(this.getCode(), this.state.compilerVersion, platform, this.state.args).then(
+      WebDemoApi.executeKotlinCode(this.getCode(), this.state.compilerVersion, platform, this.state.args, this.state.theme).then(
         state => {
           state.waitingForOutput = false;
           state.openConsole = true;
@@ -229,7 +230,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
               state.output = processErrors(errors);
             } else {
               const codeOutput = this.jsExecutor.executeJsCode(jsCode, this.state.jsLibs, platform, this.getNodeForMountIframe(platform));
-              codeOutput ? state.output = `<span class="standard-output">${codeOutput}</span>` : state.output = "";
+              codeOutput ? state.output = `<span class="standard-output ${this.state.theme}">${codeOutput}</span>` : state.output = "";
             }
           } catch (e) {
             let exceptionOutput = showJsException(e);

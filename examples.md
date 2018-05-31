@@ -65,6 +65,18 @@ fun main(args: Array<String>) {
 
 </div>
 
+Or theme `darcula`
+
+<div class="kotlin-code" data-highlight-only theme="darcula">
+
+```kotlin
+fun main(args: Array<String>) {
+    println("Hello World!")
+}
+```
+
+</div>
+
 Set another target platform with attribute `data-target-platform`.
 
 ```html

@@ -1,5 +1,6 @@
 @import "~codemirror/lib/codemirror.css";
 @import "~codemirror/theme/idea.css";
+@import "~codemirror/theme/darcula.css";
 
 $font-family-mono: 'Liberation Mono', Consolas, Menlo, Courier, monospace !global;
 
@@ -10,6 +11,10 @@ $font-family-mono: 'Liberation Mono', Consolas, Menlo, Courier, monospace !globa
 
 .executable-fragment {
   border: 1px solid #eee;
+}
+
+.executable-fragment.darcula {
+  background-color: #2B2B2B;
 }
 
 .CodeMirror {
@@ -25,7 +30,6 @@ $font-family-mono: 'Liberation Mono', Consolas, Menlo, Courier, monospace !globa
 .CodeMirror-lines {
   padding: 0;
   margin: 12px 0;
-  background: white;
 }
 
 .CodeMirror-scroll {
@@ -54,6 +58,10 @@ $font-family-mono: 'Liberation Mono', Consolas, Menlo, Courier, monospace !globa
 
 .CodeMirror-linebackground.unmodifiable-line {
   background-color: #f7f7f7;
+}
+
+.CodeMirror-linebackground.unmodifiable-line-dark {
+  background-color: #505050;
 }
 
 .markPlaceholder {
@@ -147,6 +155,10 @@ $font-family-mono: 'Liberation Mono', Consolas, Menlo, Courier, monospace !globa
   min-height: 50px;
   font-size: 14px;
 }
+.output-wrapper.darcula {
+  background-color: #2B2B2B;
+  border-top: 1px solid grey;
+}
 
 .code-output {
   white-space: pre-wrap;
@@ -154,6 +166,10 @@ $font-family-mono: 'Liberation Mono', Consolas, Menlo, Courier, monospace !globa
   overflow: auto;
   padding-left: 10px;
   padding-top: 15px;
+}
+
+.standard-output.darcula {
+  color: #A9B7C6;
 }
 
 .error-output {

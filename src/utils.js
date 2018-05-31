@@ -3,6 +3,14 @@ import convertCase from 'to-case';
 import defaultConfig from './config';
 
 /**
+ * Codemirror themes.
+ * @type {{DARCULA: string, DEFAULT: string}}
+ */
+export const THEMES = {
+  DARCULA: "darcula",
+  DEFAULT: "default"
+};
+/**
  * @param {*} arrayLike
  * @return {Array}
  */
