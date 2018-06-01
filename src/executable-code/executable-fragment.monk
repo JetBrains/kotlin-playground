@@ -19,7 +19,7 @@
             <textarea></textarea>
         </div>
         {% if (openConsole) %}
-          <div class="console-close" :onclick={{ this.onConsoleCloseButtonEnter.bind(this) }}></div>
+          <div class="console-close {{ theme }}" :onclick={{ this.onConsoleCloseButtonEnter.bind(this) }}></div>
         {% endif %}
         <div class="js-code-output-canvas-placeholder">
           {% if (waitingForOutput) %}

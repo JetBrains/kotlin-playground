@@ -155,6 +155,7 @@ $font-family-mono: 'Liberation Mono', Consolas, Menlo, Courier, monospace !globa
   min-height: 50px;
   font-size: 14px;
 }
+
 .output-wrapper.darcula {
   background-color: #2B2B2B;
   border-top: 1px solid grey;
@@ -195,6 +196,7 @@ $font-family-mono: 'Liberation Mono', Consolas, Menlo, Courier, monospace !globa
   vertical-align: top;
   margin-left: 20px;
 }
+
 .console-close {
   position: absolute;
   right: 1px;
@@ -204,10 +206,17 @@ $font-family-mono: 'Liberation Mono', Consolas, Menlo, Courier, monospace !globa
   background: lightgrey url('img/close-console-icon.svg');
 }
 
+.console-close.darcula {
+  background: url('img/close-console-icon.svg');
+}
+
 .console-close:hover {
   background-color: grey;
 }
 
+.console-close.darcula:hover {
+  background-color: red;
+}
 
 .test-fail {
   color: #ff0000;
