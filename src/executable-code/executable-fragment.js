@@ -214,14 +214,13 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
           state.openConsole = true;
           this.update(state);
         },
-        () => this.update({waitingForOutput: false, openConsole: true})
+        () => this.update({waitingForOutput: false})
       )
     } else {
       if (platform === TargetPlatform.CANVAS) this.jsExecutor.reloadIframeScripts(this.state.jsLibs, this.getNodeForMountIframe(platform));
       WebDemoApi.translateKotlinToJs(this.getCode(), this.state.compilerVersion, platform, this.state.args).then(
         state => {
           state.waitingForOutput = false;
-          state.openConsole = true;
           const jsCode = state.jsCode;
           delete state.jsCode;
           try {
@@ -230,7 +229,10 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
               state.output = processErrors(errors);
             } else {
               const codeOutput = this.jsExecutor.executeJsCode(jsCode, this.state.jsLibs, platform, this.getNodeForMountIframe(platform));
-              codeOutput ? state.output = `<span class="standard-output ${this.state.theme}">${codeOutput}</span>` : state.output = "";
+              if (codeOutput) {
+                state.openConsole = true;
+                state.output = `<span class="standard-output ${this.state.theme}">${codeOutput}</span>`
+              } else state.output = "";
             }
           } catch (e) {
             let exceptionOutput = showJsException(e);
@@ -238,7 +240,6 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
             console.error(e);
           }
           state.exception = null;
-          state.openConsole = true;
           this.update(state);
         },
         () => this.update({waitingForOutput: false})
