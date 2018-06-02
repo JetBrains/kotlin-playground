@@ -233,6 +233,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
                 state.openConsole = true;
                 state.output = `<span class="standard-output ${this.state.theme}">${codeOutput}</span>`
               } else state.output = "";
+              if (platform === TargetPlatform.CANVAS) state.openConsole = true;
             }
           } catch (e) {
             let exceptionOutput = showJsException(e);
