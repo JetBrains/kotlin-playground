@@ -7,6 +7,8 @@ import 'codemirror/addon/runmode/colorize';
 import 'codemirror/mode/clike/clike';
 import 'codemirror/mode/groovy/groovy';
 import 'codemirror/mode/xml/xml';
+import 'codemirror/addon/edit/matchbrackets'
+import 'codemirror/addon/edit/closebrackets'
 import 'codemirror/mode/javascript/javascript';
 import 'codemirror/mode/shell/shell';
 import merge from 'deepmerge';
