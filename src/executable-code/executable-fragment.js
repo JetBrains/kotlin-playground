@@ -337,6 +337,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
       mode: 'text/x-kotlin',
       theme: options.theme,
       matchBrackets: true,
+      continueComments: true,
       autoCloseBrackets: true,
       indentUnit: 4,
       viewportMargin: Infinity,
