@@ -145,6 +145,8 @@ Use the following attributes on elements that are converted to editors to adjust
 ### Supported keyboard shortcuts
 
   - Ctrl+Space		   — code completion
+  - Ctrl+F9		       — execute snippet
+  - Ctrl+/		       — comment code
   - Ctrl+Alt+L/Cmd+Alt+L   — format code
   - Shift+Tab		   — decrease indent
 
