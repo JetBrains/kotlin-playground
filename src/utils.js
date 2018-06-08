@@ -115,6 +115,15 @@ export function countLines(string) {
 }
 
 /**
+ * Find and replace whitespaces from either the beginning or the end of the string.
+ * @param string
+ * @returns {string}
+ */
+export function replaceWhiteSpaces(string) {
+  return string.replace(/^\s+|\s+$/g, '');
+}
+
+/**
  * @param {string} selector
  * @param {Function<Node>} callback
  */

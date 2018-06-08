@@ -22,6 +22,7 @@ import {
  */
 
 const CACHE = {};
+const DEFAULT_FILE_NAME = "File.kt";
 
 export default class WebDemoApi {
   /**
@@ -46,10 +47,12 @@ export default class WebDemoApi {
    * @param code            - string
    * @param compilerVersion - string kotlin compiler
    * @param platform        - TargetPlatform
+   * @param args            - command line arguments
+   * @param readOnlyFiles   - read only additional files
    * @returns {*|PromiseLike<T>|Promise<T>}
    */
-  static translateKotlinToJs(code, compilerVersion, platform, args) {
-    return executeCode(API_URLS.COMPILE, code, compilerVersion, platform, args).then(function (data) {
+  static translateKotlinToJs(code, compilerVersion, platform, args, readOnlyFiles) {
+    return executeCode(API_URLS.COMPILE, code, compilerVersion, platform, args, readOnlyFiles).then(function (data) {
       let output = "";
       let errorsAndWarnings = flatten(Object.values(data.errors));
       return {
@@ -68,10 +71,11 @@ export default class WebDemoApi {
    * @param platform        - TargetPlatform
    * @param args            - command line arguments
    * @param theme           - theme of editor
+   * @param readOnlyFiles   - read only additional files
    * @returns {*|PromiseLike<T>|Promise<T>}
    */
-  static executeKotlinCode(code, compilerVersion, platform, args, theme) {
-    return executeCode(API_URLS.COMPILE, code, compilerVersion, platform, args).then(function (data) {
+  static executeKotlinCode(code, compilerVersion, platform, args, theme, readOnlyFiles) {
+    return executeCode(API_URLS.COMPILE, code, compilerVersion, platform, args, readOnlyFiles).then(function (data) {
       let output = "";
       let errorsAndWarnings = flatten(Object.values(data.errors));
       let errors = errorsAndWarnings.filter(error => error.severity === "ERROR");
@@ -107,20 +111,26 @@ export default class WebDemoApi {
    * @param code - string code
    * @param cursor - cursor position in code
    * @param compilerVersion - string kotlin compiler
+   * @param readOnlyFiles   - read only additional files
    * @param platform - kotlin platform {@see TargetPlatform}
    * @param callback
    */
-  static getAutoCompletion(code, cursor, compilerVersion, platform, callback) {
-    const parametres = {"line": cursor.line, "ch": cursor.ch};
-    executeCode(API_URLS.COMPLETE, code, compilerVersion, platform, "", parametres)
+  static getAutoCompletion(code, cursor, compilerVersion, platform, readOnlyFiles, callback) {
+    const parameters = {"line": cursor.line, "ch": cursor.ch};
+    executeCode(API_URLS.COMPLETE, code, compilerVersion, platform, "", readOnlyFiles, parameters)
       .then(data => {
         callback(data);
       })
   }
 }
 
-
-function executeCode(url, code, compilerVersion, targetPlatform, args, options) {
+function executeCode(url, code, compilerVersion, targetPlatform, args, readOnlyFiles, options) {
+  const files = [buildFileObject(code, DEFAULT_FILE_NAME)];
+  if (readOnlyFiles) {
+    readOnlyFiles.forEach((file, index) =>
+      files.push(buildFileObject(file, `ReadOnly${index}.kt`))
+    );
+  }
   const projectJson = JSON.stringify({
     "id": "",
     "name": "",
@@ -128,18 +138,12 @@ function executeCode(url, code, compilerVersion, targetPlatform, args, options) 
     "compilerVersion": compilerVersion,
     "confType": targetPlatform.id,
     "originUrl": null,
-    "files": [
-      {
-        "name": "File.kt",
-        "text": code,
-        "publicId": ""
-      }
-    ],
+    "files": files,
     "readOnlyFileNames": []
   });
 
   const body = new URLSearchParams();
-  body.set('filename', "File.kt");
+  body.set('filename', DEFAULT_FILE_NAME);
   body.set('project', projectJson);
 
   if (options !== undefined) {
@@ -154,4 +158,19 @@ function executeCode(url, code, compilerVersion, targetPlatform, args, options) 
       'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
     }
   }).then(response => response.json())
+}
+
+/**
+ *
+ * Build file object.
+ * @param code - string code
+ * @param fileName - name of file
+ * @returns {{name: string, text: string, publicId: string}} - file object
+ */
+function buildFileObject(code, fileName) {
+  return {
+    "name": fileName,
+    "text": code,
+    "publicId": ""
+  }
 }

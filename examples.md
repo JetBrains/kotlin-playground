@@ -251,42 +251,53 @@ If you want to init Kotlin Playground manually - omit `data-selector` attribute 
 <script src="https://unpkg.com/kotlin-playground@1"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-  KotlinPlayground('.code-blocks-selector');
+  KotlinPlayground('.kotlin-playground');
 });
 </script>
 ```
 
-<div>
+Use attribute `readonly` for adding read only files.
+Put your additional files between `<textarea>` tag with class `readonly`.
 
-```text
-//sampleStart
-fun sum(a: Int, b: Int): Int {
-    return a + b
-}
-//sampleEnd
+Look at example:
 
-fun main(args: Array<String>) {
-    print(sum(-1, 8))
-}
-```
 
+```html
+
+<div class="kotlin-playground" readonly>
+  import cat.Cat
+  
+  fun main(args: Array<String>) {
+  //sampleStart
+      val cat = Cat("Kitty")
+      println(cat.name)  
+  //sampleEnd                 
+  }
+  <textarea class="readonly">
+    package cat
+    class Cat(val name: String) 
+  </textarea>
 </div>
+```
 
 <button onclick="KotlinPlayground('.kotlin-code-2'); this.disabled = true; document.getElementById('kotlin-example').style.display = 'block';">Create</button>
 
-<div id="kotlin-example" class="kotlin-code-2" style="display: none;">
+<div id="kotlin-example" class="kotlin-code-2" style="display: none;" readonly>
 
 ```text
-//sampleStart
-fun sum(a: Int, b: Int): Int {
-    return a + b
-}
-//sampleEnd
+import cat.Cat
 
 fun main(args: Array<String>) {
-    print(sum(-1, 8))
+//sampleStart
+    val cat = Cat("Kitty")
+    println(cat.name)  
+//sampleEnd                 
 }
 ```
+  <textarea class="readonly" name="file.kt">
+    package cat
+    class Cat(val name: String) 
+  </textarea>
 
 </div>
 

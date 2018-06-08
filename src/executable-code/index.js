@@ -16,13 +16,14 @@ import 'codemirror/mode/shell/shell';
 import merge from 'deepmerge';
 import Set from 'es6-set/polyfill';
 import defaultConfig, {API_URLS} from '../config';
-import {arrayFrom, getConfigFromElement, insertAfter, THEMES} from '../utils';
+import {arrayFrom, getConfigFromElement, insertAfter, replaceWhiteSpaces, THEMES} from '../utils';
 import WebDemoApi from "../webdemo-api";
 import TargetPlatform from '../target-platform'
 import ExecutableFragment from './executable-fragment';
 import '../styles.scss';
 
 const INITED_ATTRIBUTE_NAME = 'data-kotlin-playground-initialized';
+const READ_ONLY_ATTRIBUTE = 'readonly';
 
 export default class ExecutableCode {
   /**
@@ -35,11 +36,12 @@ export default class ExecutableCode {
     const highlightOnly = targetNode.hasAttribute('data-highlight-only');
     const editorTheme = targetNode.hasAttribute('theme') ? targetNode.getAttribute('theme') : THEMES.DEFAULT;
     const args = targetNode.hasAttribute('args') ? targetNode.getAttribute('args') : "";
+    const readOnlyFiles = targetNode.hasAttribute(READ_ONLY_ATTRIBUTE) ? this.getReadOnlyFiles(targetNode) : null;
     let targetPlatform = targetNode.getAttribute('data-target-platform');
     let jsLibs = targetNode.getAttribute('data-js-libs');
     let isFoldedButton = targetNode.getAttribute('folded-button') !== "false";
     targetPlatform = targetPlatform !== null ? targetPlatform : "java";
-    const code = targetNode.textContent.replace(/^\s+|\s+$/g, '');
+    const code = replaceWhiteSpaces(targetNode.textContent);
     const cfg = merge(defaultConfig, config);
 
     /*
@@ -68,6 +70,7 @@ export default class ExecutableCode {
       code: code,
       theme: editorTheme,
       args: args,
+      readOnlyFiles: readOnlyFiles,
       compilerVersion: cfg.compilerVersion,
       highlightOnly: highlightOnly,
       targetPlatform: TargetPlatform.getById(targetPlatform),
@@ -82,6 +85,20 @@ export default class ExecutableCode {
     this.view = view;
 
     targetNode.KotlinPlayground = this;
+  }
+
+  /**
+   * Get all nodes values by {READ_ONLY_ATTRIBUTE_NAME} selector.
+   * Node should be `textarea`.
+   * @param node - {NodeElement}
+   * @returns {Array} - list of node's text content
+   */
+  getReadOnlyFiles(node){
+   return arrayFrom(node.getElementsByClassName(READ_ONLY_ATTRIBUTE))
+      .reduce((prev, acc) => {
+        acc.parentNode.removeChild(acc);
+        return [...prev, replaceWhiteSpaces(acc.value)];
+      }, [])
   }
 
   destroy() {
@@ -137,7 +154,7 @@ export default class ExecutableCode {
         let compilerVersion = null;
         let listOfVersions = versions.map(version => version.version);
 
-        if (listOfVersions.includes(config.version)){
+        if (listOfVersions.includes(config.version)) {
           compilerVersion = config.version;
         } else {
           versions.forEach((compilerConfig) => {
