@@ -14,7 +14,7 @@ export function processJVMOutput(output, theme) {
   let processedOutput = escapeHtml(output);
   return processedOutput.replace(`${ANGLE_BRACKETS_LEFT_HTML}outStream${ANGLE_BRACKETS_RIGHT_HTML}`, `<span class="standard-output ${theme}">`)
     .replace(`${ANGLE_BRACKETS_LEFT_HTML}/outStream${ANGLE_BRACKETS_RIGHT_HTML}`, "</span>")
-    .replace(`${ANGLE_BRACKETS_LEFT_HTML}errStream${ANGLE_BRACKETS_RIGHT_HTML}`, "<span class=\"error-output\">")
+    .replace(`${ANGLE_BRACKETS_LEFT_HTML}errStream${ANGLE_BRACKETS_RIGHT_HTML}`, `<span class="error-output ${theme}">`)
     .replace(`${ANGLE_BRACKETS_LEFT_HTML}/errStream${ANGLE_BRACKETS_RIGHT_HTML}`, "</span>");
 }
 
@@ -24,7 +24,7 @@ export function processJUnitResults(data) {
   if (isEmptyObject(data)) return NO_TEST_FOUND;
   for (let testClass in data) {
     let listOfResults = arrayFrom(data[testClass]);
-     result = result + listOfResults.reduce((previousTest, currentTest) => {
+    result = result + listOfResults.reduce((previousTest, currentTest) => {
       totalTime = totalTime + (currentTest.executionTime / 1000);
       switch (currentTest.status) {
         case "FAIL":
@@ -40,10 +40,12 @@ export function processJUnitResults(data) {
   return testTime + result;
 }
 
-export function processErrors(errors) {
+export function processErrors(errors, theme) {
   return errors
-    .reduce((acc,currentValue) => {return acc + `<span class="console-icon attention"></span><div class="test-fail">${convertToHtmlTag(currentValue.message)}</div>`}
-    , "");
+    .reduce((acc, currentValue) => {
+        return acc + `<span class="console-icon attention"></span><div class="test-fail ${theme}">${convertToHtmlTag(currentValue.message)}</div>`
+      }
+      , "");
 }
 
 /**

@@ -76,7 +76,7 @@ export default class WebDemoApi {
       let errorsAndWarnings = flatten(Object.values(data.errors));
       let errors = errorsAndWarnings.filter(error => error.severity === "ERROR");
       if (errors.length > 0) {
-        output = processErrors(errors);
+        output = processErrors(errors, theme);
       } else {
         switch (platform) {
           case TargetPlatform.JAVA:
