@@ -4,6 +4,14 @@
 
 $font-family-mono: 'Liberation Mono', Consolas, Menlo, Courier, monospace !global;
 
+/**
+ Darcula theme variables
+ */
+$darcula-background-color: #2B2B2B;
+$darcula-text-color: #A9B7C6;
+$darcula-output-color: #FF6A67;
+$darcula-read-only-background-color: #505050;
+
 .executable-fragment-wrapper {
   margin-bottom: 20px;
   position: relative;
@@ -14,7 +22,7 @@ $font-family-mono: 'Liberation Mono', Consolas, Menlo, Courier, monospace !globa
 }
 
 .executable-fragment.darcula {
-  background-color: #2B2B2B;
+  background-color: $darcula-background-color;
 }
 
 .CodeMirror {
@@ -61,7 +69,7 @@ $font-family-mono: 'Liberation Mono', Consolas, Menlo, Courier, monospace !globa
 }
 
 .CodeMirror-linebackground.unmodifiable-line-dark {
-  background-color: #505050;
+  background-color: $darcula-read-only-background-color;
 }
 
 .markPlaceholder {
@@ -157,9 +165,9 @@ $font-family-mono: 'Liberation Mono', Consolas, Menlo, Courier, monospace !globa
 }
 
 .output-wrapper.darcula {
-  background-color: #2B2B2B;
+  background-color: $darcula-background-color;
   border-top: 1px solid grey;
-  color: #A9B7C6;
+  color: $darcula-text-color;
 }
 
 .code-output {
@@ -171,19 +179,19 @@ $font-family-mono: 'Liberation Mono', Consolas, Menlo, Courier, monospace !globa
 }
 
 .standard-output.darcula {
-  color: #A9B7C6;
+  color: $darcula-text-color;
 }
 
 .error-output {
   white-space: pre-wrap;
-  color: #ff0000;
+  color: red;
   min-height: 1.4em;
   margin: 0;
   vertical-align: top;
 }
 
 .error-output.darcula {
-  color: #ff6a67;
+  color: $darcula-output-color;
 }
 
 .standard-output {
@@ -224,14 +232,14 @@ $font-family-mono: 'Liberation Mono', Consolas, Menlo, Courier, monospace !globa
 }
 
 .test-fail {
-  color: #ff0000;
+  color: red;
   min-height: 1.4em;
   margin-left: 20px;
   vertical-align: top;
 }
 
 .test-fail.darcula {
-  color: #ff6a67;
+  color: $darcula-output-color;
 }
 
 .console-icon {
