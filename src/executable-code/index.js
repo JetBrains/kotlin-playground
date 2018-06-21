@@ -90,14 +90,14 @@ export default class ExecutableCode {
   /**
    * Get all nodes values by {READ_ONLY_ATTRIBUTE_NAME} selector.
    * Node should be `textarea`.
-   * @param node - {NodeElement}
+   * @param targetNode - {NodeElement}
    * @returns {Array} - list of node's text content
    */
-  getReadOnlyFiles(node){
-   return arrayFrom(node.getElementsByClassName(READ_ONLY_ATTRIBUTE))
-      .reduce((prev, acc) => {
-        acc.parentNode.removeChild(acc);
-        return [...prev, replaceWhiteSpaces(acc.value)];
+  getReadOnlyFiles(targetNode){
+   return arrayFrom(targetNode.getElementsByClassName(READ_ONLY_ATTRIBUTE))
+      .reduce((acc, node) => {
+        node.parentNode.removeChild(node);
+        return [...acc, replaceWhiteSpaces(node.textContent)];
       }, [])
   }
 
