@@ -34,6 +34,7 @@ export default class ExecutableCode {
     const targetNode = typeof target === 'string' ? document.querySelector(target) : target;
     const targetNodeStyle = targetNode.getAttribute('style');
     const highlightOnly = targetNode.hasAttribute('data-highlight-only');
+    const noneMarkers = targetNode.hasAttribute('none-markers');
     const editorTheme = targetNode.hasAttribute('theme') ? targetNode.getAttribute('theme') : THEMES.DEFAULT;
     const args = targetNode.hasAttribute('args') ? targetNode.getAttribute('args') : "";
     const readOnlyFiles = targetNode.hasAttribute(READ_ONLY_ATTRIBUTE) ? this.getReadOnlyFiles(targetNode) : null;
@@ -72,6 +73,7 @@ export default class ExecutableCode {
       args: args,
       readOnlyFiles: readOnlyFiles,
       compilerVersion: cfg.compilerVersion,
+      noneMarkers: noneMarkers,
       highlightOnly: highlightOnly,
       targetPlatform: TargetPlatform.getById(targetPlatform),
       jsLibs: additionalLibs,

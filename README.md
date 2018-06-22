@@ -115,7 +115,8 @@ Use the following attributes on elements that are converted to editors to adjust
   </code>
   ```
   
-  Or, you can make only a part of code read-only by placing it between `//sampleStart` and `//sampleEnd` markers:
+  Or, you can make only a part of code read-only by placing it between `//sampleStart` and `//sampleEnd` markers.
+  If you don't need this just use attribute `none-markers`.
 
   ```html
   <code>

@@ -65,7 +65,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
       const codeLen = code.length;
       const startIndex = code.indexOf(SAMPLE_START);
       const endIndex = code.indexOf(SAMPLE_END);
-      const hasMarkers = startIndex > -1 && endIndex > -1;
+      const hasMarkers = !state.noneMarkers && (startIndex > -1 && endIndex > -1);
 
       this.prefix = '';
       this.suffix = '';
