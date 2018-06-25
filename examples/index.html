@@ -199,34 +199,44 @@ The function any gets a predicate as an argument and returns true if there is at
 <pre><code class="hljs language-html"><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"https://unpkg.com/kotlin-playground@1"</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
 <span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span><span class="javascript">
 <span class="hljs-built_in">document</span>.addEventListener(<span class="hljs-string">'DOMContentLoaded'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
-  KotlinPlayground(<span class="hljs-string">'.code-blocks-selector'</span>);
+  KotlinPlayground(<span class="hljs-string">'.kotlin-playground'</span>);
 });
 </span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
 </code></pre>
-<div>
-<pre><code class="hljs language-text">//sampleStart
-fun sum(a: Int, b: Int): Int {
-    return a + b
-}
-//sampleEnd
-
-fun main(args: Array&lt;String&gt;) {
-    print(sum(-1, 8))
-}
+<p>Add additional read only files:
+Put your additional files between <code>&lt;textarea&gt;</code> tag with class <code>readonly</code>.</p>
+<p>Look at example:</p>
+<pre><code class="hljs language-html">
+<span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"kotlin-playground"</span>&gt;</span>
+  import cat.Cat
+  
+  fun main(args: Array<span class="hljs-tag">&lt;<span class="hljs-name">String</span>&gt;</span>) {
+  //sampleStart
+      val cat = Cat("Kitty")
+      println(cat.name)  
+  //sampleEnd                 
+  }
+  <span class="hljs-tag">&lt;<span class="hljs-name">textarea</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"readonly"</span>&gt;</span>
+    package cat
+    class Cat(val name: String) 
+  <span class="hljs-tag">&lt;/<span class="hljs-name">textarea</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
 </code></pre>
-</div>
 <p><button onclick="KotlinPlayground('.kotlin-code-2'); this.disabled = true; document.getElementById('kotlin-example').style.display = 'block';">Create</button></p>
 <div id="kotlin-example" class="kotlin-code-2" style="display: none;">
-<pre><code class="hljs language-text">//sampleStart
-fun sum(a: Int, b: Int): Int {
-    return a + b
-}
-//sampleEnd
+<pre><code class="hljs language-text">import cat.Cat
 
 fun main(args: Array&lt;String&gt;) {
-    print(sum(-1, 8))
+//sampleStart
+    val cat = Cat(&quot;Kitty&quot;)
+    println(cat.name)  
+//sampleEnd                 
 }
 </code></pre>
+  <textarea class="readonly" name="file.kt">
+    package cat
+    class Cat(val name: String) 
+  </textarea>
 </div>
 </body>
 </html>
