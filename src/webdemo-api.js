@@ -125,12 +125,8 @@ export default class WebDemoApi {
 }
 
 function executeCode(url, code, compilerVersion, targetPlatform, args, readOnlyFiles, options) {
-  const files = [buildFileObject(code, DEFAULT_FILE_NAME)];
-  if (readOnlyFiles) {
-    readOnlyFiles.forEach((file, index) =>
-      files.push(buildFileObject(file, `ReadOnly${index}.kt`))
-    );
-  }
+  const files = [buildFileObject(code, DEFAULT_FILE_NAME)]
+    .concat(readOnlyFiles.map((file, index) => buildFileObject(file, `ReadOnly${index}.kt`)));
   const projectJson = JSON.stringify({
     "id": "",
     "name": "",

@@ -255,8 +255,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 ```
-
-Use attribute `readonly` for adding read only files.
+Add additional read only files:
 Put your additional files between `<textarea>` tag with class `readonly`.
 
 Look at example:
@@ -264,7 +263,7 @@ Look at example:
 
 ```html
 
-<div class="kotlin-playground" readonly>
+<div class="kotlin-playground">
   import cat.Cat
   
   fun main(args: Array<String>) {
@@ -282,7 +281,7 @@ Look at example:
 
 <button onclick="KotlinPlayground('.kotlin-code-2'); this.disabled = true; document.getElementById('kotlin-example').style.display = 'block';">Create</button>
 
-<div id="kotlin-example" class="kotlin-code-2" style="display: none;" readonly>
+<div id="kotlin-example" class="kotlin-code-2" style="display: none;">
 
 ```text
 import cat.Cat

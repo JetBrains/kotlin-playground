@@ -37,7 +37,7 @@ export default class ExecutableCode {
     const noneMarkers = targetNode.hasAttribute('none-markers');
     const editorTheme = targetNode.hasAttribute('theme') ? targetNode.getAttribute('theme') : THEMES.DEFAULT;
     const args = targetNode.hasAttribute('args') ? targetNode.getAttribute('args') : "";
-    const readOnlyFiles = targetNode.hasAttribute(READ_ONLY_ATTRIBUTE) ? this.getReadOnlyFiles(targetNode) : null;
+    const readOnlyFiles = this.getReadOnlyFiles(targetNode);
     let targetPlatform = targetNode.getAttribute('data-target-platform');
     let jsLibs = targetNode.getAttribute('data-js-libs');
     let isFoldedButton = targetNode.getAttribute('folded-button') !== "false";
