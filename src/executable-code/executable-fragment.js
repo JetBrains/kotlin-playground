@@ -345,7 +345,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
       matchBrackets: true,
       continueComments: true,
       autoCloseBrackets: true,
-      indentUnit: 4,
+      indentUnit: options.indent,
       viewportMargin: Infinity,
       foldGutter: true,
       gutters: [

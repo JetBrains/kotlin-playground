@@ -34,6 +34,7 @@ export default class ExecutableCode {
     const targetNode = typeof target === 'string' ? document.querySelector(target) : target;
     const targetNodeStyle = targetNode.getAttribute('style');
     const highlightOnly = targetNode.hasAttribute('data-highlight-only');
+    const indent = targetNode.hasAttribute('indent') ? parseInt(targetNode.getAttribute('indent')) : 4;
     const noneMarkers = targetNode.hasAttribute('none-markers');
     const editorTheme = targetNode.hasAttribute('theme') ? targetNode.getAttribute('theme') : THEMES.DEFAULT;
     const args = targetNode.hasAttribute('args') ? targetNode.getAttribute('args') : "";
@@ -71,6 +72,7 @@ export default class ExecutableCode {
     view.update({
       code: code,
       theme: editorTheme,
+      indent: indent,
       args: args,
       readOnlyFiles: readOnlyFiles,
       compilerVersion: cfg.compilerVersion,
