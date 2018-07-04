@@ -141,9 +141,10 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
         }
       })
     }
-
-    for (let i = 0; i < this.codemirror.lineCount(); i++) {
-      this.codemirror.indentLine(i)
+    if (this.state.autoIndent) {
+      for (let i = 0; i < this.codemirror.lineCount(); i++) {
+        this.codemirror.indentLine(i)
+      }
     }
   }
 

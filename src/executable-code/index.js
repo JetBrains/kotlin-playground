@@ -41,6 +41,7 @@ export default class ExecutableCode {
     let targetPlatform = targetNode.getAttribute('data-target-platform');
     let jsLibs = targetNode.getAttribute('data-js-libs');
     let isFoldedButton = targetNode.getAttribute('folded-button') !== "false";
+    const autoIndent = targetNode.getAttribute('autoIndent') !== "false";
     targetPlatform = targetPlatform !== null ? targetPlatform : "java";
     const code = replaceWhiteSpaces(targetNode.textContent);
     const cfg = merge(defaultConfig, config);
@@ -74,6 +75,7 @@ export default class ExecutableCode {
       readOnlyFiles: readOnlyFiles,
       compilerVersion: cfg.compilerVersion,
       noneMarkers: noneMarkers,
+      autoIndent: autoIndent,
       highlightOnly: highlightOnly,
       targetPlatform: TargetPlatform.getById(targetPlatform),
       jsLibs: additionalLibs,

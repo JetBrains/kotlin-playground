@@ -142,6 +142,8 @@ Use the following attributes on elements that are converted to editors to adjust
     */
    </code>
   ```
+  
+- `autoIndent="true|false"`: Whether to use the context-sensitive indentation. Defaults to true. 
 
 ### Supported keyboard shortcuts
 
