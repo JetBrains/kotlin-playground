@@ -23,7 +23,21 @@ import ExecutableFragment from './executable-fragment';
 import '../styles.scss';
 
 const INITED_ATTRIBUTE_NAME = 'data-kotlin-playground-initialized';
-const READ_ONLY_ATTRIBUTE = 'readonly';
+const DEFAULT_INDENT = 4;
+
+const ATTRIBUTES = {
+  READ_ONLY: 'readonly',
+  INDENT: 'indent',
+  HIGHLIGHT_ONLY: 'data-highlight-only',
+  STYLE: 'style',
+  NONE_MARKERS: 'none-markers',
+  THEME: 'theme',
+  PLATFORM: 'data-target-platform',
+  JS_LIBS: 'data-js-libs',
+  FOLDED_BUTTON: 'folded-button',
+  ARGUMENTS: 'args',
+  AUTO_INDENT: 'autoIndent'
+};
 
 export default class ExecutableCode {
   /**
@@ -32,18 +46,18 @@ export default class ExecutableCode {
    */
   constructor(target, config = {}) {
     const targetNode = typeof target === 'string' ? document.querySelector(target) : target;
-    const targetNodeStyle = targetNode.getAttribute('style');
-    const highlightOnly = targetNode.hasAttribute('data-highlight-only');
-    const indent = targetNode.hasAttribute('indent') ? parseInt(targetNode.getAttribute('indent')) : 4;
-    const noneMarkers = targetNode.hasAttribute('none-markers');
-    const editorTheme = targetNode.hasAttribute('theme') ? targetNode.getAttribute('theme') : THEMES.DEFAULT;
-    const args = targetNode.hasAttribute('args') ? targetNode.getAttribute('args') : "";
+    const highlightOnly = targetNode.hasAttribute(ATTRIBUTES.HIGHLIGHT_ONLY);
+    const noneMarkers = targetNode.hasAttribute(ATTRIBUTES.NONE_MARKERS);
+    const indent = targetNode.hasAttribute(ATTRIBUTES.INDENT) ? parseInt(targetNode.getAttribute(ATTRIBUTES.INDENT)) : DEFAULT_INDENT;
+    const editorTheme = targetNode.hasAttribute(ATTRIBUTES.THEME) ? targetNode.getAttribute(ATTRIBUTES.THEME) : THEMES.DEFAULT;
+    const args = targetNode.hasAttribute(ATTRIBUTES.ARGUMENTS) ? targetNode.getAttribute(ATTRIBUTES.ARGUMENTS) : "";
     const readOnlyFiles = this.getReadOnlyFiles(targetNode);
-    let targetPlatform = targetNode.getAttribute('data-target-platform');
-    let jsLibs = targetNode.getAttribute('data-js-libs');
-    let isFoldedButton = targetNode.getAttribute('folded-button') !== "false";
-    const autoIndent = targetNode.getAttribute('autoIndent') !== "false";
-    targetPlatform = targetPlatform !== null ? targetPlatform : "java";
+    let targetPlatform = targetNode.getAttribute(ATTRIBUTES.PLATFORM);
+    const targetNodeStyle = targetNode.getAttribute(ATTRIBUTES.STYLE);
+    let jsLibs = targetNode.getAttribute(ATTRIBUTES.JS_LIBS);
+    let isFoldedButton = targetNode.getAttribute(ATTRIBUTES.FOLDED_BUTTON) !== "false";
+    const autoIndent = targetNode.getAttribute(ATTRIBUTES.AUTO_INDENT) !== "false";
+    targetPlatform = targetPlatform !== null ? targetPlatform : TargetPlatform.JAVA.id;
     const code = replaceWhiteSpaces(targetNode.textContent);
     const cfg = merge(defaultConfig, config);
 
@@ -54,7 +68,7 @@ export default class ExecutableCode {
     let additionalLibs;
     targetNode.style.display = 'none';
     targetNode.setAttribute(INITED_ATTRIBUTE_NAME, 'true');
-    if (targetPlatform === "js" || targetPlatform === "canvas") {
+    if (targetPlatform === TargetPlatform.JS.id || targetPlatform === TargetPlatform.CANVAS.id) {
       additionalLibs = new Set(API_URLS.JQUERY.split());
       if (jsLibs !== null) {
         let checkUrl = new RegExp("https?://.+\.js$");
@@ -100,7 +114,7 @@ export default class ExecutableCode {
    * @returns {Array} - list of node's text content
    */
   getReadOnlyFiles(targetNode){
-   return arrayFrom(targetNode.getElementsByClassName(READ_ONLY_ATTRIBUTE))
+   return arrayFrom(targetNode.getElementsByClassName(ATTRIBUTES.READ_ONLY))
       .reduce((acc, node) => {
         node.parentNode.removeChild(node);
         return [...acc, replaceWhiteSpaces(node.textContent)];
@@ -180,7 +194,7 @@ export default class ExecutableCode {
         // Skip empty and already initialized nodes
         if (
           node.textContent.trim() === '' ||
-          node.getAttribute('data-kotlin-playground-initialized') === 'true'
+          node.getAttribute(INITED_ATTRIBUTE_NAME) === 'true'
         ) {
           return;
         }

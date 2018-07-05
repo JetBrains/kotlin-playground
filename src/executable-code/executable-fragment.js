@@ -16,8 +16,17 @@ const SAMPLE_START = '//sampleStart';
 const SAMPLE_END = '//sampleEnd';
 const MARK_PLACEHOLDER_OPEN = "[mark]";
 const MARK_PLACEHOLDER_CLOSE = "[/mark]";
-const CANVAS_PLACEHOLDER_OUTPUT_CLASS = ".js-code-output-canvas-placeholder";
 const F9_KEY = 120;
+
+const CLASS_NAME_SELECTORS = {
+  CANVAS_PLACEHOLDER_OUTPUT: ".js-code-output-canvas-placeholder",
+  FOLD_BUTTON: ".fold-button",
+  UNMODIFIABLE_LINE_DARK: "unmodifiable-line-dark",
+  UNMODIFIABLE_LINE: "unmodifiable-line",
+  MARK_PLACEHOLDER: "markPlaceholder",
+  MARK_PLACEHOLDER_START: "markPlaceholder-start",
+  MARK_PLACEHOLDER_END: "markPlaceholder-end"
+};
 
 export default class ExecutableFragment extends ExecutableCodeTemplate {
   static render(element, options = {}) {
@@ -36,7 +45,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
     };
     instance.codemirror = new CodeMirror();
 
-    instance.on('click', '.fold-button', (event) => {
+    instance.on('click', CLASS_NAME_SELECTORS.FOLD_BUTTON, (event) => {
       instance.update({folded: !instance.state.folded});
     });
 
@@ -130,7 +139,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
           inclusiveRight: true
         }
       );
-      let readOnlyLineClass = this.state.theme === THEMES.DARCULA ? "unmodifiable-line-dark" : "unmodifiable-line";
+      let readOnlyLineClass = this.state.theme === THEMES.DARCULA ? CLASS_NAME_SELECTORS.UNMODIFIABLE_LINE_DARK : CLASS_NAME_SELECTORS.UNMODIFIABLE_LINE;
       this.codemirror.operation(() => {
         for (let i = 0; i < countLines(this.prefix); i++) {
           this.codemirror.addLineClass(i, "background", readOnlyLineClass)
@@ -156,9 +165,9 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
 
     taskRanges.forEach(task => {
       this.codemirror.markText({line: task.line, ch: task.ch}, {line: task.line, ch: task.ch + task.length}, {
-        className: "markPlaceholder",
-        startStyle: "markPlaceholder-start",
-        endStyle: "markPlaceholder-end",
+        className: CLASS_NAME_SELECTORS.MARK_PLACEHOLDER,
+        startStyle: CLASS_NAME_SELECTORS.MARK_PLACEHOLDER_START,
+        endStyle: CLASS_NAME_SELECTORS.MARK_PLACEHOLDER_END,
         handleMouseEvents: true
       });
     });
@@ -262,7 +271,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
   getNodeForMountIframe(platform) {
     return platform === TargetPlatform.JS
       ? document.body
-      : this.nodes[0].querySelector(CANVAS_PLACEHOLDER_OUTPUT_CLASS);
+      : this.nodes[0].querySelector(CLASS_NAME_SELECTORS.CANVAS_PLACEHOLDER_OUTPUT);
   }
 
   getCode() {
@@ -428,7 +437,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
       let position = codemirror.coordsChar({left: event.pageX, top: event.pageY});
       if (position.line !== 0 || position.ch !== 0) {
         let markers = codemirror.findMarksAt(position);
-        let todoMarker = markers.find(marker => marker.className === "markPlaceholder");
+        let todoMarker = markers.find(marker => marker.className === CLASS_NAME_SELECTORS.MARK_PLACEHOLDER);
         if (todoMarker != null) {
           let markerPosition = todoMarker.find();
           codemirror.setSelection(markerPosition.from, markerPosition.to);
