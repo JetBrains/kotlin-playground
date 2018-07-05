@@ -21,6 +21,10 @@ $darcula-read-only-background-color: #505050;
   border: 1px solid #eee;
 }
 
+.hidden-dependency {
+  display: none;
+}
+
 .executable-fragment.darcula {
   background-color: $darcula-background-color;
 }
