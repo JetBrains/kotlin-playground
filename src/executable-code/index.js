@@ -26,7 +26,7 @@ const INITED_ATTRIBUTE_NAME = 'data-kotlin-playground-initialized';
 const DEFAULT_INDENT = 4;
 
 const ATTRIBUTES = {
-  READ_ONLY: 'readonly',
+  HIDDEN_DEPENDENCY: 'hidden-dependency',
   INDENT: 'indent',
   HIGHLIGHT_ONLY: 'data-highlight-only',
   STYLE: 'style',
@@ -51,7 +51,7 @@ export default class ExecutableCode {
     const indent = targetNode.hasAttribute(ATTRIBUTES.INDENT) ? parseInt(targetNode.getAttribute(ATTRIBUTES.INDENT)) : DEFAULT_INDENT;
     const editorTheme = targetNode.hasAttribute(ATTRIBUTES.THEME) ? targetNode.getAttribute(ATTRIBUTES.THEME) : THEMES.DEFAULT;
     const args = targetNode.hasAttribute(ATTRIBUTES.ARGUMENTS) ? targetNode.getAttribute(ATTRIBUTES.ARGUMENTS) : "";
-    const readOnlyFiles = this.getReadOnlyFiles(targetNode);
+    const hiddenDependencies = this.getHiddenDependencies(targetNode);
     let targetPlatform = targetNode.getAttribute(ATTRIBUTES.PLATFORM);
     const targetNodeStyle = targetNode.getAttribute(ATTRIBUTES.STYLE);
     let jsLibs = targetNode.getAttribute(ATTRIBUTES.JS_LIBS);
@@ -88,7 +88,7 @@ export default class ExecutableCode {
       theme: editorTheme,
       indent: indent,
       args: args,
-      readOnlyFiles: readOnlyFiles,
+      hiddenDependencies: hiddenDependencies,
       compilerVersion: cfg.compilerVersion,
       noneMarkers: noneMarkers,
       autoIndent: autoIndent,
@@ -108,13 +108,13 @@ export default class ExecutableCode {
   }
 
   /**
-   * Get all nodes values by {READ_ONLY_ATTRIBUTE_NAME} selector.
+   * Get all nodes values by {ATTRIBUTES.HIDDEN_DEPENDENCY} selector.
    * Node should be `textarea`.
    * @param targetNode - {NodeElement}
    * @returns {Array} - list of node's text content
    */
-  getReadOnlyFiles(targetNode){
-   return arrayFrom(targetNode.getElementsByClassName(ATTRIBUTES.READ_ONLY))
+  getHiddenDependencies(targetNode){
+   return arrayFrom(targetNode.getElementsByClassName(ATTRIBUTES.HIDDEN_DEPENDENCY))
       .reduce((acc, node) => {
         node.parentNode.removeChild(node);
         return [...acc, replaceWhiteSpaces(node.textContent)];

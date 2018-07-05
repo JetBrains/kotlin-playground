@@ -48,11 +48,11 @@ export default class WebDemoApi {
    * @param compilerVersion - string kotlin compiler
    * @param platform        - TargetPlatform
    * @param args            - command line arguments
-   * @param readOnlyFiles   - read only additional files
+   * @param hiddenDependencies   - read only additional files
    * @returns {*|PromiseLike<T>|Promise<T>}
    */
-  static translateKotlinToJs(code, compilerVersion, platform, args, readOnlyFiles) {
-    return executeCode(API_URLS.COMPILE, code, compilerVersion, platform, args, readOnlyFiles).then(function (data) {
+  static translateKotlinToJs(code, compilerVersion, platform, args, hiddenDependencies) {
+    return executeCode(API_URLS.COMPILE, code, compilerVersion, platform, args, hiddenDependencies).then(function (data) {
       let output = "";
       let errorsAndWarnings = flatten(Object.values(data.errors));
       return {
@@ -71,11 +71,11 @@ export default class WebDemoApi {
    * @param platform        - TargetPlatform
    * @param args            - command line arguments
    * @param theme           - theme of editor
-   * @param readOnlyFiles   - read only additional files
+   * @param hiddenDependencies   - read only additional files
    * @returns {*|PromiseLike<T>|Promise<T>}
    */
-  static executeKotlinCode(code, compilerVersion, platform, args, theme, readOnlyFiles) {
-    return executeCode(API_URLS.COMPILE, code, compilerVersion, platform, args, readOnlyFiles).then(function (data) {
+  static executeKotlinCode(code, compilerVersion, platform, args, theme, hiddenDependencies) {
+    return executeCode(API_URLS.COMPILE, code, compilerVersion, platform, args, hiddenDependencies).then(function (data) {
       let output = "";
       let errorsAndWarnings = flatten(Object.values(data.errors));
       let errors = errorsAndWarnings.filter(error => error.severity === "ERROR");
@@ -111,22 +111,22 @@ export default class WebDemoApi {
    * @param code - string code
    * @param cursor - cursor position in code
    * @param compilerVersion - string kotlin compiler
-   * @param readOnlyFiles   - read only additional files
+   * @param hiddenDependencies   - read only additional files
    * @param platform - kotlin platform {@see TargetPlatform}
    * @param callback
    */
-  static getAutoCompletion(code, cursor, compilerVersion, platform, readOnlyFiles, callback) {
+  static getAutoCompletion(code, cursor, compilerVersion, platform, hiddenDependencies, callback) {
     const parameters = {"line": cursor.line, "ch": cursor.ch};
-    executeCode(API_URLS.COMPLETE, code, compilerVersion, platform, "", readOnlyFiles, parameters)
+    executeCode(API_URLS.COMPLETE, code, compilerVersion, platform, "", hiddenDependencies, parameters)
       .then(data => {
         callback(data);
       })
   }
 }
 
-function executeCode(url, code, compilerVersion, targetPlatform, args, readOnlyFiles, options) {
+function executeCode(url, code, compilerVersion, targetPlatform, args, hiddenDependencies, options) {
   const files = [buildFileObject(code, DEFAULT_FILE_NAME)]
-    .concat(readOnlyFiles.map((file, index) => buildFileObject(file, `ReadOnly${index}.kt`)));
+    .concat(hiddenDependencies.map((file, index) => buildFileObject(file, `hiddenDependency${index}.kt`)));
   const projectJson = JSON.stringify({
     "id": "",
     "name": "",

@@ -255,8 +255,8 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 ```
-Add additional read only files:
-Put your additional files between `<textarea>` tag with class `readonly`.
+Add additional hidden files:
+Put your files between `<textarea>` tag with class `hidden-dependency`.
 
 Look at example:
 
@@ -272,7 +272,7 @@ Look at example:
       println(cat.name)  
   //sampleEnd                 
   }
-  <textarea class="readonly">
+  <textarea class="hidden-dependency">
     package cat
     class Cat(val name: String) 
   </textarea>
@@ -293,7 +293,7 @@ fun main(args: Array<String>) {
 //sampleEnd                 
 }
 ```
-  <textarea class="readonly" name="file.kt">
+  <textarea class="hidden-dependency">
     package cat
     class Cat(val name: String) 
   </textarea>

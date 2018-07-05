@@ -223,7 +223,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
         this.state.compilerVersion,
         platform, this.state.args,
         this.state.theme,
-        this.state.readOnlyFiles).then(
+        this.state.hiddenDependencies).then(
         state => {
           state.waitingForOutput = false;
           state.openConsole = true;
@@ -233,7 +233,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
       )
     } else {
       if (platform === TargetPlatform.CANVAS) this.jsExecutor.reloadIframeScripts(this.state.jsLibs, this.getNodeForMountIframe(platform));
-      WebDemoApi.translateKotlinToJs(this.getCode(), this.state.compilerVersion, platform, this.state.args, this.state.readOnlyFiles).then(
+      WebDemoApi.translateKotlinToJs(this.getCode(), this.state.compilerVersion, platform, this.state.args, this.state.hiddenDependencies).then(
         state => {
           state.waitingForOutput = false;
           const jsCode = state.jsCode;
@@ -383,7 +383,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
         cur,
         this.state.compilerVersion,
         this.state.targetPlatform,
-        this.state.readOnlyFiles,
+        this.state.hiddenDependencies,
         processingCompletionsList
       );
 

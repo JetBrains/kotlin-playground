@@ -117,18 +117,22 @@ Use the following attributes on elements that are converted to editors to adjust
   
   Or, you can make only a part of code read-only by placing it between `//sampleStart` and `//sampleEnd` markers.
   If you don't need this just use attribute `none-markers`.
+  For adding hidden files: put files between `<textarea>` tag with class `hidden-dependency`.
 
   ```html
   <code>
-  //sampleStart
-  fun sum(a: Int, b: Int): Int {
-    return a + b
-  }
-  //sampleEnd
+  import cat.Cat
   
   fun main(args: Array<String>) {
-    print(sum(-1, 8))
+  //sampleStart
+      val cat = Cat("Kitty")
+      println(cat.name)  
+  //sampleEnd                 
   }
+  <textarea class="hidden-dependency">
+    package cat
+    class Cat(val name: String) 
+  </textarea>
   </code>
   ```
   Also if you want to hide code snippet just set the attribute `folded-button` to `false` value.
