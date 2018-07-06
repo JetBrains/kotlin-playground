@@ -36,7 +36,7 @@ const ATTRIBUTES = {
   JS_LIBS: 'data-js-libs',
   FOLDED_BUTTON: 'folded-button',
   ARGUMENTS: 'args',
-  AUTO_INDENT: 'autoIndent'
+  AUTO_INDENT: 'auto-indent'
 };
 
 export default class ExecutableCode {
