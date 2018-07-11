@@ -226,7 +226,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
         this.state.hiddenDependencies).then(
         state => {
           state.waitingForOutput = false;
-          state.openConsole = true;
+          if (state.output) state.openConsole = true;
           this.update(state);
         },
         () => this.update({waitingForOutput: false})
