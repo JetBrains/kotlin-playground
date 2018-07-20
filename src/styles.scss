@@ -107,13 +107,60 @@ $darcula-read-only-background-color: #505050;
   }
 }
 
-.loader-icon {
-  background: url("img/loader.svg");
-  background-size: cover;
-  background-repeat: no-repeat;
-  height: 30px;
-  width: 60px;
-  margin: 20px;
+.loader {
+  position: relative;
+  width: 15px;
+  height: 15px;
+  margin: 0 auto;
+  border-radius: 50%;
+  text-indent: -9999em;
+  color: #161616;
+  font-size: 8px;
+  opacity: .7;
+  animation: loader 1s infinite ease-in-out;
+  animation-delay: 0.16s;
+}
+
+.loader.darcula {
+  opacity: 1;
+  color: #696969;
+}
+
+.loader::before {
+  left: -3.5em;
+  animation-delay: 0s;
+  position: absolute;
+  width: 15px;
+  border-radius: 50%;
+  height: 15px;
+  content: '';
+  animation: loader 1s infinite ease-in-out;
+}
+
+.loader::after {
+  left: 3.5em;
+  animation-delay: 0.32s;
+  position: absolute;
+  border-radius: 50%;
+  width: 15px;
+  height: 15px;
+  content: '';
+  animation: loader 1s infinite ease-in-out;
+}
+
+@keyframes loader {
+  100% {
+    box-shadow: 0 2.5em 0 -1.3em;
+  }
+  80% {
+    box-shadow: 0 2.5em 0 -1.3em;
+  }
+  0% {
+    box-shadow: 0 2.5em 0 -1.3em;
+  }
+  40% {
+    box-shadow: 0 2.5em 0 0;
+  }
 }
 
 .cm__ERROR {
@@ -164,7 +211,7 @@ $darcula-read-only-background-color: #505050;
 
 .output-wrapper {
   border-top: 1px solid #eee;
-  min-height: 50px;
+  min-height: 60px;
   font-size: 14px;
 }
 
