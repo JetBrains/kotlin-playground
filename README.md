@@ -151,6 +151,8 @@ Use the following attributes on elements that are converted to editors to adjust
 
 - `indent="4"`: How many spaces a block should be indented. Defaults to 4. 
 
+- `lines="true|false"`: Whether to show line numbers to the left of the editor. Defaults to false. 
+
 ### Supported keyboard shortcuts
 
   - Ctrl+Space		   — code completion

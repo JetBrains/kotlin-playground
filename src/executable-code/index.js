@@ -36,6 +36,7 @@ const ATTRIBUTES = {
   JS_LIBS: 'data-js-libs',
   FOLDED_BUTTON: 'folded-button',
   ARGUMENTS: 'args',
+  LINES: 'lines',
   AUTO_INDENT: 'auto-indent'
 };
 
@@ -56,6 +57,7 @@ export default class ExecutableCode {
     const targetNodeStyle = targetNode.getAttribute(ATTRIBUTES.STYLE);
     let jsLibs = targetNode.getAttribute(ATTRIBUTES.JS_LIBS);
     let isFoldedButton = targetNode.getAttribute(ATTRIBUTES.FOLDED_BUTTON) !== "false";
+    let lines = targetNode.getAttribute(ATTRIBUTES.LINES) === "true";
     const autoIndent = targetNode.getAttribute(ATTRIBUTES.AUTO_INDENT) !== "false";
     targetPlatform = targetPlatform !== null ? targetPlatform : TargetPlatform.JAVA.id;
     const code = replaceWhiteSpaces(targetNode.textContent);
@@ -85,6 +87,7 @@ export default class ExecutableCode {
     const view = ExecutableFragment.render(mountNode, {highlightOnly});
     view.update({
       code: code,
+      lines: lines,
       theme: editorTheme,
       indent: indent,
       args: args,

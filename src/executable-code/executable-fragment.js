@@ -115,7 +115,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
     }
 
     if (this.state.folded) {
-      this.codemirror.setOption("lineNumbers", false);
+      this.codemirror.setOption("lineNumbers", state.lines);
       this.codemirror.setValue(sample);
       this.markPlaceHolders();
     } else {
