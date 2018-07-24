@@ -8,9 +8,18 @@ $font-family-mono: 'Liberation Mono', Consolas, Menlo, Courier, monospace !globa
  Darcula theme variables
  */
 $darcula-background-color: #2B2B2B;
-$darcula-text-color: #A9B7C6;
-$darcula-output-color: #FF6A67;
-$darcula-read-only-background-color: #505050;
+$darcula-console-color: #313336;
+
+/**
+ WebTeam UI colors
+ */
+$wt-color-tomato: #ec5424;
+$wt-color-seaweed: #4dbb5f;
+$wt-color-silver: #afb1b3;
+$wt-color-dove: #696969;
+$wt-color-code: #3c3f43;
+$wt-color-athens: #eaeaec;
+$wt-color-azure: #167dff;
 
 .executable-fragment-wrapper {
   margin-bottom: 20px;
@@ -18,7 +27,7 @@ $darcula-read-only-background-color: #505050;
 }
 
 .executable-fragment {
-  border: 1px solid #eee;
+  border: 1px solid $wt-color-athens;
 }
 
 .hidden-dependency {
@@ -26,7 +35,7 @@ $darcula-read-only-background-color: #505050;
 }
 
 .executable-fragment.darcula {
-  background-color: $darcula-background-color;
+  background-color: $darcula-console-color;
 }
 
 .CodeMirror {
@@ -63,30 +72,26 @@ $darcula-read-only-background-color: #505050;
   text-align: center;
 }
 
-.command-panel {
-  background-color: #f7f7f7;
-  padding: 5px 30px;
-}
 
 .CodeMirror-linebackground.unmodifiable-line {
-  background-color: #f7f7f7;
+  background-color: $wt-color-athens;
 }
 
 .CodeMirror-linebackground.unmodifiable-line-dark {
-  background-color: $darcula-read-only-background-color;
+  background-color: $wt-color-code;
 }
 
 .markPlaceholder {
-  border-top: 1px solid #0000FF;
-  border-bottom: 1px solid #0000FF;
+  border-top: 1px solid $wt-color-azure;
+  border-bottom: 1px solid $wt-color-azure;
 }
 
 .markPlaceholder-start {
-  border-left: 1px solid #0000FF;
+  border-left: 1px solid $wt-color-azure;
 }
 
 .markPlaceholder-end {
-  border-right: 1px solid #0000FF;
+  border-right: 1px solid $wt-color-azure;
 }
 
 .run-button {
@@ -164,7 +169,7 @@ $darcula-read-only-background-color: #505050;
 }
 
 .cm__ERROR {
-  color: #ff0000 !important;
+  color: $wt-color-tomato !important;
 }
 
 .errors-and-warnings-gutter {
@@ -187,18 +192,6 @@ $darcula-read-only-background-color: #505050;
   background: url("https://try.kotlinlang.org/static/images/icons_all_sprite.svg") no-repeat -150px -600px;
 }
 
-@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
-  .ERRORgutter {
-    background-image: url("https://try.kotlinlang.org/static/images/icons_all_sprite@2x.png");
-    background-size: 250px 900px;
-  }
-
-  .WARNINGgutter {
-    background-image: url("https://try.kotlinlang.org/static/images/icons_all_sprite@2x.png");
-    background-size: 250px 900px;
-  }
-}
-
 .cm__red_wavy_line {
   background: url(http://try.kotlinlang.org/static/images/wavyline-red.gif) repeat-x 100% 100% !important;
   padding-bottom: 2px;
@@ -210,15 +203,15 @@ $darcula-read-only-background-color: #505050;
 }
 
 .output-wrapper {
-  border-top: 1px solid #eee;
+  border-top: 1px solid $wt-color-athens;
   min-height: 60px;
   font-size: 14px;
 }
 
 .output-wrapper.darcula {
-  background-color: $darcula-background-color;
+  background-color: $darcula-console-color;
   border-top: 1px solid grey;
-  color: $darcula-text-color;
+  color: $wt-color-silver;
 }
 
 .code-output {
@@ -230,19 +223,19 @@ $darcula-read-only-background-color: #505050;
 }
 
 .standard-output.darcula {
-  color: $darcula-text-color;
+  color: $wt-color-silver;
 }
 
 .error-output {
   white-space: pre-wrap;
-  color: red;
+  color: $wt-color-tomato;
   min-height: 1.4em;
   margin: 0;
   vertical-align: top;
 }
 
 .error-output.darcula {
-  color: $darcula-output-color;
+  color: $wt-color-tomato;
 }
 
 .standard-output {
@@ -255,7 +248,7 @@ $darcula-read-only-background-color: #505050;
 
 .test-output {
   white-space: pre;
-  color: #4ca01f;
+  color: $wt-color-seaweed;
   min-height: 1.4em;
   vertical-align: top;
   margin-left: 20px;
@@ -267,7 +260,7 @@ $darcula-read-only-background-color: #505050;
   margin-top: 1px;
   width: 16px;
   height: 16px;
-  background: lightgrey url('img/close-console-icon.svg');
+  background: $wt-color-silver url('img/close-console-icon.svg');
 }
 
 .console-close.darcula {
@@ -275,22 +268,22 @@ $darcula-read-only-background-color: #505050;
 }
 
 .console-close:hover {
-  background-color: grey;
+  background-color: $wt-color-dove;
 }
 
 .console-close.darcula:hover {
-  background-color: red;
+  background-color: $wt-color-tomato;
 }
 
 .test-fail {
-  color: red;
+  color: $wt-color-tomato;
   min-height: 1.4em;
   margin-left: 20px;
   vertical-align: top;
 }
 
 .test-fail.darcula {
-  color: $darcula-output-color;
+  color: $wt-color-tomato;
 }
 
 .console-icon {
@@ -315,7 +308,7 @@ $darcula-read-only-background-color: #505050;
 .test-time {
   float: right;
   font-size: 10px;
-  color: #949494;
+  color: $wt-color-silver;
   margin-right: 20px;
   margin-top: -14px;
 }
@@ -398,7 +391,7 @@ $darcula-read-only-background-color: #505050;
   position: absolute;
   right: 0;
   font-size: 10px;
-  color: #949494;
+  color: $wt-color-silver;
 
   span {
     margin-left: 15px;
@@ -410,7 +403,7 @@ $darcula-read-only-background-color: #505050;
 
 .CodeMirror-hints {
   padding-left: 0 !important;
-  border: 1px solid #969696;
+  border: 1px solid $wt-color-silver;
   border-radius: 4px;
   position: absolute;
   background-color: #f7f7f7;
