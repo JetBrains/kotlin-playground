@@ -60,15 +60,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 Use the following attributes on elements that are converted to editors to adjust their behavior.
 
-- `data-min-compiler-version`: Minimum target Kotlin [compiler version](https://try.kotlinlang.org/kotlinServer?type=getKotlinVersions):
-
-   ```html
-    <code data-min-compiler-version="1.1">
-    /*
-    Your code here
-    */
-    </code>
-    ```
 - `data-version`: Target Kotlin [compiler version](https://try.kotlinlang.org/kotlinServer?type=getKotlinVersions):
 
    ```html
@@ -87,15 +78,7 @@ Use the following attributes on elements that are converted to editors to adjust
   */
   </code>
   ```
-- `theme`: Editor IntelliJ IDEA themes: `idea` and `darcula`.
-
-  ```html
-  <code theme="darcula">
-  /*
-  Your code here
-  */
-  </code>
-  ```
+  
 - `data-target-platform`: target platform: `junit`, `canvas`, `js` or `java` (default).
 
   ```html
@@ -147,7 +130,13 @@ Use the following attributes on elements that are converted to editors to adjust
    </code>
   ```
   
-- `auto-indent="true|false"`: Whether to use the context-sensitive indentation. Defaults to true. 
+- `auto-indent="true|false"`: Whether to use the context-sensitive indentation. Defaults to true.
+
+- `theme="idea|darcula|default"`: Editor IntelliJ IDEA themes.
+
+- `data-min-compiler-version="1.0.7"`: Minimum target Kotlin [compiler version](https://try.kotlinlang.org/kotlinServer?type=getKotlinVersions)
+ 
+- `on-fly-highlight="true|false"`: Errors and warnings check for each change in the editor. Defaults to false.
 
 - `indent="4"`: How many spaces a block should be indented. Defaults to 4. 
 

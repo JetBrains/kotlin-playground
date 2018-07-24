@@ -426,8 +426,20 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
       })
     }
 
-    this.codemirror.on("change", codemirror => {
-      this.removeStyles()
+    /**
+     * When editor's changed:
+     * 1) Remove all styles
+     * 2) if onFlyHighLight flag => getting highlight
+     */
+    this.codemirror.on("change", () => {
+      this.removeStyles();
+      if (this.state.onFlyHighLight) {
+        WebDemoApi.getHighlight(
+          this.getCode(),
+          this.state.compilerVersion,
+          this.state.targetPlatform,
+          this.state.hiddenDependencies).then(data => this.showDiagnostics(data))
+      }
     });
 
     /**

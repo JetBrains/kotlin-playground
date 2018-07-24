@@ -32,6 +32,7 @@ const ATTRIBUTES = {
   STYLE: 'style',
   NONE_MARKERS: 'none-markers',
   THEME: 'theme',
+  ON_FLY_HIGHLIGHT: 'on-fly-highlight',
   PLATFORM: 'data-target-platform',
   JS_LIBS: 'data-js-libs',
   FOLDED_BUTTON: 'folded-button',
@@ -57,7 +58,8 @@ export default class ExecutableCode {
     const targetNodeStyle = targetNode.getAttribute(ATTRIBUTES.STYLE);
     let jsLibs = targetNode.getAttribute(ATTRIBUTES.JS_LIBS);
     let isFoldedButton = targetNode.getAttribute(ATTRIBUTES.FOLDED_BUTTON) !== "false";
-    let lines = targetNode.getAttribute(ATTRIBUTES.LINES) === "true";
+    const lines = targetNode.getAttribute(ATTRIBUTES.LINES) === "true";
+    const onFlyHighLight = targetNode.getAttribute(ATTRIBUTES.ON_FLY_HIGHLIGHT) === "true";
     const autoIndent = targetNode.getAttribute(ATTRIBUTES.AUTO_INDENT) !== "false";
     targetPlatform = targetPlatform !== null ? targetPlatform : TargetPlatform.JAVA.id;
     const code = replaceWhiteSpaces(targetNode.textContent);
@@ -94,6 +96,7 @@ export default class ExecutableCode {
       hiddenDependencies: hiddenDependencies,
       compilerVersion: cfg.compilerVersion,
       noneMarkers: noneMarkers,
+      onFlyHighLight: onFlyHighLight,
       autoIndent: autoIndent,
       highlightOnly: highlightOnly,
       targetPlatform: TargetPlatform.getById(targetPlatform),

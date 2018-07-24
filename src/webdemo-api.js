@@ -122,6 +122,20 @@ export default class WebDemoApi {
         callback(data);
       })
   }
+
+  /**
+   * Request for getting errors of current file
+   *
+   * @param code - string code
+   * @param compilerVersion - string kotlin compiler
+   * @param platform - kotlin platform {@see TargetPlatform}
+   * @param hiddenDependencies   - read only additional files
+   * @return {*|PromiseLike<T>|Promise<T>}
+   */
+  static getHighlight(code, compilerVersion, platform, hiddenDependencies) {
+    return executeCode(API_URLS.HIGHLIGHT, code, compilerVersion, platform, "", hiddenDependencies)
+      .then(data => data[DEFAULT_FILE_NAME])
+  }
 }
 
 function executeCode(url, code, compilerVersion, targetPlatform, args, hiddenDependencies, options) {

@@ -7,6 +7,7 @@ const WEBDEMO_URL = __WEBDEMO_URL__;
  */
 export const API_URLS = {
   COMPILE:    `${WEBDEMO_URL}/kotlinServer?type=run&runConf=`,
+  HIGHLIGHT:  `${WEBDEMO_URL}/kotlinServer?type=highlight&runConf=`,
   COMPLETE:   `${WEBDEMO_URL}/kotlinServer?type=complete&runConf=`,
   VERSIONS:   `${WEBDEMO_URL}/kotlinServer?type=getKotlinVersions`,
   JQUERY:     `${WEBDEMO_URL}/static/lib/jquery/dist/jquery.min.js`,
