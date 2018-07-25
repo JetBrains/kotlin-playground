@@ -34,7 +34,7 @@ const ATTRIBUTES = {
   TO: 'to',
   NONE_MARKERS: 'none-markers',
   THEME: 'theme',
-  ON_FLY_HIGHLIGHT: 'on-fly-highlight',
+  ON_FLY_HIGHLIGHT: 'highlight-on-fly',
   PLATFORM: 'data-target-platform',
   JS_LIBS: 'data-js-libs',
   FOLDED_BUTTON: 'folded-button',

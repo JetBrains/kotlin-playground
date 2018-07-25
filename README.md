@@ -136,7 +136,7 @@ Use the following attributes on elements that are converted to editors to adjust
 
 - `data-min-compiler-version="1.0.7"`: Minimum target Kotlin [compiler version](https://try.kotlinlang.org/kotlinServer?type=getKotlinVersions)
  
-- `on-fly-highlight="true|false"`: Errors and warnings check for each change in the editor. Defaults to false.
+- `highlight-on-fly="true|false"`: Errors and warnings check for each change in the editor. Defaults to false.
 
 - `indent="4"`: How many spaces a block should be indented. Defaults to 4. 
 
