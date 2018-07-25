@@ -70,8 +70,13 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
     }
 
     if (state.code) {
-      const code = state.code;
-      const codeLen = code.length;
+      let code = state.code;
+      if (state.from && state.to && state.to > state.from && state.from > 0 && state.to > 0) {
+        let codeLines = code.split('\n');
+        codeLines.splice(state.from - 1, 0, SAMPLE_START);
+        codeLines.splice(state.to + 1, 0, SAMPLE_END);
+        code = codeLines.join("\n")
+      }
       const startIndex = code.indexOf(SAMPLE_START);
       const endIndex = code.indexOf(SAMPLE_END);
       const hasMarkers = !state.noneMarkers && (startIndex > -1 && endIndex > -1);
@@ -82,7 +87,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
 
       if (hasMarkers) {
         this.prefix = code.substring(0, startIndex);
-        this.suffix = code.substring(code.indexOf(SAMPLE_END) + SAMPLE_END.length);
+        this.suffix = code.substring(endIndex + SAMPLE_END.length);
         sample = code.substring(startIndex + SAMPLE_START.length + 1, endIndex - 1);
       }
 

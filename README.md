@@ -142,6 +142,9 @@ Use the following attributes on elements that are converted to editors to adjust
 
 - `lines="true|false"`: Whether to show line numbers to the left of the editor. Defaults to false. 
 
+- `from="5" to="10`: Create a part of code. Example `from` line 5 `to` line 10.
+
+
 ### Supported keyboard shortcuts
 
   - Ctrl+Space		   — code completion

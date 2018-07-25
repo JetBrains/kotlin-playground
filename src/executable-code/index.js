@@ -30,6 +30,8 @@ const ATTRIBUTES = {
   INDENT: 'indent',
   HIGHLIGHT_ONLY: 'data-highlight-only',
   STYLE: 'style',
+  FROM: 'from',
+  TO: 'to',
   NONE_MARKERS: 'none-markers',
   THEME: 'theme',
   ON_FLY_HIGHLIGHT: 'on-fly-highlight',
@@ -51,6 +53,8 @@ export default class ExecutableCode {
     const highlightOnly = targetNode.hasAttribute(ATTRIBUTES.HIGHLIGHT_ONLY);
     const noneMarkers = targetNode.hasAttribute(ATTRIBUTES.NONE_MARKERS);
     const indent = targetNode.hasAttribute(ATTRIBUTES.INDENT) ? parseInt(targetNode.getAttribute(ATTRIBUTES.INDENT)) : DEFAULT_INDENT;
+    const from = targetNode.hasAttribute(ATTRIBUTES.FROM) ? parseInt(targetNode.getAttribute(ATTRIBUTES.FROM)) : null;
+    const to = targetNode.hasAttribute(ATTRIBUTES.TO) ? parseInt(targetNode.getAttribute(ATTRIBUTES.TO)) : null;
     const editorTheme = targetNode.hasAttribute(ATTRIBUTES.THEME) ? targetNode.getAttribute(ATTRIBUTES.THEME) : THEMES.DEFAULT;
     const args = targetNode.hasAttribute(ATTRIBUTES.ARGUMENTS) ? targetNode.getAttribute(ATTRIBUTES.ARGUMENTS) : "";
     const hiddenDependencies = this.getHiddenDependencies(targetNode);
@@ -93,6 +97,8 @@ export default class ExecutableCode {
       theme: editorTheme,
       indent: indent,
       args: args,
+      from: from,
+      to: to,
       hiddenDependencies: hiddenDependencies,
       compilerVersion: cfg.compilerVersion,
       noneMarkers: noneMarkers,
@@ -119,8 +125,8 @@ export default class ExecutableCode {
    * @param targetNode - {NodeElement}
    * @returns {Array} - list of node's text content
    */
-  getHiddenDependencies(targetNode){
-   return arrayFrom(targetNode.getElementsByClassName(ATTRIBUTES.HIDDEN_DEPENDENCY))
+  getHiddenDependencies(targetNode) {
+    return arrayFrom(targetNode.getElementsByClassName(ATTRIBUTES.HIDDEN_DEPENDENCY))
       .reduce((acc, node) => {
         node.parentNode.removeChild(node);
         return [...acc, replaceWhiteSpaces(node.textContent)];
