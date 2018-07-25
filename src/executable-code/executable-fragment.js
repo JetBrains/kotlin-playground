@@ -64,6 +64,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
 
   update(state) {
     let sample;
+    let hasMarkers = false;
     let platform = state.targetPlatform;
     if (state.compilerVersion && (platform === TargetPlatform.JS || platform === TargetPlatform.CANVAS)) {
       this.jsExecutor = getJsExecutor(state.compilerVersion, state.jsLibs, this.getNodeForMountIframe(platform), platform)
@@ -79,7 +80,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
       }
       const startIndex = code.indexOf(SAMPLE_START);
       const endIndex = code.indexOf(SAMPLE_END);
-      const hasMarkers = !state.noneMarkers && (startIndex > -1 && endIndex > -1);
+      hasMarkers = !state.noneMarkers && (startIndex > -1 && endIndex > -1);
 
       this.prefix = '';
       this.suffix = '';
@@ -108,7 +109,6 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
     }]);
 
     super.update(this.state);
-
     if (!this.initialized) {
       this.initializeCodeMirror(state);
       this.initialized = true;
@@ -120,7 +120,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
     }
 
     if (this.state.folded) {
-      this.codemirror.setOption("lineNumbers", state.lines);
+      this.codemirror.setOption("lineNumbers", state.lines && !hasMarkers);
       this.codemirror.setValue(sample);
       this.markPlaceHolders();
     } else {
