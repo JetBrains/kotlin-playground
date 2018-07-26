@@ -64,7 +64,7 @@ export default class ExecutableCode {
     let isFoldedButton = targetNode.getAttribute(ATTRIBUTES.FOLDED_BUTTON) !== "false";
     const lines = targetNode.getAttribute(ATTRIBUTES.LINES) === "true";
     const onFlyHighLight = targetNode.getAttribute(ATTRIBUTES.ON_FLY_HIGHLIGHT) === "true";
-    const autoIndent = targetNode.getAttribute(ATTRIBUTES.AUTO_INDENT) !== "false";
+    const autoIndent = targetNode.getAttribute(ATTRIBUTES.AUTO_INDENT) === "true";
     targetPlatform = targetPlatform !== null ? targetPlatform : TargetPlatform.JAVA.id;
     const code = replaceWhiteSpaces(targetNode.textContent);
     const cfg = merge(defaultConfig, config);

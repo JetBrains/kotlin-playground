@@ -130,7 +130,7 @@ Use the following attributes on elements that are converted to editors to adjust
    </code>
   ```
   
-- `auto-indent="true|false"`: Whether to use the context-sensitive indentation. Defaults to true.
+- `auto-indent="true|false"`: Whether to use the context-sensitive indentation. Defaults to false.
 
 - `theme="idea|darcula|default"`: Editor IntelliJ IDEA themes.
 
