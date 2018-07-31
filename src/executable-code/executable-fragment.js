@@ -354,7 +354,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
     const codemirrorOptions = {
       readOnly: readOnly,
       lineNumbers: false,
-      mode: 'text/x-kotlin',
+      mode: options.mode,
       theme: options.theme,
       matchBrackets: true,
       continueComments: true,

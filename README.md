@@ -130,17 +130,19 @@ Use the following attributes on elements that are converted to editors to adjust
    </code>
   ```
   
-- `auto-indent="true|false"`: Whether to use the context-sensitive indentation. Defaults to false.
+- `auto-indent="true|false"`: Whether to use the context-sensitive indentation. Defaults to `false`.
 
 - `theme="idea|darcula|default"`: Editor IntelliJ IDEA themes.
 
+- `mode="kotlin|js|java|groovy|xml|c"`: Different languages styles. Runnable snippets only with `kotlin`. Default to `kotlin`.
+
 - `data-min-compiler-version="1.0.7"`: Minimum target Kotlin [compiler version](https://try.kotlinlang.org/kotlinServer?type=getKotlinVersions)
  
-- `highlight-on-fly="true|false"`: Errors and warnings check for each change in the editor. Defaults to false.
+- `highlight-on-fly="true|false"`: Errors and warnings check for each change in the editor. Defaults to `false`.
 
-- `indent="4"`: How many spaces a block should be indented. Defaults to 4. 
+- `indent="4"`: How many spaces a block should be indented. Defaults to `4`. 
 
-- `lines="true|false"`: Whether to show line numbers to the left of the editor. Defaults to false. 
+- `lines="true|false"`: Whether to show line numbers to the left of the editor. Defaults to `false`. 
 
 - `from="5" to="10`: Create a part of code. Example `from` line 5 `to` line 10.
 

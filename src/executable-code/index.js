@@ -43,6 +43,15 @@ const ATTRIBUTES = {
   AUTO_INDENT: 'auto-indent'
 };
 
+const MODES = {
+  JAVA: "text/x-java",
+  KOTLIN: "text/x-kotlin",
+  JS: "text/javascript",
+  GROOVY: "text/x-groovy",
+  XML: "text/html",
+  C: "text/x-c"
+};
+
 export default class ExecutableCode {
   /**
    * @param {string|HTMLElement} target
@@ -50,7 +59,7 @@ export default class ExecutableCode {
    */
   constructor(target, config = {}) {
     const targetNode = typeof target === 'string' ? document.querySelector(target) : target;
-    const highlightOnly = targetNode.hasAttribute(ATTRIBUTES.HIGHLIGHT_ONLY);
+    let highlightOnly = targetNode.hasAttribute(ATTRIBUTES.HIGHLIGHT_ONLY);
     const noneMarkers = targetNode.hasAttribute(ATTRIBUTES.NONE_MARKERS);
     const indent = targetNode.hasAttribute(ATTRIBUTES.INDENT) ? parseInt(targetNode.getAttribute(ATTRIBUTES.INDENT)) : DEFAULT_INDENT;
     const from = targetNode.hasAttribute(ATTRIBUTES.FROM) ? parseInt(targetNode.getAttribute(ATTRIBUTES.FROM)) : null;
@@ -65,9 +74,15 @@ export default class ExecutableCode {
     const lines = targetNode.getAttribute(ATTRIBUTES.LINES) === "true";
     const onFlyHighLight = targetNode.getAttribute(ATTRIBUTES.ON_FLY_HIGHLIGHT) === "true";
     const autoIndent = targetNode.getAttribute(ATTRIBUTES.AUTO_INDENT) === "true";
+    const mode = this.getMode(targetNode);
     targetPlatform = targetPlatform !== null ? targetPlatform : TargetPlatform.JAVA.id;
     const code = replaceWhiteSpaces(targetNode.textContent);
     const cfg = merge(defaultConfig, config);
+
+    // no run code in none kotlin mode
+    if (mode !== MODES.KOTLIN) {
+      highlightOnly = true;
+    }
 
     /*
       additionalLibs - setting additional JS-library
@@ -97,6 +112,7 @@ export default class ExecutableCode {
       theme: editorTheme,
       indent: indent,
       args: args,
+      mode: mode,
       from: from,
       to: to,
       hiddenDependencies: hiddenDependencies,
@@ -131,6 +147,24 @@ export default class ExecutableCode {
         node.parentNode.removeChild(node);
         return [...acc, replaceWhiteSpaces(node.textContent)];
       }, [])
+  }
+
+  getMode(targetNode) {
+    const mode = targetNode.getAttribute("mode");
+    switch (mode) {
+      case "java":
+        return MODES.JAVA;
+      case "c":
+        return MODES.C;
+      case "js":
+        return MODES.JS;
+      case "groovy":
+        return MODES.GROOVY;
+      case "xml":
+        return MODES.XML;
+      default:
+        return MODES.KOTLIN;
+    }
   }
 
   destroy() {
