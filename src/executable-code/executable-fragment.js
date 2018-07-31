@@ -155,7 +155,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
         }
       })
     }
-    if (this.state.autoIndent) {
+    if (this.state.autoIndent || (this.prefix && this.suffix)) {
       for (let i = 0; i < this.codemirror.lineCount(); i++) {
         this.codemirror.indentLine(i)
       }
