@@ -8,8 +8,6 @@
                     :onmouseenter={{ this.onFoldButtonMouseEnter.bind(this) }}
                     :onmouseleave={{ this.onFoldButtonMouseLeave.bind(this) }}>
                 </div>
-                <div class="zigzag _top {{ foldButtonHover ? '_hover' : '' }}"></div>
-                <div class="zigzag _bottom {{ foldButtonHover ? '_hover' : '' }}"></div>
             {% endif %}
 
             {% if (!highlightOnly) %}

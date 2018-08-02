@@ -353,36 +353,6 @@ $wt-color-azure: #167dff;
   }
 }
 
-.zigzag {
-  position: absolute;
-  left: 50%;
-  z-index: 9;
-  background-size: auto 100%;
-  background-repeat: repeat-x;
-  width: 180px;
-  height: 5px;
-
-  &._top {
-    background-image: url('img/zigzag_top.svg?fill=%23eee&selector=.data-fill');
-    top: 0;
-    transform: translate(-50%, -50%);
-
-    &._hover {
-      background-image: url('img/zigzag_top.svg?fill=%23f68322&selector=.data-fill');
-    }
-  }
-
-  &._bottom {
-    background-image: url('img/zigzag_bottom.svg?fill=%23eee&selector=.data-fill');
-    bottom: 0;
-    transform: translate(-50%, 50%);
-    &._hover {
-      background-image: url('img/zigzag_bottom.svg?fill=%23f68322&selector=.data-fill');
-    }
-  }
-
-}
-
 .code-area {
   position: relative;
 }
