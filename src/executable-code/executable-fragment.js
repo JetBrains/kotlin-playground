@@ -72,7 +72,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
 
     if (state.code) {
       let code = state.code;
-      if (state.from && state.to && state.to > state.from && state.from > 0 && state.to > 0) {
+      if (state.from && state.to && state.to >= state.from && state.from > 0 && state.to > 0) {
         let codeLines = code.split('\n');
         codeLines.splice(state.from - 1, 0, SAMPLE_START);
         codeLines.splice(state.to + 1, 0, SAMPLE_END);
