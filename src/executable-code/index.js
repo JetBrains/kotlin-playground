@@ -65,7 +65,7 @@ export default class ExecutableCode {
     const indent = targetNode.hasAttribute(ATTRIBUTES.INDENT) ? parseInt(targetNode.getAttribute(ATTRIBUTES.INDENT)) : DEFAULT_INDENT;
     const from = targetNode.hasAttribute(ATTRIBUTES.FROM) ? parseInt(targetNode.getAttribute(ATTRIBUTES.FROM)) : null;
     const to = targetNode.hasAttribute(ATTRIBUTES.TO) ? parseInt(targetNode.getAttribute(ATTRIBUTES.TO)) : null;
-    const editorTheme = targetNode.hasAttribute(ATTRIBUTES.THEME) ? targetNode.getAttribute(ATTRIBUTES.THEME) : THEMES.DEFAULT;
+    const editorTheme = this.getTheme(targetNode);
     const args = targetNode.hasAttribute(ATTRIBUTES.ARGUMENTS) ? targetNode.getAttribute(ATTRIBUTES.ARGUMENTS) : "";
     const hiddenDependencies = this.getHiddenDependencies(targetNode);
     let targetPlatform = targetNode.getAttribute(ATTRIBUTES.PLATFORM);
@@ -148,6 +148,18 @@ export default class ExecutableCode {
         node.parentNode.removeChild(node);
         return [...acc, replaceWhiteSpaces(node.textContent)];
       }, [])
+  }
+
+  getTheme(targetNode){
+    const theme = targetNode.getAttribute(ATTRIBUTES.THEME);
+    switch (theme) {
+      case THEMES.DARCULA:
+        return THEMES.DARCULA;
+      case THEMES.IDEA:
+        return THEMES.IDEA;
+      default:
+        return THEMES.DEFAULT;
+    }
   }
 
   getMode(targetNode) {

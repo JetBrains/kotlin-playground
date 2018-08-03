@@ -8,6 +8,7 @@ import defaultConfig from './config';
  */
 export const THEMES = {
   DARCULA: "darcula",
+  IDEA: "idea",
   DEFAULT: "default"
 };
 /**
