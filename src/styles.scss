@@ -336,20 +336,31 @@ $wt-color-azure: #167dff;
   transform: translate(-50%, -50%);
   z-index: 10;
   cursor: pointer;
-  background: url('img/button_open.svg?fill=%23d4d4d4&selector=.data-fill') no-repeat;
-  background-color: transparent;
+  background: transparent url('img/button_open.svg?fill=%23d4d4d4&selector=.data-fill') no-repeat;
   &._hover {
     background-image: url('img/button_open.svg?fill=%23f68322&selector=.data-fill');
+  }
+}
+
+.fold-button.darcula {
+  background: url('img/button_open_darcula.svg') no-repeat;
+  &._hover {
+    background-image: url('img/button_open_darcula.svg?fill=%23f68322&selector=.data-fill');
   }
 }
 
 ._unfolded {
   .fold-button {
     background-image: url('img/button_close.svg?fill=%23d4d4d4&selector=.data-fill');
+    &._hover {
+      background-image: url('img/button_close.svg?fill=%23f68322&selector=.data-fill');
+    }
   }
-
-  .fold-button._hover {
-    background-image: url('img/button_close.svg?fill=%23f68322&selector=.data-fill');
+  .fold-button.darcula {
+    background: url('img/button_close_darcula.svg') no-repeat;
+    &._hover {
+      background-image: url('img/button_close_darcula.svg?fill=%23f68322&selector=.data-fill');
+    }
   }
 }
 

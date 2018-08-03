@@ -4,7 +4,7 @@
     <div class="executable-fragment {{ theme }}">
         <div class="code-area {{ folded ? '_folded' : '_unfolded' }}">
             {% if (isShouldBeFolded) %}
-                <div class="fold-button {{ foldButtonHover ? '_hover' : '' }}"
+                <div class="fold-button {{ foldButtonHover ? '_hover' : '' }} {{ theme }}"
                     :onmouseenter={{ this.onFoldButtonMouseEnter.bind(this) }}
                     :onmouseleave={{ this.onFoldButtonMouseLeave.bind(this) }}>
                 </div>
