@@ -34,6 +34,7 @@ const ATTRIBUTES = {
   TO: 'to',
   NONE_MARKERS: 'none-markers',
   THEME: 'theme',
+  MODE: 'mode',
   ON_FLY_HIGHLIGHT: 'highlight-on-fly',
   PLATFORM: 'data-target-platform',
   JS_LIBS: 'data-js-libs',
@@ -150,7 +151,7 @@ export default class ExecutableCode {
   }
 
   getMode(targetNode) {
-    const mode = targetNode.getAttribute("mode");
+    const mode = targetNode.getAttribute(ATTRIBUTES.MODE);
     switch (mode) {
       case "java":
         return MODES.JAVA;
