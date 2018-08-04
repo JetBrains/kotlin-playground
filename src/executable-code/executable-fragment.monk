@@ -2,6 +2,9 @@
 
 <div class="executable-fragment-wrapper">
     <div class="executable-fragment {{ theme }}">
+      {% if (!highlightOnly) %}
+        <div class="run-button {{ waitingForOutput ? '_disabled' : ''}}" :onclick={{ this.execute.bind(this) }}></div>
+      {% endif %}
         <div class="code-area {{ folded ? '_folded' : '_unfolded' }}">
             {% if (isShouldBeFolded) %}
                 <div class="fold-button {{ foldButtonHover ? '_hover' : '' }} {{ theme }}"
@@ -9,11 +12,6 @@
                     :onmouseleave={{ this.onFoldButtonMouseLeave.bind(this) }}>
                 </div>
             {% endif %}
-
-            {% if (!highlightOnly) %}
-                <div class="run-button {{ waitingForOutput ? '_disabled' : ''}}" :onclick={{ this.execute.bind(this) }}></div>
-            {% endif %}
-
             <textarea></textarea>
         </div>
         {% if (openConsole) %}
