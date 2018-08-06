@@ -53,10 +53,6 @@ $wt-color-azure: #167dff;
   margin: 12px 0;
 }
 
-.CodeMirror-scroll {
-  height: auto;
-}
-
 .CodeMirror-gutter {
   height: auto;
 }
@@ -71,7 +67,6 @@ $wt-color-azure: #167dff;
   min-width: 0;
   text-align: center;
 }
-
 
 .CodeMirror-linebackground.unmodifiable-line {
   background-color: $wt-color-athens;
