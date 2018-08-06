@@ -1,6 +1,7 @@
 @import "~codemirror/lib/codemirror.css";
 @import "~codemirror/theme/idea.css";
 @import "~codemirror/theme/darcula.css";
+@import "~codemirror/addon/scroll/simplescrollbars.css";
 
 $font-family-mono: 'Liberation Mono', Consolas, Menlo, Courier, monospace !global;
 
@@ -45,6 +46,17 @@ $wt-color-azure: #167dff;
   pre {
     line-height: 16.8px;
     margin-bottom: 0 !important;
+  }
+
+  .CodeMirror-overlayscroll-horizontal div, .CodeMirror-overlayscroll-vertical div{
+    display: none;
+  }
+
+  &:hover {
+    .CodeMirror-overlayscroll-horizontal div, .CodeMirror-overlayscroll-vertical div {
+      display: block;
+      background: $wt-color-silver;
+    }
   }
 }
 

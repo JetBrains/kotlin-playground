@@ -2,6 +2,7 @@ import 'codemirror';
 import 'codemirror/lib/codemirror';
 import 'codemirror/addon/hint/show-hint'
 import 'codemirror/addon/hint/anyword-hint'
+import 'codemirror/addon/scroll/simplescrollbars'
 import 'codemirror/mode/smalltalk/smalltalk'
 import 'codemirror/addon/runmode/colorize';
 import 'codemirror/mode/clike/clike';
