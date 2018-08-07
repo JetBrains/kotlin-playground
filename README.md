@@ -134,7 +134,7 @@ Use the following attributes on elements that are converted to editors to adjust
 
 - `theme="idea|darcula|default"`: Editor IntelliJ IDEA themes.
 
-- `mode="kotlin|js|java|groovy|xml|c"`: Different languages styles. Runnable snippets only with `kotlin`. Default to `kotlin`.
+- `mode="kotlin|js|java|groovy|xml|c|shell|swift|obj-c"`: Different languages styles. Runnable snippets only with `kotlin`. Default to `kotlin`.
 
 - `data-min-compiler-version="1.0.7"`: Minimum target Kotlin [compiler version](https://try.kotlinlang.org/kotlinServer?type=getKotlinVersions)
  

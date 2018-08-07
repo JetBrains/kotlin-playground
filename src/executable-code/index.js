@@ -14,6 +14,7 @@ import 'codemirror/addon/comment/comment'
 import 'codemirror/addon/comment/continuecomment'
 import 'codemirror/mode/javascript/javascript';
 import 'codemirror/mode/shell/shell';
+import 'codemirror/mode/swift/swift';
 import merge from 'deepmerge';
 import Set from 'es6-set/polyfill';
 import defaultConfig, {API_URLS} from '../config';
@@ -51,7 +52,10 @@ const MODES = {
   JS: "text/javascript",
   GROOVY: "text/x-groovy",
   XML: "text/html",
-  C: "text/x-c"
+  C: "text/x-c",
+  OBJ_C: "text/x-objectivec",
+  SWIFT: "text/x-swift",
+  SHELL: "text/x-sh"
 };
 
 export default class ExecutableCode {
@@ -176,6 +180,12 @@ export default class ExecutableCode {
         return MODES.GROOVY;
       case "xml":
         return MODES.XML;
+      case "shell":
+        return MODES.SHELL;
+      case "obj-c":
+        return MODES.OBJ_C;
+      case "swift":
+        return MODES.SWIFT;
       default:
         return MODES.KOTLIN;
     }
