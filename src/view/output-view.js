@@ -10,9 +10,17 @@ const NO_TEST_FOUND = "No tests methods are found";
 const ANGLE_BRACKETS_LEFT_HTML = "&lt;";
 const ANGLE_BRACKETS_RIGHT_HTML = "&gt;";
 
+const BUG_FLAG = `${ANGLE_BRACKETS_LEFT_HTML}errStream${ANGLE_BRACKETS_RIGHT_HTML}BUG${ANGLE_BRACKETS_LEFT_HTML}/errStream${ANGLE_BRACKETS_RIGHT_HTML}`;
+const BUG_REPORT_MESSAGE = `${ANGLE_BRACKETS_LEFT_HTML}errStream${ANGLE_BRACKETS_RIGHT_HTML}Hey! It seems you just found a bug! \uD83D\uDC1E\n` +
+            `Please click <a href=https://youtrack.jetbrains.com/newIssue?draftId=25-2077811 target=_blank>here<a> to submit it ` +
+            `to the issue tracker and one day we fix it, hopefully \uD83D\uDE09\n` +
+            `✅ Don't forget to attach code to the issue${ANGLE_BRACKETS_LEFT_HTML}/errStream${ANGLE_BRACKETS_RIGHT_HTML}\n`;
+
 export function processJVMOutput(output, theme) {
   let processedOutput = escapeHtml(output);
-  return processedOutput.replace(`${ANGLE_BRACKETS_LEFT_HTML}outStream${ANGLE_BRACKETS_RIGHT_HTML}`, `<span class="standard-output ${theme}">`)
+  return processedOutput
+    .replace(BUG_FLAG, BUG_REPORT_MESSAGE)
+    .replace(`${ANGLE_BRACKETS_LEFT_HTML}outStream${ANGLE_BRACKETS_RIGHT_HTML}`, `<span class="standard-output ${theme}">`)
     .replace(`${ANGLE_BRACKETS_LEFT_HTML}/outStream${ANGLE_BRACKETS_RIGHT_HTML}`, "</span>")
     .replace(`${ANGLE_BRACKETS_LEFT_HTML}errStream${ANGLE_BRACKETS_RIGHT_HTML}`, `<span class="error-output ${theme}">`)
     .replace(`${ANGLE_BRACKETS_LEFT_HTML}/errStream${ANGLE_BRACKETS_RIGHT_HTML}`, "</span>");
