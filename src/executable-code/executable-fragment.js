@@ -18,14 +18,19 @@ const MARK_PLACEHOLDER_OPEN = "[mark]";
 const MARK_PLACEHOLDER_CLOSE = "[/mark]";
 const F9_KEY = 120;
 
-const CLASS_NAME_SELECTORS = {
+const SELECTORS = {
   CANVAS_PLACEHOLDER_OUTPUT: ".js-code-output-canvas-placeholder",
   FOLD_BUTTON: ".fold-button",
   UNMODIFIABLE_LINE_DARK: "unmodifiable-line-dark",
   UNMODIFIABLE_LINE: "unmodifiable-line",
   MARK_PLACEHOLDER: "markPlaceholder",
   MARK_PLACEHOLDER_START: "markPlaceholder-start",
-  MARK_PLACEHOLDER_END: "markPlaceholder-end"
+  MARK_PLACEHOLDER_END: "markPlaceholder-end",
+  GUTTER: "gutter",
+  FOLD_GUTTER: "CodeMirror-foldgutter",
+  ERROR_GUTTER: "ERRORgutter",
+  ERROR_AND_WARNING_GUTTER: "errors-and-warnings-gutter",
+  BACKGROUND: "background"
 };
 
 export default class ExecutableFragment extends ExecutableCodeTemplate {
@@ -45,7 +50,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
     };
     instance.codemirror = new CodeMirror();
 
-    instance.on('click', CLASS_NAME_SELECTORS.FOLD_BUTTON, (event) => {
+    instance.on('click', SELECTORS.FOLD_BUTTON, () => {
       instance.update({folded: !instance.state.folded});
     });
 
@@ -144,14 +149,14 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
           inclusiveRight: true
         }
       );
-      let readOnlyLineClass = this.state.theme === THEMES.DARCULA ? CLASS_NAME_SELECTORS.UNMODIFIABLE_LINE_DARK : CLASS_NAME_SELECTORS.UNMODIFIABLE_LINE;
+      let readOnlyLineClass = this.state.theme === THEMES.DARCULA ? SELECTORS.UNMODIFIABLE_LINE_DARK : SELECTORS.UNMODIFIABLE_LINE;
       this.codemirror.operation(() => {
         for (let i = 0; i < countLines(this.prefix); i++) {
-          this.codemirror.addLineClass(i, "background", readOnlyLineClass)
+          this.codemirror.addLineClass(i, SELECTORS.BACKGROUND, readOnlyLineClass)
         }
 
         for (let i = this.codemirror.lineCount() - countLines(this.suffix); i < this.codemirror.lineCount(); i++) {
-          this.codemirror.addLineClass(i, "background", readOnlyLineClass)
+          this.codemirror.addLineClass(i, SELECTORS.BACKGROUND, readOnlyLineClass)
         }
       })
     }
@@ -170,9 +175,9 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
 
     taskRanges.forEach(task => {
       this.codemirror.markText({line: task.line, ch: task.ch}, {line: task.line, ch: task.ch + task.length}, {
-        className: CLASS_NAME_SELECTORS.MARK_PLACEHOLDER,
-        startStyle: CLASS_NAME_SELECTORS.MARK_PLACEHOLDER_START,
-        endStyle: CLASS_NAME_SELECTORS.MARK_PLACEHOLDER_END,
+        className: SELECTORS.MARK_PLACEHOLDER,
+        startStyle: SELECTORS.MARK_PLACEHOLDER_START,
+        endStyle: SELECTORS.MARK_PLACEHOLDER_END,
         handleMouseEvents: true
       });
     });
@@ -276,7 +281,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
   getNodeForMountIframe(platform) {
     return platform === TargetPlatform.JS
       ? document.body
-      : this.nodes[0].querySelector(CLASS_NAME_SELECTORS.CANVAS_PLACEHOLDER_OUTPUT);
+      : this.nodes[0].querySelector(SELECTORS.CANVAS_PLACEHOLDER_OUTPUT);
   }
 
   getCode() {
@@ -329,15 +334,15 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
       if ((this.codemirror.lineInfo(interval.start.line) != null) &&
         (this.codemirror.lineInfo(interval.start.line).gutterMarkers == null)) {
         const gutter = document.createElement("div");
-        gutter.className = severity + "gutter";
+        gutter.className = severity + SELECTORS.GUTTER;
         gutter.title = errorMessage;
 
-        this.codemirror.setGutterMarker(interval.start.line, "errors-and-warnings-gutter", gutter)
+        this.codemirror.setGutterMarker(interval.start.line, SELECTORS.ERROR_AND_WARNING_GUTTER, gutter)
       } else {
-        const gutter = this.codemirror.lineInfo(interval.start.line).gutterMarkers["errors-and-warnings-gutter"];
+        const gutter = this.codemirror.lineInfo(interval.start.line).gutterMarkers[SELECTORS.ERROR_AND_WARNING_GUTTER];
         gutter.title += `\n${errorMessage}`;
-        if (gutter.className.indexOf("ERRORgutter") === -1) {
-          gutter.className = severity + "gutter"
+        if (gutter.className.indexOf(SELECTORS.ERROR_GUTTER) === -1) {
+          gutter.className = severity + SELECTORS.GUTTER
         }
       }
     });
@@ -345,7 +350,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
 
   removeStyles() {
     this.arrayClasses.forEach(it => it.clear());
-    this.codemirror.clearGutter("errors-and-warnings-gutter")
+    this.codemirror.clearGutter(SELECTORS.ERROR_AND_WARNING_GUTTER)
   }
 
   initializeCodeMirror(options = {}) {
@@ -364,8 +369,8 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
       viewportMargin: Infinity,
       foldGutter: true,
       gutters: [
-        "errors-and-warnings-gutter",
-        "CodeMirror-foldgutter"
+        SELECTORS.ERROR_AND_WARNING_GUTTER,
+        SELECTORS.FOLD_GUTTER
       ]
     };
 
@@ -470,7 +475,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
       let position = codemirror.coordsChar({left: event.pageX, top: event.pageY});
       if (position.line !== 0 || position.ch !== 0) {
         let markers = codemirror.findMarksAt(position);
-        let todoMarker = markers.find(marker => marker.className === CLASS_NAME_SELECTORS.MARK_PLACEHOLDER);
+        let todoMarker = markers.find(marker => marker.className === SELECTORS.MARK_PLACEHOLDER);
         if (todoMarker != null) {
           let markerPosition = todoMarker.find();
           codemirror.setSelection(markerPosition.from, markerPosition.to);
