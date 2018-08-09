@@ -377,7 +377,9 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
 
     /**
      * Register own helper for autocomplete.
-     * Getting complections from try.kotlinlang.org.
+     * Getting completions from try.kotlinlang.org.
+     * CodeMirror.hint.default => getting list from codemirror kotlin keywords.
+     *
      * {@see WebDemoApi}      - getting data from WebDemo
      * {@see CompletionView} - implementation completion view
      */
@@ -394,13 +396,17 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
       );
 
       function processingCompletionsList(results) {
-        callback({
-          list: results.map(result => {
-            return new CompletionView(result)
-          }),
-          from: {line: cur.line, ch: token.start},
-          to: {line: cur.line, ch: token.end}
-        })
+        if (results.length === 0) {
+          CodeMirror.showHint(mirror, CodeMirror.hint.default ,{completeSingle: false});
+        } else {
+          callback({
+            list: results.map(result => {
+              return new CompletionView(result)
+            }),
+            from: {line: cur.line, ch: token.start},
+            to: {line: cur.line, ch: token.end}
+          })
+        }
       }
     });
 
@@ -445,6 +451,15 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
           this.state.compilerVersion,
           this.state.targetPlatform,
           this.state.hiddenDependencies).then(data => this.showDiagnostics(data))
+      }
+    });
+
+    /**
+     * If autoComplete => Getting completion on every key press on the editor.
+     */
+    this.codemirror.on("keypress", (cm) => {
+      if (this.state.autoComplete) {
+        CodeMirror.showHint(cm, CodeMirror.hint.kotlin ,{completeSingle: false});
       }
     });
 

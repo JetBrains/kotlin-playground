@@ -140,6 +140,8 @@ Use the following attributes on elements that are converted to editors to adjust
  
 - `highlight-on-fly="true|false"`: Errors and warnings check for each change in the editor. Defaults to `false`.
 
+- `autocomplete="true|false"`: Get completion on every key press. If `false` => Press ctrl-space to activate autocompletion. Defaults to `false`.
+
 - `indent="4"`: How many spaces a block should be indented. Defaults to `4`. 
 
 - `lines="true|false"`: Whether to show line numbers to the left of the editor. Defaults to `false`. 
