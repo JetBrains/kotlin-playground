@@ -55,7 +55,12 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 ```
 
-### Customizing editors
+### Use from plugins
+
+1) [Kotlin Playground WordPress plugin](https://github.com/Kotlin/kotlin-playground-wp-plugin) — [WordPress](https://wordpress.com/) plugin which allows to embed interactive Kotlin playground to any post.
+2) [Kotlin Playground Coursera plugin](https://github.com/AlexanderPrendota/kotlin-playground-coursera-plugin) — Allows embedding interactive Kotlin layground for [coursera](https://www.coursera.org/) lessons.
+
+## Customizing editors
 
 
 Use the following attributes on elements that are converted to editors to adjust their behavior.
@@ -149,7 +154,7 @@ Use the following attributes on elements that are converted to editors to adjust
 - `from="5" to="10`: Create a part of code. Example `from` line 5 `to` line 10.
 
 
-### Supported keyboard shortcuts
+## Supported keyboard shortcuts
 
   - Ctrl+Space		   — code completion
   - Ctrl+F9		       — execute snippet
