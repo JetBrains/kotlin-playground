@@ -8,14 +8,12 @@ class TargetPlatform {
     switch (id) {
       case "js":
         return TargetPlatform.JS;
-      case "java":
-        return TargetPlatform.JAVA;
       case "junit":
         return TargetPlatform.JUNIT;
       case "canvas":
         return TargetPlatform.CANVAS;
       default:
-        throw Error("Unknown platform " + id);
+        return TargetPlatform.JAVA;
     }
   }
 }

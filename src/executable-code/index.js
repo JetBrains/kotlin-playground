@@ -74,7 +74,7 @@ export default class ExecutableCode {
     const editorTheme = this.getTheme(targetNode);
     const args = targetNode.hasAttribute(ATTRIBUTES.ARGUMENTS) ? targetNode.getAttribute(ATTRIBUTES.ARGUMENTS) : "";
     const hiddenDependencies = this.getHiddenDependencies(targetNode);
-    let targetPlatform = targetNode.getAttribute(ATTRIBUTES.PLATFORM);
+    const targetPlatform = TargetPlatform.getById(targetNode.getAttribute(ATTRIBUTES.PLATFORM));
     const targetNodeStyle = targetNode.getAttribute(ATTRIBUTES.STYLE);
     let jsLibs = targetNode.getAttribute(ATTRIBUTES.JS_LIBS);
     let isFoldedButton = targetNode.getAttribute(ATTRIBUTES.FOLDED_BUTTON) !== "false";
@@ -83,7 +83,6 @@ export default class ExecutableCode {
     const autoComplete = targetNode.getAttribute(ATTRIBUTES.COMPLETE) === "true";
     const autoIndent = targetNode.getAttribute(ATTRIBUTES.AUTO_INDENT) === "true";
     const mode = this.getMode(targetNode);
-    targetPlatform = targetPlatform !== null ? targetPlatform : TargetPlatform.JAVA.id;
     const code = replaceWhiteSpaces(targetNode.textContent);
     const cfg = merge(defaultConfig, config);
 
@@ -99,7 +98,7 @@ export default class ExecutableCode {
     let additionalLibs;
     targetNode.style.display = 'none';
     targetNode.setAttribute(INITED_ATTRIBUTE_NAME, 'true');
-    if (targetPlatform === TargetPlatform.JS.id || targetPlatform === TargetPlatform.CANVAS.id) {
+    if (targetPlatform === TargetPlatform.JS || targetPlatform === TargetPlatform.CANVAS) {
       additionalLibs = new Set(API_URLS.JQUERY.split());
       if (jsLibs !== null) {
         let checkUrl = new RegExp("https?://.+\.js$");
@@ -130,7 +129,7 @@ export default class ExecutableCode {
       onFlyHighLight: onFlyHighLight,
       autoIndent: autoIndent,
       highlightOnly: highlightOnly,
-      targetPlatform: TargetPlatform.getById(targetPlatform),
+      targetPlatform: targetPlatform,
       jsLibs: additionalLibs,
       isFoldedButton: isFoldedButton
     });
