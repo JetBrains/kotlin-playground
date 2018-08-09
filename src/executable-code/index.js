@@ -76,8 +76,8 @@ export default class ExecutableCode {
     const hiddenDependencies = this.getHiddenDependencies(targetNode);
     const targetPlatform = TargetPlatform.getById(targetNode.getAttribute(ATTRIBUTES.PLATFORM));
     const targetNodeStyle = targetNode.getAttribute(ATTRIBUTES.STYLE);
-    let jsLibs = targetNode.getAttribute(ATTRIBUTES.JS_LIBS);
-    let isFoldedButton = targetNode.getAttribute(ATTRIBUTES.FOLDED_BUTTON) !== "false";
+    const jsLibs = this.getJsLibraries(targetNode, targetPlatform);
+    const isFoldedButton = targetNode.getAttribute(ATTRIBUTES.FOLDED_BUTTON) !== "false";
     const lines = targetNode.getAttribute(ATTRIBUTES.LINES) === "true";
     const onFlyHighLight = targetNode.getAttribute(ATTRIBUTES.ON_FLY_HIGHLIGHT) === "true";
     const autoComplete = targetNode.getAttribute(ATTRIBUTES.COMPLETE) === "true";
@@ -91,24 +91,8 @@ export default class ExecutableCode {
       highlightOnly = true;
     }
 
-    /*
-      additionalLibs - setting additional JS-library
-      Setting JQuery as default JS library
-     */
-    let additionalLibs;
     targetNode.style.display = 'none';
     targetNode.setAttribute(INITED_ATTRIBUTE_NAME, 'true');
-    if (targetPlatform === TargetPlatform.JS || targetPlatform === TargetPlatform.CANVAS) {
-      additionalLibs = new Set(API_URLS.JQUERY.split());
-      if (jsLibs !== null) {
-        let checkUrl = new RegExp("https?://.+\.js$");
-        jsLibs
-          .replace(" ", "")
-          .split(",")
-          .filter(lib => checkUrl.test(lib))
-          .forEach(lib => additionalLibs.add(lib));
-      }
-    }
     const mountNode = document.createElement('div');
     insertAfter(mountNode, targetNode);
 
@@ -130,7 +114,7 @@ export default class ExecutableCode {
       autoIndent: autoIndent,
       highlightOnly: highlightOnly,
       targetPlatform: targetPlatform,
-      jsLibs: additionalLibs,
+      jsLibs: jsLibs,
       isFoldedButton: isFoldedButton
     });
 
@@ -157,7 +141,30 @@ export default class ExecutableCode {
       }, [])
   }
 
-  getTheme(targetNode){
+  /**
+   * Add additional JS-library.
+   * Setting JQuery as default library.
+   * @param targetNode - {NodeElement}
+   * @param platform - {TargetPlatform}
+   * @returns {Set} - set of additional libraries
+   */
+  getJsLibraries(targetNode, platform) {
+    if (platform === TargetPlatform.JS || platform === TargetPlatform.CANVAS) {
+      const jsLibs = targetNode.getAttribute(ATTRIBUTES.JS_LIBS);
+      let additionalLibs = new Set(API_URLS.JQUERY.split());
+      if (jsLibs) {
+        let checkUrl = new RegExp("https?://.+\.js$");
+        jsLibs
+          .replace(" ", "")
+          .split(",")
+          .filter(lib => checkUrl.test(lib))
+          .forEach(lib => additionalLibs.add(lib));
+      }
+      return additionalLibs;
+    }
+  }
+
+  getTheme(targetNode) {
     const theme = targetNode.getAttribute(ATTRIBUTES.THEME);
     switch (theme) {
       case THEMES.DARCULA:
