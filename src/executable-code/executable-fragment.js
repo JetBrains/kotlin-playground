@@ -401,8 +401,9 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
       );
 
       function processingCompletionsList(results) {
-        if (results.length === 0) {
-          CodeMirror.showHint(mirror, CodeMirror.hint.default ,{completeSingle: false});
+        const currentSymbol = mirror.getRange(cur, {line: cur.line, ch: cur.ch + 1});
+        if (results.length === 0 && /^[a-zA-Z]+$/.test(currentSymbol)) {
+          CodeMirror.showHint(mirror, CodeMirror.hint.default, {completeSingle: false});
         } else {
           callback({
             list: results.map(result => {
@@ -464,7 +465,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
      */
     this.codemirror.on("keypress", (cm) => {
       if (this.state.autoComplete) {
-        CodeMirror.showHint(cm, CodeMirror.hint.kotlin ,{completeSingle: false});
+        CodeMirror.showHint(cm, CodeMirror.hint.kotlin, {completeSingle: false});
       }
     });
 
