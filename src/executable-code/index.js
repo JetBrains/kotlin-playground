@@ -269,12 +269,11 @@ export default class ExecutableCode {
             ? versions[versions.length - 1].version
             : latestStableVersion;
         }
-
-        // Skip empty and already initialized nodes
-        if (
-          node.textContent.trim() === '' ||
-          node.getAttribute(INITED_ATTRIBUTE_NAME) === 'true'
-        ) {
+        if (!node.innerText.trim()) {
+          node.textContent = '🙂';
+        }
+        // Skip already initialized nodes
+        if (node.getAttribute(INITED_ATTRIBUTE_NAME) === 'true') {
           return;
         }
 
