@@ -10,6 +10,12 @@ const NO_TEST_FOUND = "No tests methods are found";
 const ANGLE_BRACKETS_LEFT_HTML = "&lt;";
 const ANGLE_BRACKETS_RIGHT_HTML = "&gt;";
 
+const TEST_STATUS = {
+  FAIL: 'Fail',
+  ERROR: 'Error',
+  PASSED: 'Passed'
+};
+
 const BUG_FLAG = `${ANGLE_BRACKETS_LEFT_HTML}errStream${ANGLE_BRACKETS_RIGHT_HTML}BUG${ANGLE_BRACKETS_LEFT_HTML}/errStream${ANGLE_BRACKETS_RIGHT_HTML}`;
 const BUG_REPORT_MESSAGE = `${ANGLE_BRACKETS_LEFT_HTML}errStream${ANGLE_BRACKETS_RIGHT_HTML}Hey! It seems you just found a bug! \uD83D\uDC1E\n` +
             `Please click <a href=https://youtrack.jetbrains.com/newIssue?draftId=25-2077811 target=_blank>here<a> to submit it ` +
@@ -36,11 +42,11 @@ export function processJUnitResults(data) {
       totalTime = totalTime + (currentTest.executionTime / 1000);
       switch (currentTest.status) {
         case "FAIL":
-          return previousTest + `<span class="console-icon fail"></span><div class="test-fail">${currentTest.status} ${currentTest.methodName}: ${convertToHtmlTag(currentTest.comparisonFailure.message)}</div>`;
+          return previousTest + `<span class="console-icon fail"></span><div class="test-fail">${TEST_STATUS.FAIL}: ${currentTest.methodName}: ${convertToHtmlTag(currentTest.comparisonFailure.message)}</div>`;
         case "ERROR":
-          return previousTest + `<span class="console-icon fail"></span><div class="test-fail">${currentTest.status} ${currentTest.methodName}: ${convertToHtmlTag(currentTest.exception.message)}</div>`;
+          return previousTest + `<span class="console-icon fail"></span><div class="test-fail">${TEST_STATUS.ERROR}: ${currentTest.methodName}: ${convertToHtmlTag(currentTest.exception.message)}</div>`;
         case "OK":
-          return previousTest + `<span class="console-icon ok"></span><div class="test-output">${currentTest.status} ${currentTest.methodName}</div>`;
+          return previousTest + `<span class="console-icon ok"></span><div class="test-output">${TEST_STATUS.PASSED}: ${currentTest.methodName}</div>`;
       }
     }, "");
   }
