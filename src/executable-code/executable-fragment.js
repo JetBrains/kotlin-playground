@@ -8,6 +8,7 @@ import WebDemoApi from '../webdemo-api';
 import TargetPlatform from "../target-platform";
 import getJsExecutor from "../js-executor"
 import {countLines, THEMES, unEscapeString} from "../utils";
+import debounce from 'debounce';
 import escapeStringRegexp from "escape-string-regexp"
 import CompletionView from "../view/completion-view";
 import {processErrors, showJsException} from "../view/output-view";
@@ -17,6 +18,7 @@ const SAMPLE_END = '//sampleEnd';
 const MARK_PLACEHOLDER_OPEN = "[mark]";
 const MARK_PLACEHOLDER_CLOSE = "[/mark]";
 const F9_KEY = 120;
+const DEBOUNCE_TIME = 500;
 
 const SELECTORS = {
   CANVAS_PLACEHOLDER_OUTPUT: ".js-code-output-canvas-placeholder",
@@ -449,7 +451,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
      * 1) Remove all styles
      * 2) if onFlyHighLight flag => getting highlight
      */
-    this.codemirror.on("change", () => {
+    this.codemirror.on("change", debounce(() => {
       this.removeStyles();
       if (this.state.onFlyHighLight) {
         WebDemoApi.getHighlight(
@@ -458,16 +460,16 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
           this.state.targetPlatform,
           this.state.hiddenDependencies).then(data => this.showDiagnostics(data))
       }
-    });
+    }, DEBOUNCE_TIME));
 
     /**
      * If autoComplete => Getting completion on every key press on the editor.
      */
-    this.codemirror.on("keypress", (cm) => {
+    this.codemirror.on("keypress", debounce((cm) => {
       if (this.state.autoComplete) {
         CodeMirror.showHint(cm, CodeMirror.hint.kotlin, {completeSingle: false});
       }
-    });
+    }, DEBOUNCE_TIME));
 
     /**
      * Select marker's placeholder on mouse click
