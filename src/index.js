@@ -6,11 +6,18 @@ import {
 } from './discourse-preview-panel-handler';
 
 /**
+ *
+ * @typedef {Object} eventFunctions
+ * @property {Function} onChange
+ * @property {Function} onTestPassed
+ * @property {Function} callBack
+ *
  * @param {string} selector
+ * @param {Function} eventFunctions
  * @return {Promise<Array<ExecutableCode>>}
  */
-export default function create(selector) {
-  return ExecutableCode.create(selector);
+export default function create(selector, eventFunctions) {
+  return ExecutableCode.create(selector, eventFunctions);
 }
 
 // Backwards compatibility, should be removed in next major release

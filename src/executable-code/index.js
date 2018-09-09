@@ -62,9 +62,10 @@ const MODES = {
 export default class ExecutableCode {
   /**
    * @param {string|HTMLElement} target
-   * @param {KotlinPlayGroundConfig} [config]
+   * @param {{compilerVersion: *}} [config]
+   * @param {Object} eventFunctions
    */
-  constructor(target, config = {}) {
+  constructor(target, config = {}, eventFunctions) {
     const targetNode = typeof target === 'string' ? document.querySelector(target) : target;
     let highlightOnly = targetNode.hasAttribute(ATTRIBUTES.HIGHLIGHT_ONLY);
     const noneMarkers = targetNode.hasAttribute(ATTRIBUTES.NONE_MARKERS);
@@ -97,7 +98,7 @@ export default class ExecutableCode {
     insertAfter(mountNode, targetNode);
 
     const view = ExecutableFragment.render(mountNode, {highlightOnly});
-    view.update({
+    view.update(Object.assign({
       code: code,
       lines: lines,
       theme: editorTheme,
@@ -116,7 +117,7 @@ export default class ExecutableCode {
       targetPlatform: targetPlatform,
       jsLibs: jsLibs,
       isFoldedButton: isFoldedButton
-    });
+    }, eventFunctions));
 
     this.config = cfg;
     this.node = mountNode;
@@ -125,6 +126,7 @@ export default class ExecutableCode {
     this.view = view;
 
     targetNode.KotlinPlayground = this;
+     if (eventFunctions && eventFunctions.callback) eventFunctions.callback(targetNode, mountNode);
   }
 
   /**
@@ -224,10 +226,10 @@ export default class ExecutableCode {
 
   /**
    * @param {string|Node|NodeList} target
-   * @param {boolean} highlightOnly
+   * @param {Function} eventFunctions
    * @return {Promise<Array<ExecutableCode>>}
    */
-  static create(target, highlightOnly) {
+  static create(target, eventFunctions) {
     let targetNodes;
 
     if (typeof target === 'string') {
@@ -277,10 +279,7 @@ export default class ExecutableCode {
           return;
         }
 
-        instances.push(new ExecutableCode(node, {
-          compilerVersion,
-          highlightOnly
-        }));
+        instances.push(new ExecutableCode(node, { compilerVersion }, eventFunctions));
       });
 
       return instances;
