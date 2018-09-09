@@ -44,7 +44,7 @@ class Contact(val id: Int, var email: String)
 
 fun main(args: Array<String>) {
     val contact = Contact(1, "mary@gmail.com")
-    println(contact.id)                   
+    println(contact.id)
 }
 ```
 
@@ -279,7 +279,7 @@ Look at example:
 </div>
 ```
 
-<button onclick="KotlinPlayground('.kotlin-code-2'); this.disabled = true; document.getElementById('kotlin-example').style.display = 'block';">Create</button>
+<button onclick="KotlinPlayground('.kotlin-code-2',{ onChange: (code)=> {console.log(code)}}); this.disabled = true; document.getElementById('kotlin-example').style.display = 'block';">Create</button>
 
 <div id="kotlin-example" class="kotlin-code-2" style="display: none;">
 
@@ -289,8 +289,8 @@ import cat.Cat
 fun main(args: Array<String>) {
 //sampleStart
     val cat = Cat("Kitty")
-    println(cat.name)  
-//sampleEnd                 
+    println(cat.name)
+//sampleEnd
 }
 ```
   <textarea class="hidden-dependency">
