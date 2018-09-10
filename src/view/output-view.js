@@ -39,7 +39,7 @@ export function processJUnitResults(data, onTestPassed) {
   if (isEmptyObject(data)) return NO_TEST_FOUND;
   for (let testClass in data) {
     let listOfResults = arrayFrom(data[testClass]);
-    result = result + listOfResults.reduce((previousTest, currentTest) => {
+    result += listOfResults.reduce((previousTest, currentTest) => {
       totalTime = totalTime + (currentTest.executionTime / 1000);
       if (currentTest.status === TEST_STATUS.ERROR.value || currentTest.status === TEST_STATUS.FAIL.value) passed = false;
       switch (currentTest.status) {
