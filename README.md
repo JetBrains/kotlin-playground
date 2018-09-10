@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 ### Events
 
-Kotlin Playground is supported several events on additional parameter on initialisation;
+Kotlin Playground supports several events on additional parameter on initialisation;
 
 For example:
 ```js
@@ -91,10 +91,10 @@ playground('.selector', eventFunctions)
  _code_ — current playground code.
 
 
-- `onTestPassed` — Call after all test's passed. Use for target platform `junit`.
+- `onTestPassed` — Is called after all tests passed. Use for target platform `junit`.
 
-- `callback(targetNode, mountNode)` — Call after playground's init.
- _targetNode_ — node with plain text before playground's init.
+- `callback(targetNode, mountNode)` — Is called after playground's united.
+ _targetNode_ — node with plain text before component initialization.
  _mountNode_  — new node with runnable editor.
 
 ## Customizing editors
