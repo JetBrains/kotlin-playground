@@ -11,9 +11,9 @@ const ANGLE_BRACKETS_LEFT_HTML = "&lt;";
 const ANGLE_BRACKETS_RIGHT_HTML = "&gt;";
 
 const TEST_STATUS = {
-  FAIL: 'Fail',
-  ERROR: 'Error',
-  PASSED: 'Passed'
+  FAIL : { value: "FAIL", text: "Fail" },
+  ERROR: { value: "ERROR", text: "Error" },
+  PASSED : { value: "OK", text: "Passed" }
 };
 
 const BUG_FLAG = `${ANGLE_BRACKETS_LEFT_HTML}errStream${ANGLE_BRACKETS_RIGHT_HTML}BUG${ANGLE_BRACKETS_LEFT_HTML}/errStream${ANGLE_BRACKETS_RIGHT_HTML}`;
@@ -32,24 +32,27 @@ export function processJVMOutput(output, theme) {
     .replace(`${ANGLE_BRACKETS_LEFT_HTML}/errStream${ANGLE_BRACKETS_RIGHT_HTML}`, "</span>");
 }
 
-export function processJUnitResults(data) {
+export function processJUnitResults(data, onTestPassed) {
   let result = "";
   let totalTime = 0;
+  let passed = true;
   if (isEmptyObject(data)) return NO_TEST_FOUND;
   for (let testClass in data) {
     let listOfResults = arrayFrom(data[testClass]);
-    result = result + listOfResults.reduce((previousTest, currentTest) => {
+    result += listOfResults.reduce((previousTest, currentTest) => {
       totalTime = totalTime + (currentTest.executionTime / 1000);
+      if (currentTest.status === TEST_STATUS.ERROR.value || currentTest.status === TEST_STATUS.FAIL.value) passed = false;
       switch (currentTest.status) {
-        case "FAIL":
-          return previousTest + `<span class="console-icon fail"></span><div class="test-fail">${TEST_STATUS.FAIL}: ${currentTest.methodName}: ${convertToHtmlTag(currentTest.comparisonFailure.message)}</div>`;
-        case "ERROR":
-          return previousTest + `<span class="console-icon fail"></span><div class="test-fail">${TEST_STATUS.ERROR}: ${currentTest.methodName}: ${convertToHtmlTag(currentTest.exception.message)}</div>`;
-        case "OK":
-          return previousTest + `<span class="console-icon ok"></span><div class="test-output">${TEST_STATUS.PASSED}: ${currentTest.methodName}</div>`;
+        case TEST_STATUS.FAIL.value:
+          return previousTest + `<span class="console-icon fail"></span><div class="test-fail">${TEST_STATUS.FAIL.text}: ${currentTest.methodName}: ${convertToHtmlTag(currentTest.comparisonFailure.message)}</div>`;
+        case TEST_STATUS.ERROR.value:
+          return previousTest + `<span class="console-icon fail"></span><div class="test-fail">${TEST_STATUS.ERROR.text}: ${currentTest.methodName}: ${convertToHtmlTag(currentTest.exception.message)}</div>`;
+        case TEST_STATUS.PASSED.value:
+          return previousTest + `<span class="console-icon ok"></span><div class="test-output">${TEST_STATUS.PASSED.text}: ${currentTest.methodName}</div>`;
       }
     }, "");
   }
+  if (passed && onTestPassed) onTestPassed();
   let testTime = `<div class="test-time">Total test time: ${totalTime}s</div>`;
   return testTime + result;
 }

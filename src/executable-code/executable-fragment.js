@@ -235,7 +235,8 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
         this.state.compilerVersion,
         platform, this.state.args,
         this.state.theme,
-        this.state.hiddenDependencies).then(
+        this.state.hiddenDependencies,
+        this.state.onTestPassed).then(
         state => {
           state.waitingForOutput = false;
           if (state.output) state.openConsole = true;
@@ -451,14 +452,16 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
      * 1) Remove all styles
      * 2) if onFlyHighLight flag => getting highlight
      */
-    this.codemirror.on("change", debounce(() => {
+    this.codemirror.on("change", debounce((cm) => {
+      const { onChange, onFlyHighLight, compilerVersion, targetPlatform, hiddenDependencies } = this.state;
+      if (onChange) onChange(cm.getValue());
       this.removeStyles();
-      if (this.state.onFlyHighLight) {
+      if (onFlyHighLight) {
         WebDemoApi.getHighlight(
           this.getCode(),
-          this.state.compilerVersion,
-          this.state.targetPlatform,
-          this.state.hiddenDependencies).then(data => this.showDiagnostics(data))
+          compilerVersion,
+          targetPlatform,
+          hiddenDependencies).then(data => this.showDiagnostics(data))
       }
     }, DEBOUNCE_TIME));
 

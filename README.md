@@ -61,6 +61,42 @@ document.addEventListener('DOMContentLoaded', () => {
 1) [Kotlin Playground WordPress plugin](https://github.com/Kotlin/kotlin-playground-wp-plugin) — [WordPress](https://wordpress.com/) plugin which allows to embed interactive Kotlin playground to any post.
 2) [Kotlin Playground Coursera plugin](https://github.com/AlexanderPrendota/kotlin-playground-coursera-plugin) — Allows embedding interactive Kotlin playground for [coursera](https://www.coursera.org/) lessons.
 
+### Events
+
+Kotlin Playground supports several events on additional parameter on initialisation;
+
+For example:
+```js
+function onChange(code) {
+  console.log("Editor code was changed:\n" + code);
+}
+
+function onTestPassed() {
+   console.log("Tests passed!");
+}
+
+const eventFunctions = {
+  onChange: onChange(code),
+  onTestPassed: onTestPassed,
+  callback: callback(targetNode, mountNode)
+};
+
+playground('.selector', eventFunctions)
+
+```
+
+**Events description:**
+
+- `onChage(code)` — Fires every time the content of the editor is changed. Debounce time: 0.5s.
+ _code_ — current playground code.
+
+
+- `onTestPassed` — Is called after all tests passed. Use for target platform `junit`.
+
+- `callback(targetNode, mountNode)` — Is called after playground's united.
+ _targetNode_ — node with plain text before component initialization.
+ _mountNode_  — new node with runnable editor.
+
 ## Customizing editors
 
 

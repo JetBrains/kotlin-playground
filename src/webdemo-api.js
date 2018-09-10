@@ -71,10 +71,11 @@ export default class WebDemoApi {
    * @param platform        - TargetPlatform
    * @param args            - command line arguments
    * @param theme           - theme of editor
+   * @param onTestPassed    - function will call after test's passed
    * @param hiddenDependencies   - read only additional files
    * @returns {*|PromiseLike<T>|Promise<T>}
    */
-  static executeKotlinCode(code, compilerVersion, platform, args, theme, hiddenDependencies) {
+  static executeKotlinCode(code, compilerVersion, platform, args, theme, hiddenDependencies, onTestPassed) {
     return executeCode(API_URLS.COMPILE, code, compilerVersion, platform, args, hiddenDependencies).then(function (data) {
       let output = "";
       let errorsAndWarnings = flatten(Object.values(data.errors));
@@ -87,7 +88,7 @@ export default class WebDemoApi {
             if (data.text) output = processJVMOutput(data.text, theme);
             break;
           case TargetPlatform.JUNIT:
-            data.testResults ? output = processJUnitResults(data.testResults) : output = processJVMOutput(data.text, theme);
+            data.testResults ? output = processJUnitResults(data.testResults, onTestPassed) : output = processJVMOutput(data.text, theme);
             break;
         }
       }
