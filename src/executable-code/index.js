@@ -37,6 +37,7 @@ const ATTRIBUTES = {
   NONE_MARKERS: 'none-markers',
   THEME: 'theme',
   MODE: 'mode',
+  MATCH_BRACKETS: 'match-brackets',
   COMPLETE: 'autocomplete',
   ON_FLY_HIGHLIGHT: 'highlight-on-fly',
   PLATFORM: 'data-target-platform',
@@ -82,6 +83,7 @@ export default class ExecutableCode {
     const lines = targetNode.getAttribute(ATTRIBUTES.LINES) === "true";
     const onFlyHighLight = targetNode.getAttribute(ATTRIBUTES.ON_FLY_HIGHLIGHT) === "true";
     const autoComplete = targetNode.getAttribute(ATTRIBUTES.COMPLETE) === "true";
+    const matchBrackets = targetNode.getAttribute(ATTRIBUTES.MATCH_BRACKETS) === "true";
     const autoIndent = targetNode.getAttribute(ATTRIBUTES.AUTO_INDENT) === "true";
     const mode = this.getMode(targetNode);
     const code = replaceWhiteSpaces(targetNode.textContent);
@@ -105,6 +107,7 @@ export default class ExecutableCode {
       indent: indent,
       args: args,
       mode: mode,
+      matchBrackets: matchBrackets,
       from: from,
       to: to,
       autoComplete: autoComplete,

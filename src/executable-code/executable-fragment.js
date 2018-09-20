@@ -364,7 +364,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
       lineNumbers: false,
       mode: options.mode,
       theme: options.theme,
-      matchBrackets: true,
+      matchBrackets: options.matchBrackets,
       scrollbarStyle: 'overlay',
       continueComments: true,
       autoCloseBrackets: true,
