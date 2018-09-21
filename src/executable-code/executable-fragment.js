@@ -404,7 +404,9 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
       );
 
       function processingCompletionsList(results) {
-        const currentSymbol = mirror.getRange(cur, {line: cur.line, ch: cur.ch + 1});
+        const anchorCharPosition = mirror.findWordAt({line: cur.line, ch: cur.ch}).anchor.ch;
+        const headCharPosition = mirror.findWordAt({line: cur.line, ch: cur.ch}).head.ch;
+        const currentSymbol = mirror.getRange({line: cur.line,ch: anchorCharPosition}, {line: cur.line,ch: headCharPosition});
         if (results.length === 0 && /^[a-zA-Z]+$/.test(currentSymbol)) {
           CodeMirror.showHint(mirror, CodeMirror.hint.default, {completeSingle: false});
         } else {
