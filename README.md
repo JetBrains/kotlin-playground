@@ -93,6 +93,10 @@ playground('.selector', eventFunctions)
 
 - `onTestPassed` — Is called after all tests passed. Use for target platform `junit`.
 
+- `onCloseConsole` — Is called after the console's closed.
+
+- `onOpenConsole` — Is called after the console's opened.
+
 - `callback(targetNode, mountNode)` — Is called after playground's united.
  _targetNode_ — node with plain text before component initialization.
  _mountNode_  — new node with runnable editor.

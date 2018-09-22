@@ -214,39 +214,47 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
   }
 
   onConsoleCloseButtonEnter() {
-    if (this.state.targetPlatform === TargetPlatform.CANVAS) {
-      this.jsExecutor.reloadIframeScripts(this.state.jsLibs, this.getNodeForMountIframe(TargetPlatform.CANVAS));
+    const {targetPlatform, jsLibs, onCloseConsole} = this.state;
+    if (targetPlatform === TargetPlatform.CANVAS) {
+      this.jsExecutor.reloadIframeScripts(jsLibs, this.getNodeForMountIframe(TargetPlatform.CANVAS));
     }
     this.update({output: "", openConsole: false});
+    if (onCloseConsole) onCloseConsole();
   }
 
   execute() {
-    if (this.state.waitingForOutput) {
+    const {
+      onOpenConsole, targetPlatform, waitingForOutput, compilerVersion,
+      args, theme, hiddenDependencies, onTestPassed, jsLibs
+    } = this.state;
+    if (waitingForOutput) {
       return
     }
     this.update({
       waitingForOutput: true,
       openConsole: false
     });
-    let platform = this.state.targetPlatform;
-    if (platform === TargetPlatform.JAVA || platform === TargetPlatform.JUNIT) {
+    if (targetPlatform === TargetPlatform.JAVA || targetPlatform === TargetPlatform.JUNIT) {
       WebDemoApi.executeKotlinCode(
         this.getCode(),
-        this.state.compilerVersion,
-        platform, this.state.args,
-        this.state.theme,
-        this.state.hiddenDependencies,
-        this.state.onTestPassed).then(
+        compilerVersion,
+        targetPlatform, args,
+        theme,
+        hiddenDependencies,
+        onTestPassed).then(
         state => {
           state.waitingForOutput = false;
-          if (state.output) state.openConsole = true;
+          if (state.output) {
+            if (onOpenConsole) onOpenConsole();
+            state.openConsole = true;
+          }
           this.update(state);
         },
         () => this.update({waitingForOutput: false})
       )
     } else {
-      if (platform === TargetPlatform.CANVAS) this.jsExecutor.reloadIframeScripts(this.state.jsLibs, this.getNodeForMountIframe(platform));
-      WebDemoApi.translateKotlinToJs(this.getCode(), this.state.compilerVersion, platform, this.state.args, this.state.hiddenDependencies).then(
+      if (targetPlatform === TargetPlatform.CANVAS) this.jsExecutor.reloadIframeScripts(jsLibs, this.getNodeForMountIframe(targetPlatform));
+      WebDemoApi.translateKotlinToJs(this.getCode(), compilerVersion, targetPlatform, args, hiddenDependencies).then(
         state => {
           state.waitingForOutput = false;
           const jsCode = state.jsCode;
@@ -256,12 +264,16 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
             if (errors.length > 0) {
               state.output = processErrors(errors);
             } else {
-              const codeOutput = this.jsExecutor.executeJsCode(jsCode, this.state.jsLibs, platform, this.getNodeForMountIframe(platform));
+              const codeOutput = this.jsExecutor.executeJsCode(jsCode, jsLibs, targetPlatform, this.getNodeForMountIframe(targetPlatform));
               if (codeOutput) {
                 state.openConsole = true;
-                state.output = `<span class="standard-output ${this.state.theme}">${codeOutput}</span>`
+                state.output = `<span class="standard-output ${theme}">${codeOutput}</span>`
+                if (onOpenConsole) onOpenConsole();
               } else state.output = "";
-              if (platform === TargetPlatform.CANVAS) state.openConsole = true;
+              if (targetPlatform === TargetPlatform.CANVAS) {
+                if (onOpenConsole) onOpenConsole();
+                state.openConsole = true;
+              }
             }
           } catch (e) {
             let exceptionOutput = showJsException(e);
@@ -406,7 +418,10 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
       function processingCompletionsList(results) {
         const anchorCharPosition = mirror.findWordAt({line: cur.line, ch: cur.ch}).anchor.ch;
         const headCharPosition = mirror.findWordAt({line: cur.line, ch: cur.ch}).head.ch;
-        const currentSymbol = mirror.getRange({line: cur.line,ch: anchorCharPosition}, {line: cur.line,ch: headCharPosition});
+        const currentSymbol = mirror.getRange({line: cur.line, ch: anchorCharPosition}, {
+          line: cur.line,
+          ch: headCharPosition
+        });
         if (results.length === 0 && /^[a-zA-Z]+$/.test(currentSymbol)) {
           CodeMirror.showHint(mirror, CodeMirror.hint.default, {completeSingle: false});
         } else {
@@ -455,7 +470,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
      * 2) if onFlyHighLight flag => getting highlight
      */
     this.codemirror.on("change", debounce((cm) => {
-      const { onChange, onFlyHighLight, compilerVersion, targetPlatform, hiddenDependencies } = this.state;
+      const {onChange, onFlyHighLight, compilerVersion, targetPlatform, hiddenDependencies} = this.state;
       if (onChange) onChange(cm.getValue());
       this.removeStyles();
       if (onFlyHighLight) {

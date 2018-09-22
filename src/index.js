@@ -10,6 +10,8 @@ import {
  * @typedef {Object} eventFunctions
  * @property {Function} onChange
  * @property {Function} onTestPassed
+ * @property {Function} onConsoleOpen
+ * @property {Function} onConsoleClose
  * @property {Function} callBack
  *
  * @param {string} selector
