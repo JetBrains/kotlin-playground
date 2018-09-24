@@ -38,6 +38,7 @@ const ATTRIBUTES = {
   THEME: 'theme',
   MODE: 'mode',
   MATCH_BRACKETS: 'match-brackets',
+  OUTPUT_HEIGHT: 'output-height',
   COMPLETE: 'autocomplete',
   ON_FLY_HIGHLIGHT: 'highlight-on-fly',
   PLATFORM: 'data-target-platform',
@@ -76,6 +77,7 @@ export default class ExecutableCode {
     const editorTheme = this.getTheme(targetNode);
     const args = targetNode.hasAttribute(ATTRIBUTES.ARGUMENTS) ? targetNode.getAttribute(ATTRIBUTES.ARGUMENTS) : "";
     const hiddenDependencies = this.getHiddenDependencies(targetNode);
+    const outputHeight = targetNode.getAttribute(ATTRIBUTES.OUTPUT_HEIGHT) || null;
     const targetPlatform = TargetPlatform.getById(targetNode.getAttribute(ATTRIBUTES.PLATFORM));
     const targetNodeStyle = targetNode.getAttribute(ATTRIBUTES.STYLE);
     const jsLibs = this.getJsLibraries(targetNode, targetPlatform);
@@ -119,7 +121,8 @@ export default class ExecutableCode {
       highlightOnly: highlightOnly,
       targetPlatform: targetPlatform,
       jsLibs: jsLibs,
-      isFoldedButton: isFoldedButton
+      isFoldedButton: isFoldedButton,
+      outputHeight
     }, eventFunctions));
 
     this.config = cfg;

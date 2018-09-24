@@ -225,7 +225,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
   execute() {
     const {
       onOpenConsole, targetPlatform, waitingForOutput, compilerVersion,
-      args, theme, hiddenDependencies, onTestPassed, jsLibs
+      args, theme, hiddenDependencies, onTestPassed, jsLibs, outputHeight
     } = this.state;
     if (waitingForOutput) {
       return
@@ -264,10 +264,11 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
             if (errors.length > 0) {
               state.output = processErrors(errors);
             } else {
-              const codeOutput = this.jsExecutor.executeJsCode(jsCode, jsLibs, targetPlatform, this.getNodeForMountIframe(targetPlatform));
+              const codeOutput = this.jsExecutor.executeJsCode(jsCode, jsLibs, targetPlatform,
+                this.getNodeForMountIframe(targetPlatform), outputHeight);
               if (codeOutput) {
                 state.openConsole = true;
-                state.output = `<span class="standard-output ${theme}">${codeOutput}</span>`
+                state.output = `<span class="standard-output ${theme}">${codeOutput}</span>`;
                 if (onOpenConsole) onOpenConsole();
               } else state.output = "";
               if (targetPlatform === TargetPlatform.CANVAS) {

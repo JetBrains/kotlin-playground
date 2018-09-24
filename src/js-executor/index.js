@@ -14,9 +14,10 @@ class JsExecutor {
     if (platform === TargetPlatform.JS) this.reloadIframeScripts(jsLibs, node)
   }
 
-  executeJsCode(jsCode, jsLibs, platform, node) {
+  executeJsCode(jsCode, jsLibs, platform, node, outputHeight) {
     if (platform === TargetPlatform.CANVAS) {
       this.iframe.style.display = "block";
+      if (outputHeight) this.iframe.style.height = `${outputHeight}px`;
     }
     const codeOutput = this.iframe.contentWindow.eval(jsCode);
     if (platform === TargetPlatform.JS) {
