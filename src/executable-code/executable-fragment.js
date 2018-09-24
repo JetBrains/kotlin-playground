@@ -225,7 +225,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
   execute() {
     const {
       onOpenConsole, targetPlatform, waitingForOutput, compilerVersion,
-      args, theme, hiddenDependencies, onTestPassed, jsLibs, outputHeight
+      args, theme, hiddenDependencies, onTestPassed, onCloseConsole, jsLibs, outputHeight
     } = this.state;
     if (waitingForOutput) {
       return
@@ -234,6 +234,8 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
       waitingForOutput: true,
       openConsole: false
     });
+    //open when waitingForOutput=true
+    if (onOpenConsole) onOpenConsole();
     if (targetPlatform === TargetPlatform.JAVA || targetPlatform === TargetPlatform.JUNIT) {
       WebDemoApi.executeKotlinCode(
         this.getCode(),
@@ -245,8 +247,9 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
         state => {
           state.waitingForOutput = false;
           if (state.output) {
-            if (onOpenConsole) onOpenConsole();
             state.openConsole = true;
+          } else {
+            if (onCloseConsole) onCloseConsole();
           }
           this.update(state);
         },
@@ -269,8 +272,10 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
               if (codeOutput) {
                 state.openConsole = true;
                 state.output = `<span class="standard-output ${theme}">${codeOutput}</span>`;
-                if (onOpenConsole) onOpenConsole();
-              } else state.output = "";
+              } else {
+                state.output = "";
+                if (onCloseConsole) onCloseConsole();
+              }
               if (targetPlatform === TargetPlatform.CANVAS) {
                 if (onOpenConsole) onOpenConsole();
                 state.openConsole = true;
