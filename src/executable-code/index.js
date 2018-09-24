@@ -38,7 +38,7 @@ const ATTRIBUTES = {
   THEME: 'theme',
   MODE: 'mode',
   MATCH_BRACKETS: 'match-brackets',
-  OUTPUT_HEIGHT: 'output-height',
+  OUTPUT_HEIGHT: 'data-output-height',
   COMPLETE: 'autocomplete',
   ON_FLY_HIGHLIGHT: 'highlight-on-fly',
   PLATFORM: 'data-target-platform',

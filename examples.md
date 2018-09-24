@@ -165,10 +165,10 @@ fun containsEven(collection: Collection<Int>): Boolean = collection.any {[mark]T
 Use `data-target-platform` attribute with value `canvas` for working with canvas in Kotlin:
 
 ```html
-<div class="kotlin-code" data-target-platform="canvas" output-height="200">
+<div class="kotlin-code" data-target-platform="canvas" data-output-height="200">
 ```
 
-<div class="kotlin-code" data-target-platform="canvas" output-height="200">
+<div class="kotlin-code" data-target-platform="canvas" data-output-height="200">
 
 ```kotlin
 package fancylines
