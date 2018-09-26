@@ -60,7 +60,7 @@ export function processJUnitResults(data, onTestPassed) {
 export function processErrors(errors, theme) {
   return errors
     .reduce((acc, currentValue) => {
-        return acc + `<span class="console-icon attention"></span><div class="test-fail ${theme}">${convertToHtmlTag(currentValue.message)}</div>`
+        return acc + `<span class="console-icon attention"></span><div class="test-fail ${theme}">${escapeHtml(currentValue.message)}</div>`
       }
       , "");
 }
