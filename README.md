@@ -134,7 +134,7 @@ Use the following attributes on elements that are converted to editors to adjust
     */
    </code>
    ```
-- `data-highlight-only`: Read-only mode, with only highlighting.
+- `data-highlight-only`: Read-only mode, with only highlighting. `data-highlight-only="nocursor"` - no focus on editor.
 
   ```html
   <code data-highlight-only>

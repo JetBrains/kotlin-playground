@@ -18,7 +18,7 @@ import 'codemirror/mode/swift/swift';
 import merge from 'deepmerge';
 import Set from 'es6-set/polyfill';
 import defaultConfig, {API_URLS} from '../config';
-import {arrayFrom, getConfigFromElement, insertAfter, replaceWhiteSpaces, THEMES} from '../utils';
+import {arrayFrom, getConfigFromElement, insertAfter, READ_ONLY_TAG, replaceWhiteSpaces, THEMES} from '../utils';
 import WebDemoApi from "../webdemo-api";
 import TargetPlatform from '../target-platform'
 import ExecutableFragment from './executable-fragment';
@@ -69,7 +69,8 @@ export default class ExecutableCode {
    */
   constructor(target, config = {}, eventFunctions) {
     const targetNode = typeof target === 'string' ? document.querySelector(target) : target;
-    let highlightOnly = targetNode.hasAttribute(ATTRIBUTES.HIGHLIGHT_ONLY);
+    let highlightOnly = targetNode.getAttribute(ATTRIBUTES.HIGHLIGHT_ONLY) === READ_ONLY_TAG ?
+      targetNode.getAttribute(ATTRIBUTES.HIGHLIGHT_ONLY) : targetNode.hasAttribute(ATTRIBUTES.HIGHLIGHT_ONLY);
     const noneMarkers = targetNode.hasAttribute(ATTRIBUTES.NONE_MARKERS);
     const indent = targetNode.hasAttribute(ATTRIBUTES.INDENT) ? parseInt(targetNode.getAttribute(ATTRIBUTES.INDENT)) : DEFAULT_INDENT;
     const from = targetNode.hasAttribute(ATTRIBUTES.FROM) ? parseInt(targetNode.getAttribute(ATTRIBUTES.FROM)) : null;
@@ -92,7 +93,7 @@ export default class ExecutableCode {
     const cfg = merge(defaultConfig, config);
 
     // no run code in none kotlin mode
-    if (mode !== MODES.KOTLIN) {
+    if (mode !== MODES.KOTLIN && highlightOnly !== READ_ONLY_TAG) {
       highlightOnly = true;
     }
 

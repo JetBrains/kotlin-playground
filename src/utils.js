@@ -11,6 +11,13 @@ export const THEMES = {
   IDEA: "idea",
   DEFAULT: "default"
 };
+
+/**
+ * CodeMirror readonly tag
+ * @type {string}
+ */
+export const READ_ONLY_TAG = 'nocursor';
+
 /**
  * @param {*} arrayLike
  * @return {Array}
