@@ -18,7 +18,7 @@ const TEST_STATUS = {
 
 const BUG_FLAG = `${ANGLE_BRACKETS_LEFT_HTML}errStream${ANGLE_BRACKETS_RIGHT_HTML}BUG${ANGLE_BRACKETS_LEFT_HTML}/errStream${ANGLE_BRACKETS_RIGHT_HTML}`;
 const BUG_REPORT_MESSAGE = `${ANGLE_BRACKETS_LEFT_HTML}errStream${ANGLE_BRACKETS_RIGHT_HTML}Hey! It seems you just found a bug! \uD83D\uDC1E\n` +
-            `Please click <a href=https://youtrack.jetbrains.com/newIssue?draftId=25-2077811 target=_blank>here<a> to submit it ` +
+            `Please click <a href=http://kotl.in/issue target=_blank>here<a> to submit it ` +
             `to the issue tracker and one day we fix it, hopefully \uD83D\uDE09\n` +
             `✅ Don't forget to attach code to the issue${ANGLE_BRACKETS_LEFT_HTML}/errStream${ANGLE_BRACKETS_RIGHT_HTML}\n`;
 
