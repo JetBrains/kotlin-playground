@@ -17,7 +17,10 @@ const SAMPLE_START = '//sampleStart';
 const SAMPLE_END = '//sampleEnd';
 const MARK_PLACEHOLDER_OPEN = "[mark]";
 const MARK_PLACEHOLDER_CLOSE = "[/mark]";
-const F9_KEY = 120;
+const KEY_CODES = {
+  R: 82,
+  F9: 120
+};
 const DEBOUNCE_TIME = 500;
 
 const SELECTORS = {
@@ -57,8 +60,14 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
     });
 
     instance.on('keyup', (event) => {
-      if (event.keyCode === F9_KEY && event.ctrlKey) {
-        instance.execute();
+      if (window.navigator.appVersion.indexOf("Mac") !== -1) {
+        if (event.keyCode === KEY_CODES.R && event.ctrlKey) {
+          instance.execute();
+        }
+      } else {
+        if (event.keyCode === KEY_CODES.F9 && event.ctrlKey) {
+          instance.execute();
+        }
       }
     });
 
