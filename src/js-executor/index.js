@@ -14,12 +14,12 @@ class JsExecutor {
     if (platform === TargetPlatform.JS) this.reloadIframeScripts(jsLibs, node)
   }
 
-  executeJsCode(jsCode, jsLibs, platform, node, outputHeight) {
+  async executeJsCode(jsCode, jsLibs, platform, node, outputHeight) {
     if (platform === TargetPlatform.CANVAS) {
       this.iframe.style.display = "block";
       if (outputHeight) this.iframe.style.height = `${outputHeight}px`;
     }
-    const codeOutput = this.iframe.contentWindow.eval(jsCode);
+    const codeOutput = await this.execute(jsCode, jsLibs);
     if (platform === TargetPlatform.JS) {
       this.reloadIframeScripts(jsLibs, node);
     }
@@ -34,6 +34,20 @@ class JsExecutor {
         this._initializeKotlin()
       }
     }, 3000);
+  }
+
+  async execute(jsCode, jsLibs) {
+    const loadedScripts = (this.iframe.contentDocument || this.iframe.document).getElementsByTagName('script').length;
+    // 2 scripts by default: INIT_SCRIPT + JQuery
+    if (loadedScripts === jsLibs.size + 2) {
+      return this.iframe.contentWindow.eval(jsCode);
+    }
+    await this.timeout(400);
+    return await this.execute(jsCode, jsLibs)
+  }
+
+  timeout(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms))
   }
 
   reloadIframeScripts(jsLibs, node) {
