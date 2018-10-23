@@ -276,27 +276,29 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
             if (errors.length > 0) {
               state.output = processErrors(errors);
             } else {
-              const codeOutput = this.jsExecutor.executeJsCode(jsCode, jsLibs, targetPlatform,
-                this.getNodeForMountIframe(targetPlatform), outputHeight);
-              if (codeOutput) {
-                state.openConsole = true;
-                state.output = `<span class="standard-output ${theme}">${codeOutput}</span>`;
-              } else {
-                state.output = "";
-                if (onCloseConsole) onCloseConsole();
-              }
-              if (targetPlatform === TargetPlatform.CANVAS) {
-                if (onOpenConsole) onOpenConsole();
-                state.openConsole = true;
-              }
+              this.jsExecutor.executeJsCode(jsCode, jsLibs, targetPlatform, this.getNodeForMountIframe(targetPlatform),
+                outputHeight).then(output => {
+                if (output) {
+                  state.openConsole = true;
+                  state.output = `<span class="standard-output ${theme}">${output}</span>`;
+                } else {
+                  state.output = "";
+                  if (onCloseConsole) onCloseConsole();
+                }
+                if (targetPlatform === TargetPlatform.CANVAS) {
+                  if (onOpenConsole) onOpenConsole();
+                  state.openConsole = true;
+                }
+                state.exception = null;
+                this.update(state);
+              });
             }
           } catch (e) {
             let exceptionOutput = showJsException(e);
             state.output = `<span class="error-output">${exceptionOutput}</span>`;
+            this.update(state);
             console.error(e);
           }
-          state.exception = null;
-          this.update(state);
         },
         () => this.update({waitingForOutput: false})
       )

@@ -1,12 +1,26 @@
 {
   "presets": [
-    ["es2015", { "modules": false }]
+    [
+      "@babel/preset-env",
+      {
+        "modules": false,
+        "useBuiltIns": "usage",
+        "exclude": [
+          "transform-async-to-generator",
+          "transform-regenerator"
+        ]
+      }
+    ]
   ],
   "plugins": [
-    ["transform-runtime", {
-      "helpers": false,
-      "polyfill": false,
-      "regenerator": true
-    }]
+    [
+      "@babel/plugin-transform-runtime",
+      {
+        "helpers": true,
+        "corejs": 2,
+        "regenerator": false
+      }
+    ],
+    "module:fast-async"
   ]
 }
