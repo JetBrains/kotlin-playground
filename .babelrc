@@ -3,9 +3,24 @@
     [
       "@babel/preset-env",
       {
-        "modules": false
+        "modules": false,
+        "useBuiltIns": "usage",
+        "exclude": [
+          "transform-async-to-generator",
+          "transform-regenerator"
+        ]
       }
     ]
   ],
-  "plugins": []
+  "plugins": [
+    [
+      "@babel/plugin-transform-runtime",
+      {
+        "helpers": true,
+        "corejs": 2,
+        "regenerator": false
+      }
+    ],
+    "module:fast-async"
+  ]
 }

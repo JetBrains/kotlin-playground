@@ -1,4 +1,3 @@
-import "@babel/polyfill";
 import ExecutableCode from './executable-code';
 import {getConfigFromElement, getCurrentScript, waitForNode} from './utils';
 import {

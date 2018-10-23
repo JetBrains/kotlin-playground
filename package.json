@@ -14,9 +14,13 @@
     "dist"
   ],
   "devDependencies": {
+    "@babel/cli": "^7.1.2",
     "@babel/core": "^7.0.0",
+    "@babel/plugin-transform-runtime": "^7.1.0",
     "@babel/preset-env": "^7.0.0",
+    "@babel/runtime-corejs2": "^7.1.2",
     "babel-loader": "v8.0.0-beta.0",
+    "babel-plugin-async-to-promises": "^1.0.5",
     "ci-publish": "^1.3.0",
     "codemirror": "^5.40.0",
     "css-loader": "0.28.4",
@@ -26,6 +30,7 @@
     "es6-set": "^0.1.5",
     "escape-html": "^1.0.3",
     "escape-string-regexp": "^1.0.5",
+    "fast-async": "7",
     "flatten": "^1.0.2",
     "github-markdown-css": "^2.8.0",
     "html-webpack-plugin": "^2.30.1",
