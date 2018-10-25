@@ -2,6 +2,7 @@ import './index.scss'
 import Map from 'es6-map/polyfill';
 import {API_URLS} from "../config";
 import TargetPlatform from "../target-platform";
+import {showJsException} from "../view/output-view";
 
 const jsExecutors = new Map();
 
@@ -14,12 +15,12 @@ class JsExecutor {
     if (platform === TargetPlatform.JS) this.reloadIframeScripts(jsLibs, node)
   }
 
-  async executeJsCode(jsCode, jsLibs, platform, node, outputHeight) {
+  async executeJsCode(jsCode, jsLibs, platform, node, outputHeight, theme) {
     if (platform === TargetPlatform.CANVAS) {
       this.iframe.style.display = "block";
       if (outputHeight) this.iframe.style.height = `${outputHeight}px`;
     }
-    const codeOutput = await this.execute(jsCode, jsLibs);
+    const codeOutput = await this.execute(jsCode, jsLibs, theme);
     if (platform === TargetPlatform.JS) {
       this.reloadIframeScripts(jsLibs, node);
     }
@@ -36,11 +37,17 @@ class JsExecutor {
     }, 3000);
   }
 
-  async execute(jsCode, jsLibs) {
+  async execute(jsCode, jsLibs, theme) {
     const loadedScripts = (this.iframe.contentDocument || this.iframe.document).getElementsByTagName('script').length;
     // 2 scripts by default: INIT_SCRIPT + JQuery
     if (loadedScripts === jsLibs.size + 2) {
-      return this.iframe.contentWindow.eval(jsCode);
+      try {
+        const output = this.iframe.contentWindow.eval(jsCode);
+        return output ? `<span class="standard-output ${theme}">${output}</span>` : "";
+      } catch (e) {
+        let exceptionOutput = showJsException(e);
+        return `<span class="error-output">${exceptionOutput}</span>`;
+      }
     }
     await this.timeout(400);
     return await this.execute(jsCode, jsLibs)

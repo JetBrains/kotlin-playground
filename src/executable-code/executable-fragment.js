@@ -11,7 +11,7 @@ import {countLines, THEMES, unEscapeString} from "../utils";
 import debounce from 'debounce';
 import escapeStringRegexp from "escape-string-regexp"
 import CompletionView from "../view/completion-view";
-import {processErrors, showJsException} from "../view/output-view";
+import {processErrors} from "../view/output-view";
 
 const SAMPLE_START = '//sampleStart';
 const SAMPLE_END = '//sampleEnd';
@@ -271,35 +271,28 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
           state.waitingForOutput = false;
           const jsCode = state.jsCode;
           delete state.jsCode;
-          try {
-            let errors = state.errors.filter(error => error.severity === "ERROR");
-            if (errors.length > 0) {
-              state.output = processErrors(errors);
+          let errors = state.errors.filter(error => error.severity === "ERROR");
+          if (errors.length > 0) {
+            state.output = processErrors(errors);
+            state.exception = null;
+            this.update(state);
+          } else {
+            this.jsExecutor.executeJsCode(jsCode, jsLibs, targetPlatform, this.getNodeForMountIframe(targetPlatform),
+              outputHeight, theme).then(output => {
+              if (output) {
+                state.openConsole = true;
+                state.output = output;
+              } else {
+                state.output = "";
+                if (onCloseConsole) onCloseConsole();
+              }
+              if (targetPlatform === TargetPlatform.CANVAS) {
+                if (onOpenConsole) onOpenConsole();
+                state.openConsole = true;
+              }
               state.exception = null;
               this.update(state);
-            } else {
-              this.jsExecutor.executeJsCode(jsCode, jsLibs, targetPlatform, this.getNodeForMountIframe(targetPlatform),
-                outputHeight).then(output => {
-                if (output) {
-                  state.openConsole = true;
-                  state.output = `<span class="standard-output ${theme}">${output}</span>`;
-                } else {
-                  state.output = "";
-                  if (onCloseConsole) onCloseConsole();
-                }
-                if (targetPlatform === TargetPlatform.CANVAS) {
-                  if (onOpenConsole) onOpenConsole();
-                  state.openConsole = true;
-                }
-                state.exception = null;
-                this.update(state);
-              });
-            }
-          } catch (e) {
-            let exceptionOutput = showJsException(e);
-            state.output = `<span class="error-output">${exceptionOutput}</span>`;
-            this.update(state);
-            console.error(e);
+            });
           }
         },
         () => this.update({waitingForOutput: false})
