@@ -275,6 +275,8 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
             let errors = state.errors.filter(error => error.severity === "ERROR");
             if (errors.length > 0) {
               state.output = processErrors(errors);
+              state.exception = null;
+              this.update(state);
             } else {
               this.jsExecutor.executeJsCode(jsCode, jsLibs, targetPlatform, this.getNodeForMountIframe(targetPlatform),
                 outputHeight).then(output => {
