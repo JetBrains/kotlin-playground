@@ -497,9 +497,11 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
     /**
      * If autoComplete => Getting completion on every key press on the editor.
      */
-    this.codemirror.on("keypress", debounce((cm) => {
-      if (this.state.autoComplete) {
-        CodeMirror.showHint(cm, CodeMirror.hint.kotlin, {completeSingle: false});
+    this.codemirror.on("keypress", debounce((cm, event) => {
+      if (event.keyCode !== KEY_CODES.R && !event.ctrlKey) {
+        if (this.state.autoComplete) {
+          CodeMirror.showHint(cm, CodeMirror.hint.kotlin, {completeSingle: false});
+        }
       }
     }, DEBOUNCE_TIME));
 
