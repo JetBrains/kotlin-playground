@@ -48,7 +48,7 @@ $wt-color-azure: #167dff;
     margin-bottom: 0 !important;
   }
 
-  .CodeMirror-overlayscroll-horizontal div, .CodeMirror-overlayscroll-vertical div{
+  .CodeMirror-overlayscroll-horizontal div, .CodeMirror-overlayscroll-vertical div {
     display: none;
   }
 
@@ -223,7 +223,6 @@ $wt-color-azure: #167dff;
 }
 
 .code-output {
-  white-space: pre-wrap;
   font-family: $font-family-mono;
   overflow: auto;
   padding-left: 10px;
@@ -254,12 +253,11 @@ $wt-color-azure: #167dff;
   vertical-align: top;
 }
 
-.test-output {
+.test-passed {
   white-space: pre;
   color: $wt-color-seaweed;
   min-height: 1.4em;
   vertical-align: top;
-  margin-left: 20px;
 }
 
 .console-close {
@@ -283,34 +281,37 @@ $wt-color-azure: #167dff;
   background-color: $wt-color-tomato;
 }
 
-.test-fail {
+.test-fail, .test-error {
   color: $wt-color-tomato;
   min-height: 1.4em;
-  margin-left: 20px;
   vertical-align: top;
 }
 
-.test-fail.darcula {
-  color: $wt-color-tomato;
+.console-block {
+  display: flex;
 }
 
 .console-icon {
   margin-top: 2px;
+  padding-right: 20px;
   width: 15px;
   height: 15px;
-  position: absolute;
 }
 
 .console-icon.attention {
-  background-image: url('img/attention.svg')
+  background: url('img/attention.svg') no-repeat;
 }
 
-.console-icon.ok {
-  background-image: url('img/ok.svg')
+.console-icon.passed {
+  background: url('img/ok.svg') no-repeat;
 }
 
 .console-icon.fail {
-  background-image: url('img/fail.svg')
+  background: url('img/fail.svg') no-repeat;
+}
+
+.console-icon.error {
+  background: url('img/fail.svg') no-repeat;
 }
 
 .test-time {
