@@ -18,9 +18,9 @@ const TEST_STATUS = {
 
 const BUG_FLAG = `${ANGLE_BRACKETS_LEFT_HTML}errStream${ANGLE_BRACKETS_RIGHT_HTML}BUG${ANGLE_BRACKETS_LEFT_HTML}/errStream${ANGLE_BRACKETS_RIGHT_HTML}`;
 const BUG_REPORT_MESSAGE = `${ANGLE_BRACKETS_LEFT_HTML}errStream${ANGLE_BRACKETS_RIGHT_HTML}Hey! It seems you just found a bug! \uD83D\uDC1E\n` +
-            `Please click <a href=http://kotl.in/issue target=_blank>here<a> to submit it ` +
-            `to the issue tracker and one day we fix it, hopefully \uD83D\uDE09\n` +
-            `✅ Don't forget to attach code to the issue${ANGLE_BRACKETS_LEFT_HTML}/errStream${ANGLE_BRACKETS_RIGHT_HTML}\n`;
+  `Please click <a href=http://kotl.in/issue target=_blank>here<a> to submit it ` +
+  `to the issue tracker and one day we fix it, hopefully \uD83D\uDE09\n` +
+  `✅ Don't forget to attach code to the issue${ANGLE_BRACKETS_LEFT_HTML}/errStream${ANGLE_BRACKETS_RIGHT_HTML}\n`;
 
 export function processJVMOutput(output, theme) {
   let processedOutput = processingHtmlTags(output); // don't need to escape `&`
@@ -44,11 +44,11 @@ export function processJUnitResults(data, onTestPassed) {
       if (currentTest.status === TEST_STATUS.ERROR.value || currentTest.status === TEST_STATUS.FAIL.value) passed = false;
       switch (currentTest.status) {
         case TEST_STATUS.FAIL.value:
-          return previousTest + `<span class="console-icon fail"></span><div class="test-fail">${TEST_STATUS.FAIL.text}: ${currentTest.methodName}: ${convertToHtmlTag(currentTest.comparisonFailure.message)}</div>`;
+          return previousTest + buildOutputTestLine(TEST_STATUS.FAIL.text, currentTest.methodName, currentTest.comparisonFailure.message);
         case TEST_STATUS.ERROR.value:
-          return previousTest + `<span class="console-icon fail"></span><div class="test-fail">${TEST_STATUS.ERROR.text}: ${currentTest.methodName}: ${convertToHtmlTag(currentTest.exception.message)}</div>`;
+          return previousTest + buildOutputTestLine(TEST_STATUS.ERROR.text, currentTest.methodName, currentTest.exception.message);
         case TEST_STATUS.PASSED.value:
-          return previousTest + `<span class="console-icon ok"></span><div class="test-output">${TEST_STATUS.PASSED.text}: ${currentTest.methodName}</div>`;
+          return previousTest + buildOutputTestLine(TEST_STATUS.PASSED.text, currentTest.methodName, "");
       }
     }, "");
   }
@@ -57,10 +57,22 @@ export function processJUnitResults(data, onTestPassed) {
   return testTime + result;
 }
 
+function buildOutputTestLine(status, method, message) {
+  return `
+  <div class="console-block">
+    <span class="console-icon ${status.toLocaleLowerCase()}"></span>
+    <div class="test-${status.toLocaleLowerCase()}">${status}: ${method}${message ? ': ' + convertToHtmlTag(message) : ''}</div>
+  </div>
+  `;
+}
+
 export function processErrors(errors, theme) {
   return errors
     .reduce((acc, currentValue) => {
-        return acc + `<span class="console-icon attention"></span><div class="test-fail ${theme}">${escapeHtml(currentValue.message)}</div>`
+        return acc + `<div class="console-block">
+                        <span class="console-icon attention"></span>
+                        <div class="test-fail ${theme}">${escapeHtml(currentValue.message)}</div>
+                      </div>`
       }
       , "");
 }
