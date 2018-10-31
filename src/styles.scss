@@ -395,6 +395,7 @@ $wt-color-azure: #167dff;
   padding-left: 0 !important;
   border: 1px solid $wt-color-silver;
   border-radius: 4px;
+  list-style: none;
   position: absolute;
   background-color: #f7f7f7;
   overflow-y: hidden;
@@ -404,12 +405,11 @@ $wt-color-azure: #167dff;
 }
 
 .CodeMirror-hint {
-  white-space: pre;
   cursor: pointer;
-  border-radius: 0;
-  margin: 0;
-  padding-right: 0 !important;
-  line-height: 18px;
+  display: flex;
+  align-items: center;
+  padding-right: 5px;
+  padding-left: 5px;
 }
 
 li.CodeMirror-hint-active {
@@ -418,22 +418,18 @@ li.CodeMirror-hint-active {
 }
 
 .CodeMirror-hint .name {
-  float: left;
+  margin-right: 20px;
 }
 
 .CodeMirror-hint .tail {
-  float: right;
-  padding-left: 20px;
+  margin-left: auto;
   margin-right: 5px;
 }
 
 .CodeMirror-hint .icon {
-  margin-top: 1px;
-  margin-left: 2px;
   height: 16px;
   width: 16px;
-  float: left;
-  margin-right: 10px;
+  margin-right: 5px;
 }
 
 .icon {
