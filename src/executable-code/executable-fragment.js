@@ -71,6 +71,9 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
       }
     });
 
+    const events = options.eventFunctions;
+    if (events && events.getInstance) events.getInstance(instance);
+
     return instance;
   }
 
