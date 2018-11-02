@@ -1,4 +1,4 @@
-{% import Exception from './exception.monk' %}
+{% import Exception from './exception' %}
 
 <div class="executable-fragment-wrapper">
     <div class="executable-fragment {{ theme }}">
@@ -29,9 +29,12 @@
                           {% unsafe output %}
 
                           {% if exception %}
-                              <Exception {{...exception}} originalException={{ true }}/>
+                              <Exception
+                                {{...exception}}
+                                originalException={{ true }}
+                                onExceptionClick={{ this.onExceptionClick.bind(this) }}
+                              />
                           {% endif %}
-
                       </div>
                   </div>
               {% endif %}

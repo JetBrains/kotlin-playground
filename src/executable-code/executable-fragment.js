@@ -231,6 +231,11 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
     if (onCloseConsole) onCloseConsole();
   }
 
+  onExceptionClick(fileName, line) {
+    this.codemirror.setCursor(line - 1, 0);
+    this.codemirror.focus()
+  }
+
   execute() {
     const {
       onOpenConsole, targetPlatform, waitingForOutput, compilerVersion,

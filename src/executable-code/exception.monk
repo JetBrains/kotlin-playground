@@ -1,11 +1,22 @@
-<span class="error-output">Exception in thread "main" {{ fullName }}{% if message %}: {{ message }} {% endif %}</span><br/>
+<span class="error-output">Exception in thread "main" {{ fullName }}{% if message %}: {{ message }} {% endif %}</span>
+<br/>
 {% for stacktraceElement of stackTrace %}
-    <span class="stacktrace-element error-output">    at {{ stacktraceElement.className }}.{{ stacktraceElement.methodName }}({{ stacktraceElement.fileName }}:{{ stacktraceElement.lineNumber }})</span><br/>
+    <span class="stacktrace-element error-output">
+        at {{ stacktraceElement.className }}.{{ stacktraceElement.methodName }}
+        (<span
+          class="stacktrace-link"
+          :onclick={{ this.onStackTraceClick.bind(this, stacktraceElement.fileName, stacktraceElement.lineNumber) }}>
+          {{ stacktraceElement.fileName }}:{{ stacktraceElement.lineNumber }}
+        </span>)
+    </span>
+    <br/>
 {% endfor %}
 
 {% for cause of causes %}
     <span class="error-output">Caused by: {{ fullName }}{% if message %}: {{ message }} {% endif %}</span><br/>
     {% for stacktraceElement of stackTrace %}
-        <span class="stacktrace-element error-output">at {{ stacktraceElement.className }}.{{ stacktraceElement.methodName }}({{ stacktraceElement.fileName }}:{{ stacktraceElement.lineNumber }})</span><br/>
+        <span class="stacktrace-element error-output">at {{ stacktraceElement.className }}
+          .{{ stacktraceElement.methodName }}({{ stacktraceElement.fileName }}:{{ stacktraceElement.lineNumber }})</span>
+        <br/>
     {% endfor %}
 {% endfor %}

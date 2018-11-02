@@ -324,6 +324,14 @@ $wt-color-azure: #167dff;
 
 .stacktrace-element {
   margin-left: 20px;
+
+  .stacktrace-link {
+    color: $wt-color-azure;
+    cursor: pointer;
+    &:hover {
+      text-decoration: underline;
+    }
+  }
 }
 
 .CodeMirror-foldgutter {
