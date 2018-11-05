@@ -102,7 +102,7 @@ export default class ExecutableCode {
     const mountNode = document.createElement('div');
     insertAfter(mountNode, targetNode);
 
-    const view = ExecutableFragment.render(mountNode, {highlightOnly});
+    const view = ExecutableFragment.render(mountNode, {eventFunctions});
     view.update(Object.assign({
       code: code,
       lines: lines,

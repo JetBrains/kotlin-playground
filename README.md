@@ -100,6 +100,16 @@ playground('.selector', eventFunctions)
 - `callback(targetNode, mountNode)` — Is called after playground's united.
  _targetNode_ — node with plain text before component initialization.
  _mountNode_  — new node with runnable editor.
+ 
+- `getInstance(instance)` - Getting playground state API.
+
+  ```js
+  instance.state      // playground attributes, dependencies and etc.
+  instance.nodes      // playground NodeElement.
+  instance.codemirror // editor specification.
+  instance.execute()  // function for executing code snippet.
+  instance.getCode()  // function for getting code from snippet.
+  ```
 
 ## Customizing editors
 
@@ -158,10 +168,10 @@ Use the following attributes on elements that are converted to editors to adjust
       println(cat.name)  
   //sampleEnd                 
   }
-  <textarea class="hidden-dependency">
-    package cat
-    class Cat(val name: String) 
-  </textarea>
+    <textarea class="hidden-dependency">
+      package cat
+      class Cat(val name: String) 
+    </textarea>
   </code>
   ```
   Also if you want to hide code snippet just set the attribute `folded-button` to `false` value.
