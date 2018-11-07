@@ -117,8 +117,7 @@ export default class WebDemoApi {
    * @param callback
    */
   static getAutoCompletion(code, cursor, compilerVersion, platform, hiddenDependencies, callback) {
-    const parameters = {"line": cursor.line, "ch": cursor.ch};
-    executeCode(API_URLS.COMPLETE, code, compilerVersion, platform, "", hiddenDependencies, parameters)
+    executeCode(API_URLS.COMPLETE, code, compilerVersion, platform, "", hiddenDependencies, cursor)
       .then(data => {
         callback(data);
       })

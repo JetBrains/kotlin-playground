@@ -426,9 +426,15 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
     CodeMirror.registerHelper('hint', 'kotlin', (mirror, callback) => {
       let cur = mirror.getCursor();
       let token = mirror.getTokenAt(cur);
+      let code = this.state.folded
+        ? this.prefix + mirror.getValue() + this.suffix
+        : mirror.getValue();
+      let currentCursor = this.state.folded
+        ? {line: cur.line + this.prefix.split('\n').length - 1, ch: cur.ch}
+        : cur;
       WebDemoApi.getAutoCompletion(
-        mirror.getValue(),
-        cur,
+        code,
+        currentCursor,
         this.state.compilerVersion,
         this.state.targetPlatform,
         this.state.hiddenDependencies,
