@@ -87,7 +87,7 @@ playground('.selector', eventFunctions)
 
 **Events description:**
 
-- `onChage(code)` — Fires every time the content of the editor is changed. Debounce time: 0.5s.
+- `onChange(code)` — Fires every time the content of the editor is changed. Debounce time: 0.5s.
  _code_ — current playground code.
 
 
