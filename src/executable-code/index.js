@@ -69,8 +69,10 @@ export default class ExecutableCode {
    */
   constructor(target, config = {}, eventFunctions) {
     const targetNode = typeof target === 'string' ? document.querySelector(target) : target;
-    let highlightOnly = targetNode.getAttribute(ATTRIBUTES.HIGHLIGHT_ONLY) === READ_ONLY_TAG ?
-      targetNode.getAttribute(ATTRIBUTES.HIGHLIGHT_ONLY) : targetNode.hasAttribute(ATTRIBUTES.HIGHLIGHT_ONLY);
+    let highlightOnly = config.highlightOnly ? true
+      : targetNode.getAttribute(ATTRIBUTES.HIGHLIGHT_ONLY) === READ_ONLY_TAG
+        ? targetNode.getAttribute(ATTRIBUTES.HIGHLIGHT_ONLY)
+        : targetNode.hasAttribute(ATTRIBUTES.HIGHLIGHT_ONLY);
     const noneMarkers = targetNode.hasAttribute(ATTRIBUTES.NONE_MARKERS);
     const indent = targetNode.hasAttribute(ATTRIBUTES.INDENT) ? parseInt(targetNode.getAttribute(ATTRIBUTES.INDENT)) : DEFAULT_INDENT;
     const from = targetNode.hasAttribute(ATTRIBUTES.FROM) ? parseInt(targetNode.getAttribute(ATTRIBUTES.FROM)) : null;
@@ -133,7 +135,7 @@ export default class ExecutableCode {
     this.view = view;
 
     targetNode.KotlinPlayground = this;
-     if (eventFunctions && eventFunctions.callback) eventFunctions.callback(targetNode, mountNode);
+    if (eventFunctions && eventFunctions.callback) eventFunctions.callback(targetNode, mountNode);
   }
 
   /**
@@ -260,24 +262,7 @@ export default class ExecutableCode {
         const minCompilerVersion = config.minCompilerVersion;
         let latestStableVersion = null;
         let compilerVersion = null;
-        let listOfVersions = versions.map(version => version.version);
 
-        if (listOfVersions.includes(config.version)) {
-          compilerVersion = config.version;
-        } else {
-          versions.forEach((compilerConfig) => {
-            if (compilerConfig.latestStable) {
-              latestStableVersion = compilerConfig.version;
-            }
-          });
-          compilerVersion = latestStableVersion;
-        }
-
-        if (minCompilerVersion) {
-          compilerVersion = minCompilerVersion > latestStableVersion
-            ? versions[versions.length - 1].version
-            : latestStableVersion;
-        }
         // Skip empty and already initialized nodes
         if (
           node.textContent.trim() === '' ||
@@ -286,7 +271,30 @@ export default class ExecutableCode {
           return;
         }
 
-        instances.push(new ExecutableCode(node, { compilerVersion }, eventFunctions));
+        if (versions) {
+          let listOfVersions = versions.map(version => version.version);
+
+          if (listOfVersions.includes(config.version)) {
+            compilerVersion = config.version;
+          } else {
+            versions.forEach((compilerConfig) => {
+              if (compilerConfig.latestStable) {
+                latestStableVersion = compilerConfig.version;
+              }
+            });
+            compilerVersion = latestStableVersion;
+          }
+
+          if (minCompilerVersion) {
+            compilerVersion = minCompilerVersion > latestStableVersion
+              ? versions[versions.length - 1].version
+              : latestStableVersion;
+          }
+          instances.push(new ExecutableCode(node, {compilerVersion}, eventFunctions));
+        } else {
+          console.error('Cann\'t get kotlin version from server');
+          instances.push(new ExecutableCode(node, {highlightOnly: true}));
+        }
       });
 
       return instances;

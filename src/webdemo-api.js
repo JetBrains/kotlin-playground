@@ -38,6 +38,8 @@ export default class WebDemoApi {
       .then(versions => {
         CACHE.compilerVersions = versions;
         return versions;
+      }).catch(() => {
+        return null
       });
   }
 
