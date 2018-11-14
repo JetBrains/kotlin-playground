@@ -29,6 +29,12 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 ```
 
+You can also overwrite the server where the code will be sent to be compiled and analyzed (for example if you host a server instance that includes your own Kotlin libraries). For that you can set the `data-server` attibute, like this:
+
+```html
+<script src="https://unpkg.com/kotlin-playground@1" data-selector="code" data-server="https://my-kotlin-playground-server"></script>
+```
+
 ### Host your own instance
 
 Install Kotlin-playground as dependency via NPM.
