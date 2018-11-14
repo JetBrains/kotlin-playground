@@ -1,4 +1,10 @@
-const WEBDEMO_URL = __WEBDEMO_URL__;
+import {getConfigFromElement, getCurrentScript} from './utils';
+
+const currentScript = getCurrentScript();
+
+export const RUNTIME_CONFIG = {...getConfigFromElement(currentScript)};
+
+const WEBDEMO_URL = RUNTIME_CONFIG.server || __WEBDEMO_URL__;
 
 /**
  * API Paths
