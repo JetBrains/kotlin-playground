@@ -24,7 +24,7 @@ const KEY_CODES = {
 const DEBOUNCE_TIME = 500;
 
 const SELECTORS = {
-  CANVAS_PLACEHOLDER_OUTPUT: ".js-code-output-canvas-placeholder",
+  CANVAS_PLACEHOLDER_OUTPUT: ".js-code-output-executor",
   FOLD_BUTTON: ".fold-button",
   UNMODIFIABLE_LINE_DARK: "unmodifiable-line-dark",
   UNMODIFIABLE_LINE: "unmodifiable-line",
@@ -230,7 +230,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
     if (targetPlatform === TargetPlatform.CANVAS) {
       this.jsExecutor.reloadIframeScripts(jsLibs, this.getNodeForMountIframe(TargetPlatform.CANVAS));
     }
-    this.update({output: "", openConsole: false});
+    this.update({output: "", openConsole: false, exception: null});
     if (onCloseConsole) onCloseConsole();
   }
 

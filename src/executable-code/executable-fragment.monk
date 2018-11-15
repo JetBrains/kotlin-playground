@@ -14,10 +14,10 @@
             {% endif %}
             <textarea></textarea>
         </div>
-        {% if (openConsole) %}
-          <div class="console-close {{ theme }}" :onclick={{ this.onConsoleCloseButtonEnter.bind(this) }}></div>
-        {% endif %}
-        <div class="js-code-output-canvas-placeholder">
+        <div class="js-code-output-executor">
+          {% if (openConsole) %}
+            <div class="console-close {{ theme }}" :onclick={{ this.onConsoleCloseButtonEnter.bind(this) }}></div>
+          {% endif %}
           {% if (waitingForOutput) %}
               <div class="output-wrapper {{ theme }}">
                 <div class="loader {{ theme }}"></div>
