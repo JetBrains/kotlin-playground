@@ -230,7 +230,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
     if (targetPlatform === TargetPlatform.CANVAS) {
       this.jsExecutor.reloadIframeScripts(jsLibs, this.getNodeForMountIframe(TargetPlatform.CANVAS));
     }
-    this.update({output: "", openConsole: false});
+    this.update({output: "", openConsole: false, exception: null});
     if (onCloseConsole) onCloseConsole();
   }
 
