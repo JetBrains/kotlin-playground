@@ -28,9 +28,8 @@ $wt-color-azure: #167dff;
 }
 
 .executable-fragment {
-  border-top: 1px solid $wt-color-athens;
-  border-right: 1px solid $wt-color-athens;
-  border-left: 1px solid $wt-color-athens;
+  border: 1px solid $wt-color-athens;
+  border-bottom-width: 0;
 }
 
 .hidden-dependency {
