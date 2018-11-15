@@ -28,7 +28,9 @@ $wt-color-azure: #167dff;
 }
 
 .executable-fragment {
-  border: 1px solid $wt-color-athens;
+  border-top: 1px solid $wt-color-athens;
+  border-right: 1px solid $wt-color-athens;
+  border-left: 1px solid $wt-color-athens;
 }
 
 .hidden-dependency {
@@ -109,9 +111,8 @@ $wt-color-azure: #167dff;
   height: 20px;
   width: 16px;
   cursor: pointer;
-  background: url("img/run.svg");
   background-size: cover;
-  background-repeat: no-repeat;
+  background: url("img/run.svg") no-repeat;
 
   &._disabled {
     cursor: default;
@@ -209,8 +210,13 @@ $wt-color-azure: #167dff;
   padding-bottom: 2px;
 }
 
-.output-wrapper {
+.js-code-output-executor {
   border-top: 1px solid $wt-color-athens;
+  position: relative;
+}
+
+.output-wrapper {
+  border-bottom: 1px solid $wt-color-athens;
   min-height: 60px;
   font-size: 14px;
   background-color: white;
@@ -262,11 +268,10 @@ $wt-color-azure: #167dff;
 
 .console-close {
   position: absolute;
-  right: 1px;
-  margin-top: 1px;
+  right: 0;
   width: 16px;
   height: 16px;
-  background: $wt-color-silver url('img/close-console-icon.svg');
+  background: $wt-color-silver url('img/close-console-icon.svg') no-repeat;
 }
 
 .console-close.darcula {
@@ -394,9 +399,6 @@ $wt-color-azure: #167dff;
   span {
     margin-left: 15px;
   }
-}
-
-.executable-fragment-wrapper {
 }
 
 .CodeMirror-hints {

@@ -24,7 +24,7 @@ const KEY_CODES = {
 const DEBOUNCE_TIME = 500;
 
 const SELECTORS = {
-  CANVAS_PLACEHOLDER_OUTPUT: ".js-code-output-canvas-placeholder",
+  CANVAS_PLACEHOLDER_OUTPUT: ".js-code-output-executor",
   FOLD_BUTTON: ".fold-button",
   UNMODIFIABLE_LINE_DARK: "unmodifiable-line-dark",
   UNMODIFIABLE_LINE: "unmodifiable-line",
