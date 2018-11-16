@@ -19,6 +19,7 @@ $wt-color-seaweed: #4dbb5f;
 $wt-color-silver: #afb1b3;
 $wt-color-dove: #696969;
 $wt-color-code: #3c3f43;
+$warning-color: rgb(254, 255, 222);
 $wt-color-athens: #eaeaec;
 $wt-color-azure: #167dff;
 
@@ -462,4 +463,15 @@ li.CodeMirror-hint-active {
 
 .icon.property {
   background: url("https://try.kotlinlang.org/static/images/completion_property.svg");
+}
+
+div[label]:hover:after {
+  content: attr(label);
+  padding: 4px 8px;
+  white-space: nowrap;
+  background: $warning-color;
+  border-radius: 3px;
+  margin-left: 15px;
+  color: black;
+  border: 1px solid $wt-color-code;
 }

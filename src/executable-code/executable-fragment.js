@@ -35,7 +35,8 @@ const SELECTORS = {
   FOLD_GUTTER: "CodeMirror-foldgutter",
   ERROR_GUTTER: "ERRORgutter",
   ERROR_AND_WARNING_GUTTER: "errors-and-warnings-gutter",
-  BACKGROUND: "background"
+  BACKGROUND: "background",
+  LABEL: "label"
 };
 
 export default class ExecutableFragment extends ExecutableCodeTemplate {
@@ -370,12 +371,11 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
         (this.codemirror.lineInfo(interval.start.line).gutterMarkers == null)) {
         const gutter = document.createElement("div");
         gutter.className = severity + SELECTORS.GUTTER;
-        gutter.title = errorMessage;
-
+        gutter.setAttribute(SELECTORS.LABEL, errorMessage);
         this.codemirror.setGutterMarker(interval.start.line, SELECTORS.ERROR_AND_WARNING_GUTTER, gutter)
       } else {
         const gutter = this.codemirror.lineInfo(interval.start.line).gutterMarkers[SELECTORS.ERROR_AND_WARNING_GUTTER];
-        gutter.title += `\n${errorMessage}`;
+        gutter.setAttribute(SELECTORS.LABEL, gutter.getAttribute(SELECTORS.LABEL) + ` & ${errorMessage}`);
         if (gutter.className.indexOf(SELECTORS.ERROR_GUTTER) === -1) {
           gutter.className = severity + SELECTORS.GUTTER
         }
