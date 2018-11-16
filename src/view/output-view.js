@@ -1,4 +1,4 @@
-import {arrayFrom, convertToHtmlTag, processingHtmlTags} from "../utils";
+import {arrayFrom, convertToHtmlTag, processingHtmlBrackets} from "../utils";
 import isEmptyObject from "is-empty-object"
 import escapeHtml from "escape-html"
 
@@ -23,7 +23,7 @@ const BUG_REPORT_MESSAGE = `${ANGLE_BRACKETS_LEFT_HTML}errStream${ANGLE_BRACKETS
   `✅ Don't forget to attach code to the issue${ANGLE_BRACKETS_LEFT_HTML}/errStream${ANGLE_BRACKETS_RIGHT_HTML}\n`;
 
 export function processJVMOutput(output, theme) {
-  let processedOutput = processingHtmlTags(output); // don't need to escape `&`
+  let processedOutput = processingHtmlBrackets(output); // don't need to escape `&`
   return processedOutput
     .replace(BUG_FLAG, BUG_REPORT_MESSAGE)
     .replace(`${ANGLE_BRACKETS_LEFT_HTML}outStream${ANGLE_BRACKETS_RIGHT_HTML}`, `<span class="standard-output ${theme}">`)

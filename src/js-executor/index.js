@@ -3,6 +3,7 @@ import Map from 'es6-map/polyfill';
 import {API_URLS} from "../config";
 import TargetPlatform from "../target-platform";
 import {showJsException} from "../view/output-view";
+import {processingHtmlBrackets} from "../utils";
 
 const jsExecutors = new Map();
 
@@ -43,7 +44,7 @@ class JsExecutor {
     if (loadedScripts === jsLibs.size + 2) {
       try {
         const output = this.iframe.contentWindow.eval(jsCode);
-        return output ? `<span class="standard-output ${theme}">${output}</span>` : "";
+        return output ? `<span class="standard-output ${theme}">${processingHtmlBrackets(output)}</span>` : "";
       } catch (e) {
         let exceptionOutput = showJsException(e);
         return `<span class="error-output">${exceptionOutput}</span>`;
