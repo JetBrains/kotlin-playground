@@ -97,6 +97,9 @@ playground('.selector', eventFunctions)
 
 - `onOpenConsole` — Is called after the console's opened.
 
+- `getJsCode(code)` — Is called after compilation Kotlin to JS. Use for target platform `js`.
+   _code_ — converted JS code from Kotlin.
+
 - `callback(targetNode, mountNode)` — Is called after playground's united.
  _targetNode_ — node with plain text before component initialization.
  _mountNode_  — new node with runnable editor.
