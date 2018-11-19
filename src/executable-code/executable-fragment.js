@@ -375,7 +375,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
         this.codemirror.setGutterMarker(interval.start.line, SELECTORS.ERROR_AND_WARNING_GUTTER, gutter)
       } else {
         const gutter = this.codemirror.lineInfo(interval.start.line).gutterMarkers[SELECTORS.ERROR_AND_WARNING_GUTTER];
-        gutter.setAttribute(SELECTORS.LABEL, gutter.getAttribute(SELECTORS.LABEL) + ` & ${errorMessage}`);
+        gutter.setAttribute(SELECTORS.LABEL, gutter.getAttribute(SELECTORS.LABEL) + `\n${errorMessage}`);
         if (gutter.className.indexOf(SELECTORS.ERROR_GUTTER) === -1) {
           gutter.className = severity + SELECTORS.GUTTER
         }

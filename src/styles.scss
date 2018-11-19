@@ -467,11 +467,12 @@ li.CodeMirror-hint-active {
 
 div[label]:hover:after {
   content: attr(label);
-  padding: 4px 8px;
-  white-space: nowrap;
+  display: inline-flex;
+  padding: 0.25rem 0.5rem;
+  white-space: pre;
   background: $warning-color;
   border-radius: 3px;
-  margin-left: 15px;
+  margin-left: 1rem;
   color: black;
   border: 1px solid $wt-color-code;
 }
