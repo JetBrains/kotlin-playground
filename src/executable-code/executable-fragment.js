@@ -264,7 +264,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
         onTestPassed).then(
         state => {
           state.waitingForOutput = false;
-          if (state.output) {
+          if (state.output || state.exception) {
             state.openConsole = true;
           } else {
             if (onCloseConsole) onCloseConsole();
