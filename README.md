@@ -62,6 +62,17 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 ```
 
+You could also use the events, or overwrite the server this way by passing them as part of the function parameters:
+
+```js
+// ES6
+import playground from 'kotlin-playground';
+
+document.addEventListener('DOMContentLoaded', () => {
+  playground('code', eventFunctions, 'https://my-kotlin-playground-server'); // attach to all <code> elements
+});
+```
+
 ### Use from plugins
 
 1) [Kotlin Playground WordPress plugin](https://github.com/Kotlin/kotlin-playground-wp-plugin) — [WordPress](https://wordpress.com/) plugin which allows to embed interactive Kotlin playground to any post.
