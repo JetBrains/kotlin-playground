@@ -366,7 +366,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
 
       this.arrayClasses.push(this.codemirror.markText(interval.start, interval.end, {
         "className": "cm__" + diagnostic.className,
-        "title": errorMessage
+        "attributes": { label : errorMessage }
       }));
 
       if ((this.codemirror.lineInfo(interval.start.line) != null) &&
