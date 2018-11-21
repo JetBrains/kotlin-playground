@@ -1,4 +1,4 @@
-import {RUNTIME_CONFIG} from './config';
+import {RUNTIME_CONFIG, API_URLS} from './config';
 import ExecutableCode from './executable-code';
 import {getConfigFromElement, getCurrentScript, waitForNode} from './utils';
 import {
@@ -17,9 +17,11 @@ import {
  *
  * @param {string} selector
  * @param {Function} eventFunctions
+ * @param {string} server
  * @return {Promise<Array<ExecutableCode>>}
  */
-export default function create(selector, eventFunctions) {
+export default function create(selector, eventFunctions, server) {
+  API_URLS.server = server || API_URLS.server;
   return ExecutableCode.create(selector, eventFunctions);
 }
 
