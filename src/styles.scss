@@ -469,17 +469,14 @@ li.CodeMirror-hint-active {
   background: url("https://try.kotlinlang.org/static/images/completion_property.svg");
 }
 
-[label]:hover:after {
+div[label]:hover:after {
   content: attr(label);
   padding: 0.25rem 0.5rem;
   white-space: pre;
+  display: inline-flex;
   background: $warning-color;
   border-radius: 3px;
-  margin-left: 0.2rem;
+  margin-left: 1rem;
   color: black;
   border: 1px solid $wt-color-code;
-}
-div[label]:hover:after{
-  display: inline-flex;
-  margin-left: 1rem;
 }
