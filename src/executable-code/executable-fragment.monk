@@ -14,7 +14,7 @@
             {% endif %}
             <textarea></textarea>
         </div>
-        <div class="js-code-output-executor">
+        <div class="js-code-output-executor {{ theme }}">
           {% if (openConsole) %}
             <div class="console-close {{ theme }}" :onclick={{ this.onConsoleCloseButtonEnter.bind(this) }}></div>
           {% endif %}

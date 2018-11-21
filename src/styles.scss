@@ -215,6 +215,10 @@ $wt-color-azure: #167dff;
   position: relative;
 }
 
+.js-code-output-executor.darcula {
+  border-top: 1px solid grey;
+}
+
 .output-wrapper {
   border-bottom: 1px solid $wt-color-athens;
   min-height: 60px;
@@ -224,7 +228,6 @@ $wt-color-azure: #167dff;
 
 .output-wrapper.darcula {
   background-color: $darcula-console-color;
-  border-top: 1px solid grey;
   color: $wt-color-silver;
 }
 
