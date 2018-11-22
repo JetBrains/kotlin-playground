@@ -62,14 +62,18 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 ```
 
-You could also use the events, or overwrite the server this way by passing them as part of the function parameters:
+You could also use the events, or overwrite the server this way by passing them as part of the function parameter `options`:
 
 ```js
 // ES6
 import playground from 'kotlin-playground';
 
 document.addEventListener('DOMContentLoaded', () => {
-  playground('code', eventFunctions, 'https://my-kotlin-playground-server'); // attach to all <code> elements
+  const options = {
+    eventFunctions: {},
+    server: 'https://my-kotlin-playground-server'
+  }
+  playground('code', options); // attach to all <code> elements
 });
 ```
 
@@ -80,7 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 ### Events
 
-Kotlin Playground supports several events on additional parameter on initialisation;
+Kotlin Playground supports several events on additional parameter on initialisation.
 
 For example:
 ```js
@@ -98,7 +102,7 @@ const eventFunctions = {
   callback: callback(targetNode, mountNode)
 };
 
-playground('.selector', eventFunctions)
+playground('.selector', { eventFunctions })
 
 ```
 

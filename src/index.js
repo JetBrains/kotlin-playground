@@ -7,6 +7,9 @@ import {
 } from './discourse-preview-panel-handler';
 
 /**
+ * @typedef {Object} options
+ * @property {Object} eventFunctions
+ * @property {string} server
  *
  * @typedef {Object} eventFunctions
  * @property {Function} onChange
@@ -16,13 +19,13 @@ import {
  * @property {Function} callBack
  *
  * @param {string} selector
- * @param {Function} eventFunctions
- * @param {string} server
+ * @param {Object} options
  * @return {Promise<Array<ExecutableCode>>}
  */
-export default function create(selector, eventFunctions, server) {
-  API_URLS.server = server || API_URLS.server;
-  return ExecutableCode.create(selector, eventFunctions);
+// export default function create(selector, eventFunctions, server) {
+export default function create(selector, options = {}) {
+  API_URLS.server = options.server || API_URLS.server;
+  return ExecutableCode.create(selector, options.eventFunctions);
 }
 
 // Backwards compatibility, should be removed in next major release
