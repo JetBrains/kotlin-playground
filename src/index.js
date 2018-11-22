@@ -22,7 +22,6 @@ import {
  * @param {Object} options
  * @return {Promise<Array<ExecutableCode>>}
  */
-// export default function create(selector, eventFunctions, server) {
 export default function create(selector, options = {}) {
   API_URLS.server = options.server || API_URLS.server;
   return ExecutableCode.create(selector, options.eventFunctions);
