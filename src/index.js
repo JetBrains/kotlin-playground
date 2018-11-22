@@ -8,10 +8,7 @@ import {
 
 /**
  * @typedef {Object} options
- * @property {Object} eventFunctions
  * @property {string} server
- *
- * @typedef {Object} eventFunctions
  * @property {Function} onChange
  * @property {Function} onTestPassed
  * @property {Function} onConsoleOpen
@@ -24,7 +21,7 @@ import {
  */
 export default function create(selector, options = {}) {
   API_URLS.server = options.server || API_URLS.server;
-  return ExecutableCode.create(selector, options.eventFunctions);
+  return ExecutableCode.create(selector, options);
 }
 
 // Backwards compatibility, should be removed in next major release
