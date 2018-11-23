@@ -1,5 +1,5 @@
 [![official JetBrains project](http://jb.gg/badges/official-plastic.svg)](https://confluence.jetbrains.com/display/ALL/JetBrains+on+GitHub)
-[![NPM version](https://img.shields.io/npm/v/kotlin-playground.svg)](https://www.npmjs.com/package/kotlin-playground) 
+[![NPM version](https://img.shields.io/npm/v/kotlin-playground.svg)](https://www.npmjs.com/package/kotlin-playground)
 
 # Kotlin Playground
 
@@ -27,6 +27,12 @@ document.addEventListener('DOMContentLoaded', function() {
   KotlinPlayground('.code-blocks-selector');
 });
 </script>
+```
+
+You can also overwrite the server where the code will be sent to be compiled and analyzed (for example if you host a server instance that includes your own Kotlin libraries). For that you can set the `data-server` attibute, like this:
+
+```html
+<script src="https://unpkg.com/kotlin-playground@1" data-selector="code" data-server="https://my-kotlin-playground-server"></script>
 ```
 
 ### Host your own instance
@@ -61,9 +67,9 @@ document.addEventListener('DOMContentLoaded', () => {
 1) [Kotlin Playground WordPress plugin](https://github.com/Kotlin/kotlin-playground-wp-plugin) — [WordPress](https://wordpress.com/) plugin which allows to embed interactive Kotlin playground to any post.
 2) [Kotlin Playground Coursera plugin](https://github.com/AlexanderPrendota/kotlin-playground-coursera-plugin) — Allows embedding interactive Kotlin playground for [coursera](https://www.coursera.org/) lessons.
 
-### Events
+### Options
 
-Kotlin Playground supports several events on additional parameter on initialisation;
+Kotlin Playground supports several events, and also server URL overwriting passing an additional `options` parameter on initialisation.
 
 For example:
 ```js
@@ -75,13 +81,14 @@ function onTestPassed() {
    console.log("Tests passed!");
 }
 
-const eventFunctions = {
+const options = {
+  server: 'https://my-kotlin-playground-server',
   onChange: onChange(code),
   onTestPassed: onTestPassed,
   callback: callback(targetNode, mountNode)
 };
 
-playground('.selector', eventFunctions)
+playground('.selector', options)
 
 ```
 
@@ -103,7 +110,7 @@ playground('.selector', eventFunctions)
 - `callback(targetNode, mountNode)` — Is called after playground's united.
  _targetNode_ — node with plain text before component initialization.
  _mountNode_  — new node with runnable editor.
- 
+
 - `getInstance(instance)` - Getting playground state API.
 
   ```js
@@ -137,7 +144,7 @@ Use the following attributes on elements that are converted to editors to adjust
   */
   </code>
   ```
-  
+
 - `data-target-platform`: target platform: `junit`, `canvas`, `js` or `java` (default).
 
   ```html
@@ -156,7 +163,7 @@ Use the following attributes on elements that are converted to editors to adjust
     */
   </code>
   ```
-  
+
   Or, you can make only a part of code read-only by placing it between `//sampleStart` and `//sampleEnd` markers.
   If you don't need this just use attribute `none-markers`.
   For adding hidden files: put files between `<textarea>` tag with class `hidden-dependency`.
@@ -164,7 +171,7 @@ Use the following attributes on elements that are converted to editors to adjust
   ```html
   <code>
   import cat.Cat
-  
+
   fun main(args: Array<String>) {
   //sampleStart
       val cat = Cat("Kitty")
@@ -173,22 +180,22 @@ Use the following attributes on elements that are converted to editors to adjust
   }
     <textarea class="hidden-dependency">
       package cat
-      class Cat(val name: String) 
+      class Cat(val name: String)
     </textarea>
   </code>
   ```
   Also if you want to hide code snippet just set the attribute `folded-button` to `false` value.
-  
+
 - `data-js-libs`: By default component loads jQuery and makes it available to the code running in the editor. If you need any additional JS libraries, specify them as comma-separated list in this attribute.
 
   ```html
-  <code data-js-libs="https://my-awesome-js-lib/lib.min.js"> 
+  <code data-js-libs="https://my-awesome-js-lib/lib.min.js">
     /*
     Your code here
     */
    </code>
   ```
-  
+
 - `auto-indent="true|false"`: Whether to use the context-sensitive indentation. Defaults to `false`.
 
 - `theme="idea|darcula|default"`: Editor IntelliJ IDEA themes.
@@ -196,18 +203,18 @@ Use the following attributes on elements that are converted to editors to adjust
 - `mode="kotlin|js|java|groovy|xml|c|shell|swift|obj-c"`: Different languages styles. Runnable snippets only with `kotlin`. Default to `kotlin`.
 
 - `data-min-compiler-version="1.0.7"`: Minimum target Kotlin [compiler version](https://try.kotlinlang.org/kotlinServer?type=getKotlinVersions)
- 
+
 - `highlight-on-fly="true|false"`: Errors and warnings check for each change in the editor. Defaults to `false`.
 
 - `autocomplete="true|false"`: Get completion on every key press. If `false` => Press ctrl-space to activate autocompletion. Defaults to `false`.
 
-- `indent="4"`: How many spaces a block should be indented. Defaults to `4`. 
+- `indent="4"`: How many spaces a block should be indented. Defaults to `4`.
 
-- `lines="true|false"`: Whether to show line numbers to the left of the editor. Defaults to `false`. 
+- `lines="true|false"`: Whether to show line numbers to the left of the editor. Defaults to `false`.
 
 - `from="5" to="10`: Create a part of code. Example `from` line 5 `to` line 10.
 
-- `data-output-height="200"`: Set the iframe height in `px` in output. Use for target platform `canvas`. 
+- `data-output-height="200"`: Set the iframe height in `px` in output. Use for target platform `canvas`.
 
 - `match-brackets="true|false""`: Determines whether brackets are matched whenever the cursor is moved next to a bracket. Defaults to `false`.
 
@@ -227,4 +234,3 @@ Use the following attributes on elements that are converted to editors to adjust
 2. Install required dependencies `npm install`.
 3. `npm start` to start local development server at http://localhost:9000, or `npm start -- --env.webDemoUrl=http://localhost:6666` if you want a different port.
 4. `npm run build` to create production bundles.
-

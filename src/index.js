@@ -1,3 +1,4 @@
+import {RUNTIME_CONFIG, API_URLS} from './config';
 import ExecutableCode from './executable-code';
 import {getConfigFromElement, getCurrentScript, waitForNode} from './utils';
 import {
@@ -6,8 +7,8 @@ import {
 } from './discourse-preview-panel-handler';
 
 /**
- *
- * @typedef {Object} eventFunctions
+ * @typedef {Object} options
+ * @property {string} server
  * @property {Function} onChange
  * @property {Function} onTestPassed
  * @property {Function} onConsoleOpen
@@ -15,11 +16,12 @@ import {
  * @property {Function} callBack
  *
  * @param {string} selector
- * @param {Function} eventFunctions
+ * @param {Object} options
  * @return {Promise<Array<ExecutableCode>>}
  */
-export default function create(selector, eventFunctions) {
-  return ExecutableCode.create(selector, eventFunctions);
+export default function create(selector, options = {}) {
+  API_URLS.server = options.server || API_URLS.server;
+  return ExecutableCode.create(selector, options);
 }
 
 // Backwards compatibility, should be removed in next major release
@@ -36,9 +38,7 @@ create.discourse = function (selector) {
 };
 
 // Auto initialization via data-selector <script> attribute
-const currentScript = getCurrentScript();
-const config = getConfigFromElement(currentScript);
-const {selector, discourseSelector} = config;
+const {selector, discourseSelector} = RUNTIME_CONFIG;
 
 if (selector || discourseSelector) {
   document.addEventListener('DOMContentLoaded', () => {

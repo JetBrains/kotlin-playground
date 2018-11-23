@@ -1,4 +1,8 @@
-const WEBDEMO_URL = __WEBDEMO_URL__;
+import {getConfigFromElement, getCurrentScript} from './utils';
+
+const currentScript = getCurrentScript();
+
+export const RUNTIME_CONFIG = {...getConfigFromElement(currentScript)};
 
 /**
  * API Paths
@@ -6,12 +10,25 @@ const WEBDEMO_URL = __WEBDEMO_URL__;
  * @type {{COMPILE: string, COMPLETE: string, VERSIONS: string, JQUERY: string, KOTLIN_JS: string}}
  */
 export const API_URLS = {
-  COMPILE:    `${WEBDEMO_URL}/kotlinServer?type=run&runConf=`,
-  HIGHLIGHT:  `${WEBDEMO_URL}/kotlinServer?type=highlight&runConf=`,
-  COMPLETE:   `${WEBDEMO_URL}/kotlinServer?type=complete&runConf=`,
-  VERSIONS:   `${WEBDEMO_URL}/kotlinServer?type=getKotlinVersions`,
-  JQUERY:     `${WEBDEMO_URL}/static/lib/jquery/dist/jquery.min.js`,
-  KOTLIN_JS:  `${WEBDEMO_URL}/static/kotlin/`
+  server: RUNTIME_CONFIG.server || __WEBDEMO_URL__,
+  get COMPILE() {
+    return `${this.server}/kotlinServer?type=run&runConf=`;
+  },
+  get HIGHLIGHT() {
+    return `${this.server}/kotlinServer?type=highlight&runConf=`;
+  },
+  get COMPLETE() {
+    return `${this.server}/kotlinServer?type=complete&runConf=`;
+  },
+  get VERSIONS() {
+    return `${this.server}/kotlinServer?type=getKotlinVersions`;
+  },
+  get JQUERY() {
+    return `${this.server}/static/lib/jquery/dist/jquery.min.js`;
+  },
+  get KOTLIN_JS() {
+    return `${this.server}/static/kotlin/`;
+  }
 };
 
 /**
