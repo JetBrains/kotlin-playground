@@ -1,6 +1,6 @@
-import {RUNTIME_CONFIG, API_URLS} from './config';
+import {API_URLS, RUNTIME_CONFIG} from './config';
 import ExecutableCode from './executable-code';
-import {getConfigFromElement, getCurrentScript, waitForNode} from './utils';
+import {waitForNode} from './utils';
 import {
   default as discoursePreviewPanelHandler,
   Selectors as DiscourseSelectors
