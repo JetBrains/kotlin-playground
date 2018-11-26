@@ -1,4 +1,4 @@
-import 'whatwg-fetch';
+import {fetch} from 'whatwg-fetch';
 import URLSearchParams from 'url-search-params';
 import TargetPlatform from "./target-platform";
 import {API_URLS} from "./config";
