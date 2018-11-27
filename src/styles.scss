@@ -473,6 +473,7 @@ div[label]:hover:after {
   content: attr(label);
   padding: 0.25rem 0.5rem;
   white-space: pre;
+  margin-top: -1rem;
   display: inline-flex;
   background: $warning-color;
   border-radius: 3px;
