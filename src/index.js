@@ -5,6 +5,11 @@ import {
   default as discoursePreviewPanelHandler,
   Selectors as DiscourseSelectors
 } from './discourse-preview-panel-handler';
+// support IE11
+import {polyfill} from "es6-promise";
+
+polyfill();
+
 
 /**
  * @typedef {Object} options
