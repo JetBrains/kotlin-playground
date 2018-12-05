@@ -33,12 +33,14 @@ $wt-color-azure: #167dff;
   border-bottom-width: 0;
 }
 
-.hidden-dependency {
-  display: none;
+.executable-fragment.darcula {
+  border: 1px solid gray;
+  border-bottom-width: 0;
+  background-color: $darcula-console-color;
 }
 
-.executable-fragment.darcula {
-  background-color: $darcula-console-color;
+.hidden-dependency {
+  display: none;
 }
 
 .CodeMirror {
