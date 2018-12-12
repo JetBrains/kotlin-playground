@@ -203,12 +203,12 @@ $wt-color-azure: #167dff;
 }
 
 .cm__red_wavy_line {
-  background: url(http://try.kotlinlang.org/static/images/wavyline-red.gif) repeat-x 100% 100% !important;
+  background: url("https://try.kotlinlang.org/static/images/wavyline-red.gif") repeat-x 100% 100%;
   padding-bottom: 2px;
 }
 
 .cm__green_wavy_line {
-  background: url(http://try.kotlinlang.org/static/images/wavyline-green.gif) repeat-x 100% 100% !important;
+  background: url("https://try.kotlinlang.org/static/images/wavyline-green.gif") repeat-x 100% 100%;
   padding-bottom: 2px;
 }
 
