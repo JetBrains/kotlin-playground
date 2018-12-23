@@ -65,16 +65,36 @@ class JsExecutor {
     const iframe = document.createElement('iframe');
     iframe.className = "k2js-iframe";
     node.appendChild(iframe);
+    let loadedScriptCount = 0;
     this.iframe = iframe;
     let iframeDoc = this.iframe.contentDocument || this.iframe.document;
-    const kotlinScript = API_URLS.KOTLIN_JS + `${this.kotlinVersion}/kotlin.js`;
-    iframeDoc.write("<script src='" + kotlinScript + "'></script>");
-    for (let lib of jsLibs) {
-      iframeDoc.write("<script src='" + lib + "'></script>");
+    const head = iframeDoc.getElementsByTagName("head")[0];
+    const body = iframeDoc.getElementsByTagName("body")[0];
+    body.style = "margin: 0; overflow: hidden;";
+
+    function internalLoaded( event) {
+      loadedScriptCount++;
+      if (loadedScriptCount === jsLibs.size + 1){
+        const initScript = iframeDoc.createElement("script");
+        initScript.innerHTML = INIT_SCRIPT;
+        head.appendChild(initScript);
+      }
     }
-    iframeDoc.write(`<script>${INIT_SCRIPT}</script>`);
-    iframe.contentWindow.document.write('<body style="margin: 0; overflow: hidden;"></body>');
-    this._initializeKotlin();
+
+    function addScript(lib) {
+      const script = iframeDoc.createElement('script');
+      script.src = lib;
+      script.defer = true;
+      script.async = false;
+      script.onload = internalLoaded;
+      head.appendChild(script)
+    }
+
+    const kotlinScript = API_URLS.KOTLIN_JS + `${this.kotlinVersion}/kotlin.js`;
+    addScript(kotlinScript);
+    for (let lib of jsLibs) {
+      addScript(lib)
+    }
   }
 }
 
