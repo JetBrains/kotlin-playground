@@ -40,7 +40,7 @@ class JsExecutor {
 
   async execute(jsCode, jsLibs, theme) {
     const loadedScripts = (this.iframe.contentDocument || this.iframe.document).getElementsByTagName('script').length;
-    // 2 scripts by default: INIT_SCRIPT + JQuery
+    // 2 scripts by default: INIT_SCRIPT + kotlin stdlib
     if (loadedScripts === jsLibs.size + 2) {
       try {
         const output = this.iframe.contentWindow.eval(jsCode);

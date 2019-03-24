@@ -164,7 +164,7 @@ export default class ExecutableCode {
       const jsLibs = targetNode.getAttribute(ATTRIBUTES.JS_LIBS);
       let additionalLibs = new Set(API_URLS.JQUERY.split());
       if (jsLibs) {
-        let checkUrl = new RegExp("https?://.+\.js$");
+        let checkUrl = new RegExp("https?://.+$");
         jsLibs
           .replace(" ", "")
           .split(",")
