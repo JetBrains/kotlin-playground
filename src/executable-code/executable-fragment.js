@@ -87,7 +87,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
     let hasMarkers = false;
     let platform = state.targetPlatform;
     if (state.compilerVersion && (platform === TargetPlatform.JS || platform === TargetPlatform.CANVAS)) {
-      this.jsExecutor = getJsExecutor(state.compilerVersion, state.jsLibs, this.getNodeForMountIframe(platform), platform)
+      this.jsExecutor = getJsExecutor(state.compilerVersion, platform);
     }
 
     if (state.code) {
@@ -274,7 +274,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
         () => this.update({waitingForOutput: false})
       )
     } else {
-      if (targetPlatform === TargetPlatform.CANVAS) this.jsExecutor.reloadIframeScripts(jsLibs, this.getNodeForMountIframe(targetPlatform));
+      this.jsExecutor.reloadIframeScripts(jsLibs, this.getNodeForMountIframe(targetPlatform));
       WebDemoApi.translateKotlinToJs(this.getCode(), compilerVersion, targetPlatform, args, hiddenDependencies).then(
         state => {
           state.waitingForOutput = false;
