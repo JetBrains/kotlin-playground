@@ -246,6 +246,24 @@ fun main(args: Array<String>) {
 
 </div>
 
+Use `data-js-libs` with a comma-separated list of URLs to specify additional javascript libraries to load.
+
+```html
+<div class="kotlin-code" data-target-platform="canvas" data-js-libs="https://unpkg.com/moment@2" data-output-height="0">
+```
+
+<div class="kotlin-code" data-target-platform="canvas" data-js-libs="https://unpkg.com/moment@2" data-output-height="0">
+
+```kotlin
+external fun moment(): dynamic
+
+fun main() {
+    val startOfDay = moment().startOf("day").fromNow()
+    println("The start of the day was $startOfDay")
+}
+```
+
+</div>
 
 ## Manual initialization
 
