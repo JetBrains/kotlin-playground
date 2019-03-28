@@ -67,6 +67,7 @@ class JsExecutor {
     node.appendChild(iframe);
     this.iframe = iframe;
     let iframeDoc = this.iframe.contentDocument || this.iframe.document;
+    iframeDoc.open();
     const kotlinScript = API_URLS.KOTLIN_JS + `${this.kotlinVersion}/kotlin.js`;
     iframeDoc.write("<script src='" + kotlinScript + "'></script>");
     for (let lib of jsLibs) {
@@ -74,6 +75,7 @@ class JsExecutor {
     }
     iframeDoc.write(`<script>${INIT_SCRIPT}</script>`);
     iframe.contentWindow.document.write('<body style="margin: 0; overflow: hidden;"></body>');
+    iframeDoc.close();
     this._initializeKotlin();
   }
 }
