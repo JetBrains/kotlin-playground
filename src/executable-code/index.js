@@ -39,7 +39,7 @@ const ATTRIBUTES = {
   MODE: 'mode',
   MATCH_BRACKETS: 'match-brackets',
   OUTPUT_HEIGHT: 'data-output-height',
-  COMPLETE: 'autocomplete',
+  COMPLETE: 'data-autocomplete',
   ON_FLY_HIGHLIGHT: 'highlight-on-fly',
   PLATFORM: 'data-target-platform',
   JS_LIBS: 'data-js-libs',
