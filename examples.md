@@ -249,10 +249,10 @@ fun main(args: Array<String>) {
 Use `data-js-libs` with a comma-separated list of URLs to specify additional javascript libraries to load.
 
 ```html
-<div class="kotlin-code" data-target-platform="canvas" data-js-libs="https://unpkg.com/moment@2" data-output-height="0">
+<div class="kotlin-code" data-target-platform="js" data-js-libs="https://unpkg.com/moment@2">
 ```
 
-<div class="kotlin-code" data-target-platform="canvas" data-js-libs="https://unpkg.com/moment@2" data-output-height="0">
+<div class="kotlin-code" data-target-platform="js" data-js-libs="https://unpkg.com/moment@2">
 
 ```kotlin
 external fun moment(): dynamic

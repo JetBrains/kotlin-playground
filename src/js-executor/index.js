@@ -1,21 +1,18 @@
 import './index.scss'
-import Map from 'es6-map/polyfill';
 import {API_URLS} from "../config";
 import TargetPlatform from "../target-platform";
 import {showJsException} from "../view/output-view";
 import {processingHtmlBrackets} from "../utils";
 
-const jsExecutors = new Map();
-
 const INIT_SCRIPT = "if(kotlin.BufferedOutput!==undefined){kotlin.out = new kotlin.BufferedOutput()}" +
   "else{kotlin.kotlin.io.output = new kotlin.kotlin.io.BufferedOutput()}";
 
-class JsExecutor {
+export default class JsExecutor {
   constructor(kotlinVersion) {
     this.kotlinVersion = kotlinVersion;
   }
 
-  async executeJsCode(jsCode, jsLibs, platform, node, outputHeight, theme) {
+  async executeJsCode(jsCode, jsLibs, platform, outputHeight, theme) {
     if (platform === TargetPlatform.CANVAS) {
       this.iframe.style.display = "block";
       if (outputHeight) this.iframe.style.height = `${outputHeight}px`;
@@ -62,19 +59,3 @@ class JsExecutor {
     iframeDoc.close();
   }
 }
-
-function getJsExecutor(kotlinVersion, platform) {
-  let executor;
-  if (platform === TargetPlatform.CANVAS) {
-    return new JsExecutor(kotlinVersion);
-  }
-  if (jsExecutors.has(kotlinVersion)) {
-    executor = jsExecutors.get(kotlinVersion);
-  } else {
-    executor = new JsExecutor(kotlinVersion);
-    jsExecutors.set(kotlinVersion, executor);
-  }
-  return executor;
-}
-
-export default getJsExecutor;
