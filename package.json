@@ -26,7 +26,6 @@
     "css-loader": "0.28.4",
     "debounce": "^1.1.0",
     "deepmerge": "^1.5.0",
-    "es6-map": "^0.1.5",
     "es6-promise": "^4.2.5",
     "es6-set": "^0.1.5",
     "escape-html": "^1.0.3",
