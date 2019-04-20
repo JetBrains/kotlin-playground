@@ -222,6 +222,8 @@ $wt-color-azure: #167dff;
 }
 
 .output-wrapper {
+  flex-direction: column;
+  display: flex;
   border-bottom: 1px solid $wt-color-athens;
   min-height: 60px;
   font-size: 14px;
@@ -234,6 +236,7 @@ $wt-color-azure: #167dff;
 }
 
 .code-output {
+  flex-grow: 1;
   font-family: $font-family-mono;
   overflow: auto;
   padding-left: 10px;
