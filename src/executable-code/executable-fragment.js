@@ -6,7 +6,7 @@ import 'monkberry-events';
 import ExecutableCodeTemplate from './executable-fragment.monk';
 import WebDemoApi from '../webdemo-api';
 import TargetPlatform from "../target-platform";
-import getJsExecutor from "../js-executor"
+import JsExecutor from "../js-executor"
 import {countLines, THEMES, unEscapeString} from "../utils";
 import debounce from 'debounce';
 import escapeStringRegexp from "escape-string-regexp"
@@ -24,7 +24,7 @@ const KEY_CODES = {
 const DEBOUNCE_TIME = 500;
 
 const SELECTORS = {
-  CANVAS_PLACEHOLDER_OUTPUT: ".js-code-output-executor",
+  JS_CODE_OUTPUT_EXECUTOR: ".js-code-output-executor",
   FOLD_BUTTON: ".fold-button",
   UNMODIFIABLE_LINE_DARK: "unmodifiable-line-dark",
   UNMODIFIABLE_LINE: "unmodifiable-line",
@@ -87,7 +87,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
     let hasMarkers = false;
     let platform = state.targetPlatform;
     if (state.compilerVersion && (platform === TargetPlatform.JS || platform === TargetPlatform.CANVAS)) {
-      this.jsExecutor = getJsExecutor(state.compilerVersion, state.jsLibs, this.getNodeForMountIframe(platform), platform)
+      this.jsExecutor = new JsExecutor(state.compilerVersion);
     }
 
     if (state.code) {
@@ -227,10 +227,9 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
   }
 
   onConsoleCloseButtonEnter() {
-    const {targetPlatform, jsLibs, onCloseConsole} = this.state;
-    if (targetPlatform === TargetPlatform.CANVAS) {
-      this.jsExecutor.reloadIframeScripts(jsLibs, this.getNodeForMountIframe(TargetPlatform.CANVAS));
-    }
+    const {jsLibs, onCloseConsole} = this.state;
+    // creates a new iframe and removes the old one, thereby stops execution of any running script
+    this.jsExecutor.reloadIframeScripts(jsLibs, this.getNodeForMountIframe());
     this.update({output: "", openConsole: false, exception: null});
     if (onCloseConsole) onCloseConsole();
   }
@@ -274,7 +273,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
         () => this.update({waitingForOutput: false})
       )
     } else {
-      if (targetPlatform === TargetPlatform.CANVAS) this.jsExecutor.reloadIframeScripts(jsLibs, this.getNodeForMountIframe(targetPlatform));
+      this.jsExecutor.reloadIframeScripts(jsLibs, this.getNodeForMountIframe());
       WebDemoApi.translateKotlinToJs(this.getCode(), compilerVersion, targetPlatform, args, hiddenDependencies).then(
         state => {
           state.waitingForOutput = false;
@@ -288,7 +287,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
             state.exception = null;
             this.update(state);
           } else {
-            this.jsExecutor.executeJsCode(jsCode, jsLibs, targetPlatform, this.getNodeForMountIframe(targetPlatform),
+            this.jsExecutor.executeJsCode(jsCode, jsLibs, targetPlatform,
               outputHeight, theme).then(output => {
               if (output) {
                 state.openConsole = true;
@@ -316,10 +315,8 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
    * @param {TargetPlatform} platform
    * @return {HTMLElement}
    */
-  getNodeForMountIframe(platform) {
-    return platform === TargetPlatform.JS
-      ? document.body
-      : this.nodes[0].querySelector(SELECTORS.CANVAS_PLACEHOLDER_OUTPUT);
+  getNodeForMountIframe() {
+    return this.nodes[0].querySelector(SELECTORS.JS_CODE_OUTPUT_EXECUTOR);
   }
 
   getCode() {
