@@ -32,7 +32,7 @@ export function processJVMOutput(output, theme) {
     .replace(`${ANGLE_BRACKETS_LEFT_HTML}/errStream${ANGLE_BRACKETS_RIGHT_HTML}`, "</span>");
 }
 
-export function processJUnitResults(data, onTestPassed) {
+export function processJUnitResults(data, onTestPassed, onTestFailed) {
   let result = "";
   let totalTime = 0;
   let passed = true;
@@ -53,6 +53,7 @@ export function processJUnitResults(data, onTestPassed) {
     }, "");
   }
   if (passed && onTestPassed) onTestPassed();
+  if (!passed && onTestFailed) onTestFailed();
   let testTime = `<div class="test-time">Total test time: ${totalTime}s</div>`;
   return testTime + result;
 }

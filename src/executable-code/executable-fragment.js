@@ -242,7 +242,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
   execute() {
     const {
       onOpenConsole, targetPlatform, waitingForOutput, compilerVersion,
-      args, theme, hiddenDependencies, onTestPassed, onCloseConsole, jsLibs, outputHeight, getJsCode
+      args, theme, hiddenDependencies, onTestPassed, onTestFailed, onCloseConsole, jsLibs, outputHeight, getJsCode
     } = this.state;
     if (waitingForOutput) {
       return
@@ -260,7 +260,8 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
         targetPlatform, args,
         theme,
         hiddenDependencies,
-        onTestPassed).then(
+        onTestPassed,
+        onTestFailed).then(
         state => {
           state.waitingForOutput = false;
           if (state.output || state.exception) {
