@@ -103,6 +103,8 @@ export function getExceptionCauses(exception) {
 }
 
 export function showJsException(exception) {
+  console && console.error(exception);
+
   if (exception.stack != null) {
     let userStackTrace = exception.stack.toString().substr(0, exception.stack.toString().indexOf("at eval (<anonymous>)"));
     return `${UNHANDLED_JS_EXCEPTION}: ${exception.message} \n ${userStackTrace}`;
