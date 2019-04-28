@@ -227,9 +227,10 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
   }
 
   onConsoleCloseButtonEnter() {
-    const {jsLibs, onCloseConsole} = this.state;
+    const {jsLibs, onCloseConsole, targetPlatform } = this.state;
     // creates a new iframe and removes the old one, thereby stops execution of any running script
-    this.jsExecutor.reloadIframeScripts(jsLibs, this.getNodeForMountIframe());
+    if (targetPlatform === TargetPlatform.CANVAS || targetPlatform === TargetPlatform.JS)
+      this.jsExecutor.reloadIframeScripts(jsLibs, this.getNodeForMountIframe());
     this.update({output: "", openConsole: false, exception: null});
     if (onCloseConsole) onCloseConsole();
   }
