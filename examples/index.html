@@ -62,7 +62,7 @@ fun main(args: Array&lt;String&gt;) {
 }
 
 <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">main</span><span class="hljs-params">(args: <span class="hljs-type">Array</span>&lt;<span class="hljs-type">String</span>&gt;)</span></span> {
-    print(sum(<span class="hljs-number">-1</span>, <span class="hljs-number">8</span>))
+    print(sum(-<span class="hljs-number">1</span>, <span class="hljs-number">8</span>))
 }
 </code></pre>
 </div>
@@ -73,7 +73,7 @@ fun main(args: Array&lt;String&gt;) {
 
 <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">TestExtensionFunctions</span></span>() {
     <span class="hljs-meta">@Test</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">testIntExtension</span><span class="hljs-params">()</span></span> {
-        Assert.assertEquals(<span class="hljs-string">"Rational number creation error: "</span>, RationalNumber(<span class="hljs-number">4</span>, <span class="hljs-number">1</span>), <span class="hljs-number">4.</span>r())
+        Assert.assertEquals(<span class="hljs-string">"Rational number creation error: "</span>, RationalNumber(<span class="hljs-number">4</span>, <span class="hljs-number">1</span>), <span class="hljs-number">4</span>.r())
     }
 
     <span class="hljs-meta">@Test</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">testPairExtension</span><span class="hljs-params">()</span></span> {
@@ -194,6 +194,18 @@ The function any gets a predicate as an argument and returns true if there is at
      FancyLines().run()
 }
 <span class="hljs-comment">//sampleEnd</span>
+</code></pre>
+</div>
+<p>Use <code>data-js-libs</code> with a comma-separated list of URLs to specify additional javascript libraries to load.</p>
+<pre><code class="hljs language-html"><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"kotlin-code"</span> <span class="hljs-attr">data-target-platform</span>=<span class="hljs-string">"js"</span> <span class="hljs-attr">data-js-libs</span>=<span class="hljs-string">"https://unpkg.com/moment@2"</span>&gt;</span>
+</code></pre>
+<div class="kotlin-code" data-target-platform="js" data-js-libs="https://unpkg.com/moment@2">
+<pre><code class="hljs language-kotlin"><span class="hljs-keyword">external</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">moment</span><span class="hljs-params">()</span></span>: <span class="hljs-keyword">dynamic</span>
+
+<span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> {
+    <span class="hljs-keyword">val</span> startOfDay = moment().startOf(<span class="hljs-string">"day"</span>).fromNow()
+    println(<span class="hljs-string">"The start of the day was <span class="hljs-variable">$startOfDay</span>"</span>)
+}
 </code></pre>
 </div>
 <h2>Manual initialization</h2>
