@@ -105,6 +105,8 @@ playground('.selector', options)
 
 - `onTestPassed` — Is called after all tests passed. Use for target platform `junit`.
 
+- `onTestFailed` — Is called after all tests failed. Use for target platform `junit`.
+
 - `onCloseConsole` — Is called after the console's closed.
 
 - `onOpenConsole` — Is called after the console's opened.
