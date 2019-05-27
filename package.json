@@ -25,7 +25,7 @@
     "codemirror": "^5.46.0",
     "css-loader": "2.1.1",
     "debounce": "^1.2.0",
-    "deepmerge": "^3.2.0",
+    "deepmerge": "^1.5.0",
     "es6-promise": "^4.2.6",
     "es6-set": "^0.1.5",
     "escape-html": "^1.0.3",
