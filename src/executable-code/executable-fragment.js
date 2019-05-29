@@ -242,7 +242,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
 
   execute() {
     const {
-      onOpenConsole, targetPlatform, waitingForOutput, compilerVersion,
+      onOpenConsole, targetPlatform, waitingForOutput, compilerVersion, onRun,
       args, theme, hiddenDependencies, onTestPassed, onTestFailed, onCloseConsole, jsLibs, outputHeight, getJsCode
     } = this.state;
     if (waitingForOutput) {
@@ -252,8 +252,8 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
       waitingForOutput: true,
       openConsole: false
     });
-    //open when waitingForOutput=true
-    if (onOpenConsole) onOpenConsole();
+    if (onOpenConsole) onOpenConsole(); //open when waitingForOutput=true
+    if (onRun) onRun();
     if (targetPlatform === TargetPlatform.JAVA || targetPlatform === TargetPlatform.JUNIT) {
       WebDemoApi.executeKotlinCode(
         this.getCode(),
