@@ -12,6 +12,7 @@ module.exports = (params = {}) => {
   const examplesPath = isServer ? '' : 'examples/';
 
   const config = {
+    mode: env,
     entry: {
       [mainEntryName]: ['./src/index'],
       REMOVE_ME: [
