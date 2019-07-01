@@ -238,6 +238,6 @@ Use the following attributes on elements that are converted to editors to adjust
 ## Develop and contribute
 
 1. Fork & clone [our repository](https://github.com/JetBrains/kotlin-playground).
-2. Install required dependencies `npm install`.
-3. `npm start` to start local development server at http://localhost:9000, or `npm start -- --env.webDemoUrl=http://localhost:6666` if you want a different port.
-4. `npm run build` to create production bundles.
+2. Install required dependencies `yarn install`.
+3. `yarn start` to start local development server at http://localhost:9000.
+4. `yarn run build` to create production bundles.
