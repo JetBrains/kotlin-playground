@@ -12,15 +12,15 @@ export default class JsExecutor {
     this.kotlinVersion = kotlinVersion;
   }
 
-  async executeJsCode(jsCode, jsLibs, platform, outputHeight, theme) {
+  async executeJsCode(jsCode, jsLibs, platform, outputHeight, theme, onError) {
     if (platform === TargetPlatform.CANVAS) {
       this.iframe.style.display = "block";
       if (outputHeight) this.iframe.style.height = `${outputHeight}px`;
     }
-    return await this.execute(jsCode, jsLibs, theme);
+    return await this.execute(jsCode, jsLibs, theme, onError);
   }
 
-  async execute(jsCode, jsLibs, theme) {
+  async execute(jsCode, jsLibs, theme, onError) {
     const loadedScripts = (this.iframe.contentDocument || this.iframe.document).getElementsByTagName('script').length;
     // 2 scripts by default: INIT_SCRIPT + kotlin stdlib
     if (loadedScripts === jsLibs.size + 2) {
@@ -28,12 +28,13 @@ export default class JsExecutor {
         const output = this.iframe.contentWindow.eval(jsCode);
         return output ? `<span class="standard-output ${theme}">${processingHtmlBrackets(output)}</span>` : "";
       } catch (e) {
+        if (onError) onError();
         let exceptionOutput = showJsException(e);
         return `<span class="error-output">${exceptionOutput}</span>`;
       }
     }
     await this.timeout(400);
-    return await this.execute(jsCode, jsLibs, theme);
+    return await this.execute(jsCode, jsLibs, theme, onError);
   }
 
   timeout(ms) {

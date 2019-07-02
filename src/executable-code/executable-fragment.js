@@ -242,7 +242,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
 
   execute() {
     const {
-      onOpenConsole, targetPlatform, waitingForOutput, compilerVersion, onRun,
+      onOpenConsole, targetPlatform, waitingForOutput, compilerVersion, onRun, onError,
       args, theme, hiddenDependencies, onTestPassed, onTestFailed, onCloseConsole, jsLibs, outputHeight, getJsCode
     } = this.state;
     if (waitingForOutput) {
@@ -270,6 +270,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
           } else {
             if (onCloseConsole) onCloseConsole();
           }
+          if ((state.errors.length > 0 || state.exception) && onError) onError();
           this.update(state);
         },
         () => this.update({waitingForOutput: false})
@@ -284,13 +285,14 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
           if (getJsCode) getJsCode(jsCode);
           let errors = state.errors.filter(error => error.severity === "ERROR");
           if (errors.length > 0) {
+            if (onError) onError();
             state.output = processErrors(errors);
             state.openConsole = true;
             state.exception = null;
             this.update(state);
           } else {
             this.jsExecutor.executeJsCode(jsCode, jsLibs, targetPlatform,
-              outputHeight, theme).then(output => {
+              outputHeight, theme, onError).then(output => {
               if (output) {
                 state.openConsole = true;
                 state.output = output;
