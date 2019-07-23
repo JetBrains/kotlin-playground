@@ -97,6 +97,11 @@ playground('.selector', options)
 
 ```
 
+**Options description:**
+
+- `server` — string, server where the code will be sent to be compiled and analyzed
+- `offline` — boolean, if true don't send any requests to server
+
 **Events description:**
 
 - `onChange(code)` — Fires every time the content of the editor is changed. Debounce time: 0.5s.
