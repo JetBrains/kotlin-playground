@@ -301,7 +301,7 @@ Look at example:
 </div>
 ```
 
-<button onclick="KotlinPlayground('.kotlin-code-2',{ onChange: (code)=> {console.log(code)}}); this.disabled = true; document.getElementById('kotlin-example').style.display = 'block';">Create</button>
+<button onclick="KotlinPlayground('.kotlin-code-2',{ onChange: function (code) {console.log(code)}}); this.disabled = true; document.getElementById('kotlin-example').style.display = 'block';">Create</button>
 
 <div id="kotlin-example" class="kotlin-code-2" style="display: none;">
 

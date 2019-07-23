@@ -39,6 +39,26 @@ module.exports = (params = {}) => {
           loader: 'babel-loader'
         },
         {
+          test: /\.js$/,
+          include: /node_modules\/escape-string-regexp\//,
+          use: [
+            {
+              loader: 'babel-loader',
+              options: {
+                extends: './.babelrc',
+                presets: [
+                  [
+                    '@babel/preset-env',
+                    {
+                      modules: 'commonjs',
+                    }
+                  ]
+                ]
+              }
+            }
+          ]
+        },
+        {
           test: /\.monk$/,
           loader: 'monkberry-loader'
         },
