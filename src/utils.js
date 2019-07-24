@@ -56,7 +56,7 @@ export function dashToCamel(string) {
  * @return {Object<string, string>}
  */
 export function getConfigFromElement(element, mergeWithDefaults = false) {
-  if (!element.attributes) {
+  if (!element || !element.attributes) {
     return {};
   }
 
