@@ -277,7 +277,39 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 ```
-Add additional hidden files:
+
+## Offline mode
+
+You can opt out of any server communication (code completion, execution, etc) by passing an `offline` flag:
+
+```html
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  KotlinPlayground('.kotlin-playground', {offline: true});
+});
+</script>
+```
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  KotlinPlayground('.kotlin-code-offline', {offline: true});
+});
+</script>
+<div class="kotlin-code-offline">
+
+```kotlin
+class Contact(val id: Int, var email: String) 
+
+fun main(args: Array<String>) {
+    val contact = Contact(1, "mary@gmail.com")
+    println(contact.id)
+}
+```
+
+</div>
+
+
+## Add additional hidden files:
 Put your files between `<textarea>` tag with class `hidden-dependency`.
 
 Look at example:

@@ -45,6 +45,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
       'directives': directives
     });
 
+    instance.offline = options.offline;
     instance.arrayClasses = [];
     instance.initialized = false;
     instance.state = {
@@ -60,20 +61,21 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
       instance.update({folded: !instance.state.folded});
     });
 
-    instance.on('keyup', (event) => {
-      if (window.navigator.appVersion.indexOf("Mac") !== -1) {
-        if (event.keyCode === KEY_CODES.R && event.ctrlKey) {
-          instance.execute();
+    if (!options.offline) {
+      instance.on('keyup', (event) => {
+        if (window.navigator.appVersion.indexOf("Mac") !== -1) {
+          if (event.keyCode === KEY_CODES.R && event.ctrlKey) {
+            instance.execute();
+          }
+        } else {
+          if (event.keyCode === KEY_CODES.F9 && event.ctrlKey) {
+            instance.execute();
+          }
         }
-      } else {
-        if (event.keyCode === KEY_CODES.F9 && event.ctrlKey) {
-          instance.execute();
-        }
-      }
-    });
+      });
+    }
 
-    const events = options.eventFunctions;
-    if (events && events.getInstance) events.getInstance(instance);
+    if (options.getInstance) options.getInstance(instance);
 
     return instance;
   }
@@ -241,6 +243,10 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
   }
 
   execute() {
+    if (this.offline) {
+      throw new Error('Can\'t execude code in offline mode');
+    }
+
     const {
       onOpenConsole, targetPlatform, waitingForOutput, compilerVersion, onRun, onError,
       args, theme, hiddenDependencies, onTestPassed, onTestFailed, onCloseConsole, jsLibs, outputHeight, getJsCode
@@ -418,58 +424,60 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
       codemirrorOptions.cursorBlinkRate = -1;
     }
 
-    /**
-     * Register own helper for autocomplete.
-     * Getting completions from try.kotlinlang.org.
-     * CodeMirror.hint.default => getting list from codemirror kotlin keywords.
-     *
-     * {@see WebDemoApi}      - getting data from WebDemo
-     * {@see CompletionView} - implementation completion view
-     */
-    CodeMirror.registerHelper('hint', 'kotlin', (mirror, callback) => {
-      let cur = mirror.getCursor();
-      let token = mirror.getTokenAt(cur);
-      let code = this.state.folded
-        ? this.prefix + mirror.getValue() + this.suffix
-        : mirror.getValue();
-      let currentCursor = this.state.folded
-        ? {line: cur.line + this.prefix.split('\n').length - 1, ch: cur.ch}
-        : cur;
-      WebDemoApi.getAutoCompletion(
-        code,
-        currentCursor,
-        this.state.compilerVersion,
-        this.state.targetPlatform,
-        this.state.hiddenDependencies,
-        processingCompletionsList
-      );
+    if (!this.offline) {
+      /**
+       * Register own helper for autocomplete.
+       * Getting completions from try.kotlinlang.org.
+       * CodeMirror.hint.default => getting list from codemirror kotlin keywords.
+       *
+       * {@see WebDemoApi}      - getting data from WebDemo
+       * {@see CompletionView} - implementation completion view
+       */
+      CodeMirror.registerHelper('hint', 'kotlin', (mirror, callback) => {
+        let cur = mirror.getCursor();
+        let token = mirror.getTokenAt(cur);
+        let code = this.state.folded
+          ? this.prefix + mirror.getValue() + this.suffix
+          : mirror.getValue();
+        let currentCursor = this.state.folded
+          ? {line: cur.line + this.prefix.split('\n').length - 1, ch: cur.ch}
+          : cur;
+        WebDemoApi.getAutoCompletion(
+          code,
+          currentCursor,
+          this.state.compilerVersion,
+          this.state.targetPlatform,
+          this.state.hiddenDependencies,
+          processingCompletionsList
+        );
 
-      function processingCompletionsList(results) {
-        const anchorCharPosition = mirror.findWordAt({line: cur.line, ch: cur.ch}).anchor.ch;
-        const headCharPosition = mirror.findWordAt({line: cur.line, ch: cur.ch}).head.ch;
-        const currentSymbol = mirror.getRange({line: cur.line, ch: anchorCharPosition}, {
-          line: cur.line,
-          ch: headCharPosition
-        });
-        if (results.length === 0 && /^[a-zA-Z]+$/.test(currentSymbol)) {
-          CodeMirror.showHint(mirror, CodeMirror.hint.default, {completeSingle: false});
-        } else {
-          callback({
-            list: results.map(result => {
-              return new CompletionView(result)
-            }),
-            from: {line: cur.line, ch: token.start},
-            to: {line: cur.line, ch: token.end}
-          })
+        function processingCompletionsList(results) {
+          const anchorCharPosition = mirror.findWordAt({line: cur.line, ch: cur.ch}).anchor.ch;
+          const headCharPosition = mirror.findWordAt({line: cur.line, ch: cur.ch}).head.ch;
+          const currentSymbol = mirror.getRange({line: cur.line, ch: anchorCharPosition}, {
+            line: cur.line,
+            ch: headCharPosition
+          });
+          if (results.length === 0 && /^[a-zA-Z]+$/.test(currentSymbol)) {
+            CodeMirror.showHint(mirror, CodeMirror.hint.default, {completeSingle: false});
+          } else {
+            callback({
+              list: results.map(result => {
+                return new CompletionView(result)
+              }),
+              from: {line: cur.line, ch: token.start},
+              to: {line: cur.line, ch: token.end}
+            })
+          }
         }
-      }
-    });
+      });
 
-    CodeMirror.hint.kotlin.async = true;
+      CodeMirror.hint.kotlin.async = true;
 
-    CodeMirror.commands.autocomplete = (cm) => {
-      CodeMirror.showHint(cm, CodeMirror.hint.kotlin);
-    };
+      CodeMirror.commands.autocomplete = (cm) => {
+        CodeMirror.showHint(cm, CodeMirror.hint.kotlin);
+      };
+    }
 
     this.codemirror = CodeMirror.fromTextArea(textarea, codemirrorOptions);
 
@@ -502,7 +510,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
       const {onChange, onFlyHighLight, compilerVersion, targetPlatform, hiddenDependencies} = this.state;
       if (onChange) onChange(cm.getValue());
       this.removeStyles();
-      if (onFlyHighLight) {
+      if (onFlyHighLight && !this.offline) {
         WebDemoApi.getHighlight(
           this.getCode(),
           compilerVersion,

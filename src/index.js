@@ -40,21 +40,21 @@ create.default = create;
  * @param {string} selector
  * @return {Promise<Array<ExecutableCode>>}
  */
-create.discourse = function (selector) {
+create.discourse = function (selector, options) {
   discoursePreviewPanelHandler();
-  return create(selector);
+  return create(selector, options);
 };
 
 // Auto initialization via data-selector <script> attribute
-const {selector, discourseSelector} = RUNTIME_CONFIG;
+const {selector, discourseSelector, offline} = RUNTIME_CONFIG;
 
 if (selector || discourseSelector) {
   document.addEventListener('DOMContentLoaded', () => {
     if (discourseSelector) {
-      create.discourse(discourseSelector);
+      create.discourse(discourseSelector, {offline});
       waitForNode(DiscourseSelectors.PREVIEW_PANEL, () => discoursePreviewPanelHandler());
     } else {
-      create(selector);
+      create(selector, {offline});
     }
   });
 }
