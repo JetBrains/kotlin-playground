@@ -418,6 +418,11 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
       codemirrorOptions.cursorBlinkRate = -1;
     }
 
+    this.codemirror = CodeMirror.fromTextArea(textarea, codemirrorOptions);
+
+    // don't need to create additional editor options in readonly mode.
+    if (readOnly) return;
+
     /**
      * Register own helper for autocomplete.
      * Getting completions from try.kotlinlang.org.
@@ -470,8 +475,6 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
     CodeMirror.commands.autocomplete = (cm) => {
       CodeMirror.showHint(cm, CodeMirror.hint.kotlin);
     };
-
-    this.codemirror = CodeMirror.fromTextArea(textarea, codemirrorOptions);
 
     if (window.navigator.appVersion.indexOf("Mac") !== -1) {
       this.codemirror.setOption("extraKeys", {
