@@ -17,7 +17,7 @@
 <h1>Kotlin Playground demo</h1>
 <h2>Automatic initialization</h2>
 <p>Insert a <code>&lt;script&gt;</code> element into your page and specify what elements should be converted in its <code>data-selector</code> attribute.</p>
-<pre><code class="hljs language-html"><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"https://unpkg.com/kotlin-playground@1"</span> <span class="hljs-attr">data-selector</span>=<span class="hljs-string">".kotlin-code"</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
+<pre><code class="hljs language-html"><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"https://unpkg.com/kotlin-playground@1"</span> <span class="hljs-attr">data-selector</span>=<span class="hljs-string">".kotlin-code"</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
 </code></pre>
 <p>For instance following block of Kotlin code:</p>
 <pre><code class="hljs language-txt">class Contact(val id: Int, var email: String) 
@@ -210,7 +210,7 @@ The function any gets a predicate as an argument and returns true if there is at
 </div>
 <h2>Manual initialization</h2>
 <p>If you want to init Kotlin Playground manually - omit <code>data-selector</code> attribute and call it when it's needed:</p>
-<pre><code class="hljs language-html"><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"https://unpkg.com/kotlin-playground@1"</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
+<pre><code class="hljs language-html"><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"https://unpkg.com/kotlin-playground@1"</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
 <span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span><span class="javascript">
 <span class="hljs-built_in">document</span>.addEventListener(<span class="hljs-string">'DOMContentLoaded'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
   KotlinPlayground(<span class="hljs-string">'.kotlin-playground'</span>);
