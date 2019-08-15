@@ -83,12 +83,10 @@ export function getCurrentScript() {
 }
 
 /**
- * @return {boolean}
+ * Use instead of @escape-string-regexp
  */
-export function isEmbeddedFromCdn() {
-  const currentScript = getCurrentScript();
-  const src = currentScript.src ? currentScript.src : null;
-  return src && src.indexOf(__CDN_URL__) !== -1;
+export function escapeRegExp(str) {
+  return str.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
 }
 
 /**

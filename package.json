@@ -29,7 +29,6 @@
     "es6-promise": "^4.2.6",
     "es6-set": "^0.1.5",
     "escape-html": "^1.0.3",
-    "escape-string-regexp": "^2.0.0",
     "fast-async": "7",
     "flatten": "^1.0.2",
     "github-markdown-css": "^3.0.1",

@@ -7,9 +7,8 @@ import ExecutableCodeTemplate from './executable-fragment.monk';
 import WebDemoApi from '../webdemo-api';
 import TargetPlatform from "../target-platform";
 import JsExecutor from "../js-executor"
-import {countLines, THEMES, unEscapeString} from "../utils";
+import {countLines, escapeRegExp, THEMES, unEscapeString} from "../utils";
 import debounce from 'debounce';
-import escapeStringRegexp from "escape-string-regexp"
 import CompletionView from "../view/completion-view";
 import {processErrors} from "../view/output-view";
 
@@ -185,8 +184,8 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
   markPlaceHolders() {
     let taskRanges = this.getTaskRanges();
     this.codemirror.setValue(this.codemirror.getValue()
-      .replace(new RegExp(escapeStringRegexp(MARK_PLACEHOLDER_OPEN), 'g'), "")
-      .replace(new RegExp(escapeStringRegexp(MARK_PLACEHOLDER_CLOSE), 'g'), ""));
+      .replace(new RegExp(escapeRegExp(MARK_PLACEHOLDER_OPEN), 'g'), "")
+      .replace(new RegExp(escapeRegExp(MARK_PLACEHOLDER_CLOSE), 'g'), ""));
 
     taskRanges.forEach(task => {
       this.codemirror.markText({line: task.line, ch: task.ch}, {line: task.line, ch: task.ch + task.length}, {
