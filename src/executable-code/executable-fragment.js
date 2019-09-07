@@ -518,7 +518,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
      */
     this.codemirror.on("keypress", debounce((cm, event) => {
       if (event.keyCode !== KEY_CODES.R && !event.ctrlKey) {
-        if (this.state.autoComplete) {
+        if (this.state.autoComplete && !cm.state.completionActive) {
           CodeMirror.showHint(cm, CodeMirror.hint.kotlin, {completeSingle: false});
         }
       }
