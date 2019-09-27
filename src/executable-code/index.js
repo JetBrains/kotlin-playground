@@ -15,6 +15,7 @@ import 'codemirror/addon/comment/continuecomment'
 import 'codemirror/mode/javascript/javascript';
 import 'codemirror/mode/shell/shell';
 import 'codemirror/mode/swift/swift';
+import 'google_modes/dist/kotlin';
 import merge from 'deepmerge';
 import Set from 'es6-set/polyfill';
 import defaultConfig, {API_URLS} from '../config';
@@ -51,7 +52,7 @@ const ATTRIBUTES = {
 
 const MODES = {
   JAVA: "text/x-java",
-  KOTLIN: "text/x-kotlin",
+  KOTLIN: "google-kotlin",
   JS: "text/javascript",
   GROOVY: "text/x-groovy",
   XML: "text/html",
