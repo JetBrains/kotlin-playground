@@ -39,6 +39,10 @@ module.exports = (params = {}) => {
           loader: 'babel-loader'
         },
         {
+          test: require.resolve("codemirror-grammar-mode"),
+          use: "imports-loader?CodeMirror=codemirror"
+        },
+        {
           test: /\.monk$/,
           loader: 'monkberry-loader'
         },
