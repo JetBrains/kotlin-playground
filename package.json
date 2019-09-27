@@ -13,6 +13,9 @@
   "files": [
     "dist"
   ],
+  "resolutions": {
+    "**/codemirror": "^5.48.4"
+  },
   "devDependencies": {
     "@babel/cli": "^7.4.4",
     "@babel/core": "~7.4.4",
