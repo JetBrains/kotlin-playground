@@ -30,8 +30,8 @@ For instance following block of Kotlin code:
 class Contact(val id: Int, var email: String) 
 
 fun main(args: Array<String>) {
-    val contact = Contact(1, "mary@gmail.com")
-    println(contact.id)                   
+    val contact = Contact(1, "mary@gmail.com $args, ${args.size}")
+    println(contact.id)
 }
 ```
 
