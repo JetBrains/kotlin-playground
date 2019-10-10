@@ -88,7 +88,7 @@ function onTestPassed() {
 
 const options = {
   server: 'https://my-kotlin-playground-server',
-  onChange: onChange(code),
+  onChange: onChange,
   onTestPassed: onTestPassed,
   callback: callback(targetNode, mountNode)
 };
