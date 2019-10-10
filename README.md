@@ -29,12 +29,15 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 ```
 
-You can also overwrite the server where the code will be sent to be compiled and analyzed (for example if you host a server instance that includes your own Kotlin libraries). For that you can set the `data-server` attibute, like this:
+You can also overwrite the server where the code will be sent to be compiled and analyzed (for example if you host a server instance that includes your own Kotlin libraries). For that you can set the `data-server` attribute.
+
+And you can also set a default Kotlin version for code snippets to run on. Bear in mind that the [version set per editor](#customizing-editors) will take precedence though:
 
 ```html
 <script src="https://unpkg.com/kotlin-playground@1"
-        data-selector="code" 
-        data-server="https://my-kotlin-playground-server">
+        data-selector="code"
+        data-server="https://my-kotlin-playground-server"
+        data-version="1.3.41">
 </script>
 ```
 
@@ -74,7 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 ### Options
 
-Kotlin Playground supports several events, and also server URL overwriting passing an additional `options` parameter on initialisation.
+Kotlin Playground supports several events, and also Kotlin version or server URL overwriting passing an additional `options` parameter on initialisation.
 
 For example:
 ```js
@@ -88,6 +91,7 @@ function onTestPassed() {
 
 const options = {
   server: 'https://my-kotlin-playground-server',
+  version: '1.3.41',
   onChange: onChange,
   onTestPassed: onTestPassed,
   callback: callback(targetNode, mountNode)
@@ -101,7 +105,6 @@ playground('.selector', options)
 
 - `onChange(code)` — Fires every time the content of the editor is changed. Debounce time: 0.5s.
  _code_ — current playground code.
-
 
 - `onTestPassed` — Is called after all tests passed. Use for target platform `junit`.
 

@@ -38,23 +38,24 @@ create.default = create;
 /**
  * Initialize Kotlin playground for Discourse platform
  * @param {string} selector
+ * @param {Object} options
  * @return {Promise<Array<ExecutableCode>>}
  */
-create.discourse = function (selector) {
+create.discourse = function (selector, options) {
   discoursePreviewPanelHandler();
-  return create(selector);
+  return create(selector, options);
 };
 
 // Auto initialization via data-selector <script> attribute
-const {selector, discourseSelector} = RUNTIME_CONFIG;
+const {selector, discourseSelector, ...options} = RUNTIME_CONFIG;
 
 if (selector || discourseSelector) {
   document.addEventListener('DOMContentLoaded', () => {
     if (discourseSelector) {
-      create.discourse(discourseSelector);
+      create.discourse(discourseSelector, options);
       waitForNode(DiscourseSelectors.PREVIEW_PANEL, () => discoursePreviewPanelHandler());
     } else {
-      create(selector);
+      create(selector, options);
     }
   });
 }
