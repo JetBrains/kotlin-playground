@@ -92,7 +92,7 @@ function onTestPassed() {
 
 const options = {
   server: 'https://my-kotlin-playground-server',
-  version: '1.3.41',
+  version: '1.3.50',
   onChange: onChange,
   onTestPassed: onTestPassed,
   callback: callback(targetNode, mountNode)
