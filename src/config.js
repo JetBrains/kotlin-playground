@@ -24,7 +24,7 @@ export const API_URLS = {
     return `${this.server}/kotlinServer?type=getKotlinVersions`;
   },
   get JQUERY() {
-    return `${this.server}/static/lib/jquery/dist/jquery.min.js`;
+    return `https://cdn.jsdelivr.net/npm/jquery@1/dist/jquery.min.js`;
   },
   get KOTLIN_JS() {
     return `https://cdn.jsdelivr.net/npm/kotlin@`;
