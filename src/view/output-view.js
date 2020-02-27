@@ -25,11 +25,11 @@ const BUG_REPORT_MESSAGE = `${ANGLE_BRACKETS_LEFT_HTML}errStream${ANGLE_BRACKETS
 export function processJVMOutput(output, theme) {
   let processedOutput = processingHtmlBrackets(output); // don't need to escape `&`
   return processedOutput
-    .replace(BUG_FLAG, BUG_REPORT_MESSAGE)
-    .replace(`${ANGLE_BRACKETS_LEFT_HTML}outStream${ANGLE_BRACKETS_RIGHT_HTML}`, `<span class="standard-output ${theme}">`)
-    .replace(`${ANGLE_BRACKETS_LEFT_HTML}/outStream${ANGLE_BRACKETS_RIGHT_HTML}`, "</span>")
-    .replace(`${ANGLE_BRACKETS_LEFT_HTML}errStream${ANGLE_BRACKETS_RIGHT_HTML}`, `<span class="error-output ${theme}">`)
-    .replace(`${ANGLE_BRACKETS_LEFT_HTML}/errStream${ANGLE_BRACKETS_RIGHT_HTML}`, "</span>");
+    .split(BUG_FLAG).join(BUG_REPORT_MESSAGE)
+    .split(`${ANGLE_BRACKETS_LEFT_HTML}outStream${ANGLE_BRACKETS_RIGHT_HTML}`).join(`<span class="standard-output ${theme}">`)
+    .split(`${ANGLE_BRACKETS_LEFT_HTML}/outStream${ANGLE_BRACKETS_RIGHT_HTML}`).join("</span>")
+    .split(`${ANGLE_BRACKETS_LEFT_HTML}errStream${ANGLE_BRACKETS_RIGHT_HTML}`).join(`<span class="error-output ${theme}">`)
+    .split(`${ANGLE_BRACKETS_LEFT_HTML}/errStream${ANGLE_BRACKETS_RIGHT_HTML}`).join("</span>");
 }
 
 export function processJUnitResults(data, onTestPassed, onTestFailed) {
