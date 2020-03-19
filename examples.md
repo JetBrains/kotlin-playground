@@ -126,7 +126,8 @@ data class RationalNumber(val numerator: Int, val denominator: Int)
 ```
 </div>
 
-If you want to hide test classes in you code snippet just set the attribute `folded-button` to `false` value.
+The test clases in this code snippet are folded away thanks to the `//sampleStart` and `//sampleEnd` comments in the code.
+If you want to hide test classes completely just set the attribute `folded-button` to `false` value.
 
 Also you can mark arbitrary code by putting it between `[mark]your code[/mark]`.
 
