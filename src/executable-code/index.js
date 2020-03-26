@@ -177,14 +177,12 @@ export default class ExecutableCode {
 
   getTheme(targetNode) {
     const theme = targetNode.getAttribute(ATTRIBUTES.THEME);
-    switch (theme) {
-      case THEMES.DARCULA:
-        return THEMES.DARCULA;
-      case THEMES.IDEA:
-        return THEMES.IDEA;
-      default:
-        return THEMES.DEFAULT;
+
+    if (theme && theme !== THEMES.DARCULA && theme !== THEMES.IDEA) {
+      console.warn(`Custom theme '${theme}' requires custom css by developer, you might use default values for reduce size – ${THEMES.DARCULA} or ${THEMES.IDEA}.`);
     }
+
+    return theme || THEMES.DEFAULT;
   }
 
   getMode(targetNode) {
