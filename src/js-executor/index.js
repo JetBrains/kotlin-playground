@@ -7,6 +7,17 @@ import {processingHtmlBrackets} from "../utils";
 const INIT_SCRIPT = "if(kotlin.BufferedOutput!==undefined){kotlin.out = new kotlin.BufferedOutput()}" +
   "else{kotlin.kotlin.io.output = new kotlin.kotlin.io.BufferedOutput()}";
 
+const normalizeJsVersion = version => {
+  const match = version.match(/-M\d+$/);
+
+  // For EAP releases like 1.4-M1
+  if (match && version.substring(0, match.index).match(/^\d+\.\d+$/)) {
+    return version.substring(0, match.index) + '.0' + match[0]
+  }
+
+  return version;
+};
+
 export default class JsExecutor {
   constructor(kotlinVersion) {
     this.kotlinVersion = kotlinVersion;
@@ -50,7 +61,7 @@ export default class JsExecutor {
     node.appendChild(this.iframe);
     let iframeDoc = this.iframe.contentDocument || this.iframe.document;
     iframeDoc.open();
-    const kotlinScript = API_URLS.KOTLIN_JS + `${this.kotlinVersion}/kotlin.js`;
+    const kotlinScript = API_URLS.KOTLIN_JS + `${normalizeJsVersion(this.kotlinVersion)}/kotlin.js`;
     iframeDoc.write("<script src='" + kotlinScript + "'></script>");
     for (let lib of jsLibs) {
       iframeDoc.write("<script src='" + lib + "'></script>");
