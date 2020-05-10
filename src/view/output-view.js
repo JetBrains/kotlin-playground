@@ -1,4 +1,4 @@
-import {arrayFrom, convertToHtmlTag, processingHtmlBrackets} from "../utils";
+import {arrayFrom, convertToHtmlTag, escapeBrackets} from "../utils";
 import isEmptyObject from "is-empty-object"
 import escapeHtml from "escape-html"
 
@@ -16,53 +16,61 @@ const TEST_STATUS = {
   PASSED : { value: "OK", text: "Passed" }
 };
 
-const BUG_FLAG = `${ANGLE_BRACKETS_LEFT_HTML}errStream${ANGLE_BRACKETS_RIGHT_HTML}BUG${ANGLE_BRACKETS_LEFT_HTML}/errStream${ANGLE_BRACKETS_RIGHT_HTML}`;
-const BUG_REPORT_MESSAGE = `${ANGLE_BRACKETS_LEFT_HTML}errStream${ANGLE_BRACKETS_RIGHT_HTML}Hey! It seems you just found a bug! \uD83D\uDC1E\n` +
+const BUG_FLAG_TEMP = 'BUG'
+const BUG_REPORT_MESSAGE_TEMP = 'Hey! It seems you just found a bug! \uD83D\uDC1E\n' +
   `Please click <a href=http://kotl.in/issue target=_blank>here<a> to submit it ` +
   `to the issue tracker and one day we fix it, hopefully \uD83D\uDE09\n` +
-  `✅ Don't forget to attach code to the issue${ANGLE_BRACKETS_LEFT_HTML}/errStream${ANGLE_BRACKETS_RIGHT_HTML}\n`;
+  `✅ Don't forget to attach code to the issue\n`;
 
-export function processJVMOutput(output, theme) {
-  let processedOutput = processingHtmlBrackets(output); // don't need to escape `&`
-  return processedOutput
-    .split(BUG_FLAG).join(BUG_REPORT_MESSAGE)
-    .split(`${ANGLE_BRACKETS_LEFT_HTML}outStream${ANGLE_BRACKETS_RIGHT_HTML}`).join(`<span class="standard-output ${theme}">`)
-    .split(`${ANGLE_BRACKETS_LEFT_HTML}/outStream${ANGLE_BRACKETS_RIGHT_HTML}`).join("</span>")
-    .split(`${ANGLE_BRACKETS_LEFT_HTML}errStream${ANGLE_BRACKETS_RIGHT_HTML}`).join(`<span class="error-output ${theme}">`)
-    .split(`${ANGLE_BRACKETS_LEFT_HTML}/errStream${ANGLE_BRACKETS_RIGHT_HTML}`).join("</span>");
+export function processJVMStdout(output, theme) {
+  const processedOutput = escapeBrackets(output);
+  return `<span class="standard-output ${theme}">${processedOutput}</span>`
 }
 
-export function processJUnitResults(data, onTestPassed, onTestFailed) {
-  let result = "";
-  let totalTime = 0;
-  let passed = true;
-  if (isEmptyObject(data)) return NO_TEST_FOUND;
-  for (let testClass in data) {
-    let listOfResults = arrayFrom(data[testClass]);
-    result += listOfResults.reduce((previousTest, currentTest) => {
-      totalTime = totalTime + (currentTest.executionTime / 1000);
-      if (currentTest.status === TEST_STATUS.ERROR.value || currentTest.status === TEST_STATUS.FAIL.value) passed = false;
-      switch (currentTest.status) {
-        case TEST_STATUS.FAIL.value:
-          return previousTest + buildOutputTestLine(TEST_STATUS.FAIL.text, currentTest.methodName, currentTest.comparisonFailure.message);
-        case TEST_STATUS.ERROR.value:
-          return previousTest + buildOutputTestLine(TEST_STATUS.ERROR.text, currentTest.methodName, currentTest.exception.message);
-        case TEST_STATUS.PASSED.value:
-          return previousTest + buildOutputTestLine(TEST_STATUS.PASSED.text, currentTest.methodName, "");
-      }
-    }, "");
+export function processJVMStderr(output, theme) {
+  if (output === BUG_FLAG_TEMP) {
+    output = BUG_REPORT_MESSAGE_TEMP
   }
-  if (passed && onTestPassed) onTestPassed();
-  if (!passed && onTestFailed) onTestFailed();
-  let testTime = `<div class="test-time">Total test time: ${totalTime}s</div>`;
-  return testTime + result;
+  const processedOutput = escapeBrackets(output);
+  return `<span class="error-output ${theme}">${processedOutput}</span>`
+}
+
+export function processJUnitTotalResults(testResults, onTestPassed, onTestFailed) {
+  if (testResults.testsRun === 0) {
+    return NO_TEST_FOUND
+  }
+  if (testResults.success) {
+    if (onTestPassed) onTestPassed()
+  } else {
+    if (onTestFailed) onTestFailed()
+  }
+  return `<div class="test-time">Total test time: ${testResults.totalTime}s</div>`
+}
+
+export function processJUnitTestResult(testRunInfo, testResults) {
+  let output = "";
+  testResults.testsRun++
+  testResults.totalTime += testRunInfo.executionTime / 1000
+  switch (testRunInfo.status) {
+    case TEST_STATUS.FAIL.value:
+      testResults.success = false;
+      output = buildOutputTestLine(TEST_STATUS.FAIL.text, testRunInfo.methodName, testRunInfo.comparisonFailure.message);
+      break;
+    case TEST_STATUS.ERROR.value:
+      testResults.success = false;
+      output = buildOutputTestLine(TEST_STATUS.ERROR.text, testRunInfo.methodName, testRunInfo.exception.message);
+      break;
+    case TEST_STATUS.PASSED.value:
+      output = buildOutputTestLine(TEST_STATUS.PASSED.text, testRunInfo.methodName, "");
+  }
+  return output;
 }
 
 function buildOutputTestLine(status, method, message) {
   return `
   <div class="console-block">
     <span class="console-icon ${status.toLocaleLowerCase()}"></span>
-    <div class="test-${status.toLocaleLowerCase()}">${status}: ${method}${message ? ': ' + convertToHtmlTag(message) : ''}</div>
+    <div class="test-${status.toLocaleLowerCase()}">${status}: ${method}${message ? ': ' + escapeBrackets(message) : ''}</div>
   </div>
   `;
 }

@@ -102,7 +102,7 @@ export function insertAfter(newNode, referenceNode) {
  * @param string
  * @returns {*}
  */
-export function processingHtmlBrackets(string) {
+export function escapeBrackets(string) {
   const tagsToReplace = {
     "&lt;": "<",
     "&gt;": ">"
@@ -125,23 +125,6 @@ export function unEscapeString(string) {
     ">": "&amp;gt;",
     "&": "&amp;",
     " ": "%20"
-  };
-  let unEscapedString = string;
-  Object.keys(tagsToReplace).forEach(function (key) {
-    unEscapedString = unEscapedString.replace(new RegExp(tagsToReplace[key], 'g'), key)
-  });
-  return unEscapedString
-}
-
-/**
- * convert all `<` and `>` to `&lt;` and `&gt;`
- * @param string
- * @returns {*}
- */
-export function convertToHtmlTag(string) {
-  const tagsToReplace = {
-    "&lt;": "&amp;lt;",
-    "&gt;": "&amp;gt;",
   };
   let unEscapedString = string;
   Object.keys(tagsToReplace).forEach(function (key) {

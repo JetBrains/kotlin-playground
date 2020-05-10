@@ -1,9 +1,9 @@
-import merge from 'deepmerge';
 import CodeMirror from 'codemirror';
 import Monkberry from 'monkberry';
 import directives from 'monkberry-directives';
 import 'monkberry-events';
 import ExecutableCodeTemplate from './executable-fragment.monk';
+import Exception from './exception';
 import WebDemoApi from '../webdemo-api';
 import TargetPlatform from "../target-platform";
 import JsExecutor from "../js-executor"
@@ -51,9 +51,12 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
       code: '',
       foldButtonHover: false,
       folded: true,
+      exception: null,
       output: null,
+      errors: []
     };
     instance.codemirror = new CodeMirror();
+    instance.element = element
 
     instance.on('click', SELECTORS.FOLD_BUTTON, () => {
       instance.update({folded: !instance.state.folded});
@@ -123,16 +126,20 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
       }
     }
 
-    this.state = merge.all([this.state, state, {
-      isShouldBeFolded: this.isShouldBeFolded && state.isFoldedButton
-    }]);
-
+    if (state.output === null) {
+      this.removeAllOutputNodes()
+    }
+    this.applyStateUpdate(state)
     super.update(this.state);
+    this.renderNewOutputNodes(state)
+
     if (!this.initialized) {
       this.initializeCodeMirror(state);
       this.initialized = true;
     } else {
-      this.showDiagnostics(state.errors);
+      if (state.errors !== undefined) { // rerender errors if the array was explicitly changed
+        this.showDiagnostics(this.state.errors);
+      }
       if (state.folded === undefined) {
         return
       }
@@ -178,6 +185,51 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
       for (let i = 0; i < this.codemirror.lineCount(); i++) {
         this.codemirror.indentLine(i)
       }
+    }
+  }
+
+  removeAllOutputNodes() {
+    const outputNode = this.element.getElementsByClassName("code-output").item(0)
+    while(outputNode && outputNode.lastChild) {
+      outputNode.removeChild(outputNode.lastChild)
+    }
+  }
+
+  applyStateUpdate(stateUpdate) {
+    if (stateUpdate.errors === null) {
+      stateUpdate.errors = []
+    } else if (stateUpdate.errors !== undefined) {
+      this.state.errors.push(...stateUpdate.errors)
+      stateUpdate.errors = this.state.errors
+    }
+
+    Object.keys(stateUpdate).forEach(key =>{
+      if (stateUpdate[key] === undefined) {
+        delete stateUpdate[key];
+      }
+    })
+    Object.assign(this.state, stateUpdate, {
+      isShouldBeFolded: this.isShouldBeFolded && stateUpdate.isFoldedButton
+    })
+  }
+
+  renderNewOutputNodes(stateUpdate) {
+    if (stateUpdate.output) {
+      const template = document.createElement('template');
+      template.innerHTML = stateUpdate.output.trim();
+      const node = template.content.firstChild;
+      this.element.getElementsByClassName("code-output").item(0).appendChild(node)
+    }
+
+    if (stateUpdate.exception) {
+      const outputNode = this.element.getElementsByClassName("code-output").item(0)
+      const exceptionView = Monkberry.render(Exception, outputNode, {
+        'directives': directives
+      })
+      exceptionView.update({
+        ...stateUpdate.exception,
+        onExceptionClick: this.onExceptionClick.bind(this)
+      })
     }
   }
 
@@ -230,7 +282,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
     // creates a new iframe and removes the old one, thereby stops execution of any running script
     if (targetPlatform === TargetPlatform.CANVAS || targetPlatform === TargetPlatform.JS)
       this.jsExecutor.reloadIframeScripts(jsLibs, this.getNodeForMountIframe());
-    this.update({output: "", openConsole: false, exception: null});
+    this.update({output: null, openConsole: false, exception: null});
     if (onCloseConsole) onCloseConsole();
   }
 
@@ -248,31 +300,38 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
       return
     }
     this.update({
+      errors: null,
+      output: null,
+      exception: null,
       waitingForOutput: true,
       openConsole: false
     });
     if (onOpenConsole) onOpenConsole(); //open when waitingForOutput=true
     if (onRun) onRun();
     if (targetPlatform === TargetPlatform.JAVA || targetPlatform === TargetPlatform.JUNIT) {
-      WebDemoApi.executeKotlinCode(
+      WebDemoApi.executeKotlinCodeTEMP(
         this.getCode(),
         compilerVersion,
         targetPlatform, args,
         theme,
         hiddenDependencies,
         onTestPassed,
-        onTestFailed).then(
+        onTestFailed,
         state => {
-          state.waitingForOutput = false;
-          if (state.output || state.exception) {
-            state.openConsole = true;
-          } else {
-            if (onCloseConsole) onCloseConsole();
+          if (state.waitingForOutput) {
+            this.update(state)
+            return
           }
-          if ((state.errors.length > 0 || state.exception) && onError) onError();
+          // all chunks were processed
+
+          if (this.state.output || this.state.exception) { // previous chunk contained some text
+            state.openConsole = true;
+          } else if (onCloseConsole) {
+            onCloseConsole()
+          }
+          if ((this.state.errors.length > 0 || this.state.exception) && onError) onError();
           this.update(state);
-        },
-        () => this.update({waitingForOutput: false})
+        }
       )
     } else {
       this.jsExecutor.reloadIframeScripts(jsLibs, this.getNodeForMountIframe());
@@ -357,7 +416,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
       return;
     }
     diagnostics.forEach(diagnostic => {
-      const interval = diagnostic.interval;
+      const interval = Object.assign({}, diagnostic.interval);
       interval.start = this.recalculatePosition(interval.start);
       interval.end = this.recalculatePosition(interval.end);
 

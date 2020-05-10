@@ -3683,6 +3683,11 @@ jsonify@~0.0.0:
   version "0.0.0"
   resolved "https://registry.yarnpkg.com/jsonify/-/jsonify-0.0.0.tgz#2c74b6ee41d93ca51b7b5aaee8f503631d252a73"
 
+jsonpipe@2.2.0:
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/jsonpipe/-/jsonpipe-2.2.0.tgz#70a1344b9f9111d8ff4a7c23a95f22c90d87d214"
+  integrity sha512-K+vnwaebP0Zu61Q6Dmdw6QLrHQVTVun7PbiUSqQmdcyOx00KmHCJnY+x1oWxAtmOrGTOkW5TcpGcJ5NV8ugCFQ==
+
 jsprim@^1.2.2:
   version "1.4.1"
   resolved "https://registry.yarnpkg.com/jsprim/-/jsprim-1.4.1.tgz#313e66bc1e5cc06e438bc1b7499c2e5c56acb6a2"

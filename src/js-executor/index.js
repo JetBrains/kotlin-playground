@@ -2,7 +2,7 @@ import './index.scss'
 import {API_URLS} from "../config";
 import TargetPlatform from "../target-platform";
 import {showJsException} from "../view/output-view";
-import {processingHtmlBrackets} from "../utils";
+import {escapeBrackets} from "../utils";
 
 const INIT_SCRIPT = "if(kotlin.BufferedOutput!==undefined){kotlin.out = new kotlin.BufferedOutput()}" +
   "else{kotlin.kotlin.io.output = new kotlin.kotlin.io.BufferedOutput()}";
@@ -37,7 +37,7 @@ export default class JsExecutor {
     if (loadedScripts === jsLibs.size + 2) {
       try {
         const output = this.iframe.contentWindow.eval(jsCode);
-        return output ? `<span class="standard-output ${theme}">${processingHtmlBrackets(output)}</span>` : "";
+        return output ? `<span class="standard-output ${theme}">${escapeBrackets(output)}</span>` : "";
       } catch (e) {
         if (onError) onError();
         let exceptionOutput = showJsException(e);
