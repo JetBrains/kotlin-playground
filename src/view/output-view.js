@@ -7,8 +7,6 @@ const ACCESS_CONTROL_EXCEPTION = "java.security.AccessControlException";
 const SECURITY_MESSAGE = "Access control exception due to security reasons in web playground";
 const UNHANDLED_JS_EXCEPTION = "Unhandled JavaScript exception";
 const NO_TEST_FOUND = "No tests methods are found";
-const ANGLE_BRACKETS_LEFT_HTML = "&lt;";
-const ANGLE_BRACKETS_RIGHT_HTML = "&gt;";
 
 const TEST_STATUS = {
   FAIL : { value: "FAIL", text: "Fail" },

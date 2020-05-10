@@ -190,7 +190,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
 
   removeAllOutputNodes() {
     const outputNode = this.element.getElementsByClassName("code-output").item(0)
-    while(outputNode && outputNode.lastChild) {
+    while (outputNode && outputNode.lastChild) {
       outputNode.removeChild(outputNode.lastChild)
     }
   }
@@ -203,7 +203,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
       stateUpdate.errors = this.state.errors
     }
 
-    Object.keys(stateUpdate).forEach(key =>{
+    Object.keys(stateUpdate).forEach(key => {
       if (stateUpdate[key] === undefined) {
         delete stateUpdate[key];
       }
@@ -215,10 +215,16 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
 
   renderNewOutputNodes(stateUpdate) {
     if (stateUpdate.output) {
-      const template = document.createElement('template');
+      const template = document.createElement("template");
       template.innerHTML = stateUpdate.output.trim();
-      const node = template.content.firstChild;
-      this.element.getElementsByClassName("code-output").item(0).appendChild(node)
+      const newNode = template.content.firstChild;
+      const parent = this.element.getElementsByClassName("code-output").item(0)
+      const isMergeable = newNode.className.startsWith("standard-output") || newNode.className.startsWith("error-output")
+      if (isMergeable && parent.lastChild !== null && parent.lastChild.className === newNode.className) {
+        parent.lastChild.textContent += newNode.textContent
+      } else {
+        parent.appendChild(newNode)
+      }
     }
 
     if (stateUpdate.exception) {
@@ -278,7 +284,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
   }
 
   onConsoleCloseButtonEnter() {
-    const {jsLibs, onCloseConsole, targetPlatform } = this.state;
+    const {jsLibs, onCloseConsole, targetPlatform} = this.state;
     // creates a new iframe and removes the old one, thereby stops execution of any running script
     if (targetPlatform === TargetPlatform.CANVAS || targetPlatform === TargetPlatform.JS)
       this.jsExecutor.reloadIframeScripts(jsLibs, this.getNodeForMountIframe());
