@@ -14,8 +14,8 @@ const TEST_STATUS = {
   PASSED : { value: "OK", text: "Passed" }
 };
 
-const BUG_FLAG_TEMP = 'BUG'
-const BUG_REPORT_MESSAGE_TEMP = 'Hey! It seems you just found a bug! \uD83D\uDC1E\n' +
+const BUG_FLAG = 'BUG'
+const BUG_REPORT_MESSAGE = 'Hey! It seems you just found a bug! \uD83D\uDC1E\n' +
   `Please click <a href=http://kotl.in/issue target=_blank>here<a> to submit it ` +
   `to the issue tracker and one day we fix it, hopefully \uD83D\uDE09\n` +
   `✅ Don't forget to attach code to the issue\n`;
@@ -26,8 +26,8 @@ export function processJVMStdout(output, theme) {
 }
 
 export function processJVMStderr(output, theme) {
-  if (output === BUG_FLAG_TEMP) {
-    output = BUG_REPORT_MESSAGE_TEMP
+  if (output === BUG_FLAG) {
+    output = BUG_REPORT_MESSAGE
   }
   const processedOutput = escapeBrackets(output);
   return `<span class="error-output ${theme}">${processedOutput}</span>`

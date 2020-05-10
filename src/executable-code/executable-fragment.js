@@ -315,7 +315,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
     if (onOpenConsole) onOpenConsole(); //open when waitingForOutput=true
     if (onRun) onRun();
     if (targetPlatform === TargetPlatform.JAVA || targetPlatform === TargetPlatform.JUNIT) {
-      WebDemoApi.executeKotlinCodeTEMP(
+      WebDemoApi.executeKotlinCode(
         this.getCode(),
         compilerVersion,
         targetPlatform, args,

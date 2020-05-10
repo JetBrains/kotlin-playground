@@ -81,7 +81,7 @@ export default class WebDemoApi {
    * @param hiddenDependencies   - read only additional files
    * @param callback             - a callback for output chunks
    */
-  static executeKotlinCodeTEMP(code, compilerVersion, platform, args, theme, hiddenDependencies, onTestPassed, onTestFailed, callback) {
+  static executeKotlinCode(code, compilerVersion, platform, args, theme, hiddenDependencies, onTestPassed, onTestFailed, callback) {
     const testResults = {
       testsRun: 0,
       totalTime: 0,
