@@ -16,7 +16,7 @@ const TEST_STATUS = {
 
 const BUG_FLAG = 'BUG'
 const BUG_REPORT_MESSAGE = 'Hey! It seems you just found a bug! \uD83D\uDC1E\n' +
-  `Please click <a href=http://kotl.in/issue target=_blank>here<a> to submit it ` +
+  `Please go here -> http://kotl.in/issue to submit it ` +
   `to the issue tracker and one day we fix it, hopefully \uD83D\uDE09\n` +
   `✅ Don't forget to attach code to the issue\n`;
 
