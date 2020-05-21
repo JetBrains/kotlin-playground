@@ -21,7 +21,9 @@ import {
  * @property {string|null} stdlibVersion
  */
 
-const CACHE = {};
+const CACHE = {
+  compilerVersions: null,
+};
 const DEFAULT_FILE_NAME = "File.kt";
 
 export default class WebDemoApi {
@@ -29,18 +31,13 @@ export default class WebDemoApi {
    * @return {Promise<Array<KotlinVersion>>}
    */
   static getCompilerVersions() {
-    if ('compilerVersions' in CACHE) {
-      return Promise.resolve(CACHE.compilerVersions);
+    if (!CACHE.compilerVersions) {
+      CACHE.compilerVersions = fetch(API_URLS.VERSIONS)
+        .then(response => response.json())
+        .catch(() => (CACHE.compilerVersions = null));
     }
 
-    return fetch(API_URLS.VERSIONS)
-      .then(response => response.json())
-      .then(versions => {
-        CACHE.compilerVersions = versions;
-        return versions;
-      }).catch(() => {
-        return null
-      });
+    return CACHE.compilerVersions;
   }
 
   /**
