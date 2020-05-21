@@ -272,6 +272,12 @@ export default class ExecutableCode {
         }
 
         if (versions) {
+          versions.sort(function({ version: version1 }, { version: version2 }) {
+            if (version1 < version2) return -1;
+            if (version1 > version2) return 1;
+            return 0;
+          });
+
           let listOfVersions = versions.map(version => version.version);
 
           if (listOfVersions.includes(config.version)) {
