@@ -219,19 +219,34 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
     })
   }
 
+  appendOneNodeToDOM(parent, newNode) { // used for streaming
+    const isMergeable = newNode.className.startsWith(STANDARD_OUTPUT_CLASS_NAME) ||
+      newNode.className.startsWith(ERROR_OUTPUT_CLASS_NAME)
+
+    if (isMergeable && parent.lastChild && parent.lastChild.className === newNode.className) {
+      parent.lastChild.textContent += newNode.textContent
+    } else {
+      parent.appendChild(newNode)
+    }
+  }
+
+  appendMultipleNodesToDOM(parent, newNodes) { // used for synchronous batch output update
+    const documentFragment = document.createDocumentFragment()
+    while (newNodes.item(0)) {
+      documentFragment.append(newNodes.item(0))
+    }
+    parent.appendChild(documentFragment)
+  }
+
   renderNewOutputNodes(stateUpdate) {
     if (stateUpdate.output) {
+      const parent = this.element.getElementsByClassName(CODE_OUTPUT_CLASS_NAME).item(0)
       const template = document.createElement("template");
       template.innerHTML = stateUpdate.output.trim();
-      const newNode = template.content.firstChild;
-      const parent = this.element.getElementsByClassName(CODE_OUTPUT_CLASS_NAME).item(0)
-      const isMergeable = newNode.className.startsWith(STANDARD_OUTPUT_CLASS_NAME) ||
-        newNode.className.startsWith(ERROR_OUTPUT_CLASS_NAME)
-
-      if (isMergeable && parent.lastChild && parent.lastChild.className === newNode.className) {
-        parent.lastChild.textContent += newNode.textContent
-      } else {
-        parent.appendChild(newNode)
+      if (template.content.childElementCount !== 1) { // synchronous mode
+        this.appendMultipleNodesToDOM(parent, template.content.childNodes)
+      } else { // streaming
+        this.appendOneNodeToDOM(parent, template.content.firstChild)
       }
     }
 

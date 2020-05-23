@@ -11,8 +11,11 @@ import {
   processJUnitTestResult,
   processJUnitTotalResults,
   processJVMStdout,
-  processJVMStderr, createErrorText
+  processJVMStderr,
+  createErrorText,
+  processBatchJVMOutput
 } from "./view/output-view";
+import {arrayFrom} from "./utils";
 
 /**
  * @typedef {Object} KotlinVersion
@@ -69,7 +72,7 @@ export default class WebDemoApi {
   }
 
   /**
-   * Request on execute Kotlin code.
+   * Request to execute Kotlin code.
    *
    * @param code                 - string
    * @param compilerVersion      - string kotlin compiler
@@ -82,56 +85,11 @@ export default class WebDemoApi {
    * @param callback             - a callback for output chunks
    */
   static executeKotlinCode(code, compilerVersion, platform, args, theme, hiddenDependencies, onTestPassed, onTestFailed, callback) {
-    const testResults = {
-      testsRun: 0,
-      totalTime: 0,
-      success: true
+    if (API_URLS.COMPILE_ASYNC) {
+      executeKotlinCodeStreaming(code, compilerVersion, platform, args, theme, hiddenDependencies, onTestPassed, onTestFailed, callback)
+    } else {
+      executeKotlinCodeSync(code, compilerVersion, platform, args, theme, hiddenDependencies, onTestPassed, onTestFailed, callback)
     }
-    executeCodeStreaming(API_URLS.COMPILE, code, compilerVersion, platform, args, hiddenDependencies, result => {
-      let output;
-      if (result.errorText) {
-        output = createErrorText(result.errorText, theme)
-      } else if (platform === TargetPlatform.JUNIT) {
-        output = processJUnitTotalResults(testResults, onTestPassed, onTestFailed)
-      }
-      callback({
-        waitingForOutput: false,
-        output: output
-      })
-    }, result => {
-      const data = result.data
-
-      let errorsAndWarnings
-      let errors = []
-      if (data.hasOwnProperty('errors')) {
-        errorsAndWarnings = flatten(Object.values(data.errors));
-        errors = errorsAndWarnings.filter(error => error.severity === "ERROR");
-      }
-
-      let output;
-      if (errors.length > 0) {
-        output = processErrors(errors, theme);
-      } else if (data.hasOwnProperty('errStream')) {
-        output = processJVMStderr(data.errStream, theme)
-      } else if (data.hasOwnProperty('outStream')) {
-        output = processJVMStdout(data.outStream)
-      } else if (data.hasOwnProperty('testResult') && platform === TargetPlatform.JUNIT) {
-        output = processJUnitTestResult(data.testResult, testResults)
-      }
-
-      let exception;
-      if (data.hasOwnProperty('exception')) {
-        exception = findSecurityException(data.exception);
-        exception.causes = getExceptionCauses(exception);
-        exception.cause = undefined;
-      }
-      callback({
-        waitingForOutput: true,
-        errors: errorsAndWarnings,
-        output: output,
-        exception: exception
-      })
-    })
   }
 
   /**
@@ -164,6 +122,112 @@ export default class WebDemoApi {
     return executeCode(API_URLS.HIGHLIGHT, code, compilerVersion, platform, "", hiddenDependencies)
       .then(data => data[DEFAULT_FILE_NAME])
   }
+}
+
+function processJUnitResults(data, theme, onTestPassed, onTestFailed) { // use for synchronous output only
+  const testResults = {
+    testsRun: 0,
+    totalTime: 0,
+    success: true
+  }
+  let output = ""
+  for (let testClass in data) {
+    arrayFrom(data[testClass]).forEach(testResult => {
+      output += processJUnitTestResult(testResult, testResults, false)
+    })
+  }
+  output += processJUnitTotalResults(testResults, theme, onTestPassed, onTestFailed)
+  return output
+}
+
+function executeKotlinCodeSync(code, compilerVersion, platform, args, theme, hiddenDependencies, onTestPassed, onTestFailed, callback) {
+  executeCode(API_URLS.COMPILE, code, compilerVersion, platform, args, hiddenDependencies).then(function (data) {
+    let output = "";
+    let errorsAndWarnings = flatten(Object.values(data.errors));
+    let errors = errorsAndWarnings.filter(error => error.severity === "ERROR");
+    if (errors.length > 0) {
+      output = processErrors(errors, theme);
+    } else {
+      switch (platform) {
+        case TargetPlatform.JAVA:
+          if (data.text) output = processBatchJVMOutput(data.text, theme);
+          break;
+        case TargetPlatform.JUNIT:
+          if (data.testResults || !data.text) {
+            output = processJUnitResults(data.testResults, theme, onTestPassed, onTestFailed)
+          } else {
+            output = processBatchJVMOutput(data.text, theme);
+          }
+          break;
+      }
+    }
+    let exceptions = null;
+    if (data.exception != null) {
+      exceptions = findSecurityException(data.exception);
+      exceptions.causes = getExceptionCauses(exceptions);
+      exceptions.cause = undefined;
+    }
+    callback({
+      waitingForOutput: false,
+      errors: errorsAndWarnings,
+      output: output,
+      exception: exceptions
+    })
+  })
+}
+
+
+function executeKotlinCodeStreaming(code, compilerVersion, platform, args, theme, hiddenDependencies, onTestPassed, onTestFailed, callback) {
+  const testResults = {
+    testsRun: 0,
+    totalTime: 0,
+    success: true
+  }
+  executeCodeStreaming(API_URLS.COMPILE, code, compilerVersion, platform, args, hiddenDependencies, result => {
+    let output;
+    if (result.errorText) {
+      output = createErrorText(result.errorText, theme)
+    } else if (platform === TargetPlatform.JUNIT) {
+      output = processJUnitTotalResults(testResults, theme, onTestPassed, onTestFailed)
+    }
+    callback({
+      waitingForOutput: false,
+      output: output
+    })
+  }, result => {
+    const data = result.data
+
+    let errorsAndWarnings
+    let errors = []
+    if (data.hasOwnProperty('errors')) {
+      errorsAndWarnings = flatten(Object.values(data.errors));
+      errors = errorsAndWarnings.filter(error => error.severity === "ERROR");
+    }
+
+    let output;
+    if (errors.length > 0) {
+      output = processErrors(errors, theme);
+    } else if (data.hasOwnProperty('errStream')) {
+      output = processJVMStderr(data.errStream, theme)
+    } else if (data.hasOwnProperty('outStream')) {
+      output = processJVMStdout(data.outStream)
+    } else if (data.hasOwnProperty('testResult') && platform === TargetPlatform.JUNIT) {
+      output = processJUnitTestResult(data.testResult, testResults, true)
+    }
+
+    let exception;
+    if (data.hasOwnProperty('exception')) {
+      exception = findSecurityException(data.exception);
+      exception.causes = getExceptionCauses(exception);
+      exception.cause = undefined;
+    }
+    callback({
+      waitingForOutput: true,
+      errors: errorsAndWarnings,
+      output: output,
+      exception: exception
+    })
+  })
 }
 
 function createBodyForCodeExecution(code, compilerVersion, targetPlatform, args, hiddenDependencies, options) {

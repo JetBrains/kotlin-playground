@@ -134,6 +134,23 @@ export function unEscapeString(string) {
 }
 
 /**
+ * convert all `&amp;lt;` and `&amp;gt;` to `&lt;` and `&gt;`
+ * @param string
+ * @returns {*}
+ */
+export function convertToHtmlTag(string) {
+  const tagsToReplace = {
+    "&lt;": "&amp;lt;",
+    "&gt;": "&amp;gt;",
+  };
+  let unEscapedString = string;
+  Object.keys(tagsToReplace).forEach(function (key) {
+    unEscapedString = unEscapedString.replace(new RegExp(tagsToReplace[key], 'g'), key)
+  });
+  return unEscapedString
+}
+
+/**
  * Getting count of lines
  * @param string
  * @returns {number}

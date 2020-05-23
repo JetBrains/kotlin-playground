@@ -9,6 +9,7 @@ module.exports = (params = {}) => {
   const isServer = process.argv[1].includes('webpack-dev-server');
   const libraryName = 'KotlinPlayground';
   const webDemoUrl = params.webDemoUrl || 'https://try.kotlinlang.org';
+  const asyncServerUrl = params.asyncServerUrl;
   const examplesPath = isServer ? '' : 'examples/';
 
   const config = {
@@ -75,6 +76,7 @@ module.exports = (params = {}) => {
 
       new webpack.DefinePlugin({
         __WEBDEMO_URL__: JSON.stringify(webDemoUrl),
+        __ASYNC_SERVER_URL__: JSON.stringify(asyncServerUrl),
         __IS_PRODUCTION__: isProduction,
         __LIBRARY_NAME__: JSON.stringify(libraryName),
         'process.env': {
