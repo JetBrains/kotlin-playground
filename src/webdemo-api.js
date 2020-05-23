@@ -11,7 +11,7 @@ import {
   processJUnitTestResult,
   processJUnitTotalResults,
   processJVMStdout,
-  processJVMStderr
+  processJVMStderr, createErrorText
 } from "./view/output-view";
 
 /**
@@ -87,20 +87,18 @@ export default class WebDemoApi {
       totalTime: 0,
       success: true
     }
-    return executeCodeStreaming(API_URLS.COMPILE, code, compilerVersion, platform, args, hiddenDependencies, result => {
-      if (result.done) {
-        if (platform === TargetPlatform.JUNIT) {
-          const output = processJUnitTotalResults(testResults, onTestPassed, onTestFailed)
-          callback({
-            waitingForOutput: true,
-            output: output
-          })
-        }
-        callback({
-          waitingForOutput: false
-        });
-        return
+    executeCodeStreaming(API_URLS.COMPILE, code, compilerVersion, platform, args, hiddenDependencies, result => {
+      let output;
+      if (result.errorText) {
+        output = createErrorText(result.errorText, theme)
+      } else if (platform === TargetPlatform.JUNIT) {
+        output = processJUnitTotalResults(testResults, onTestPassed, onTestFailed)
       }
+      callback({
+        waitingForOutput: false,
+        output: output
+      })
+    }, result => {
       const data = result.data
 
       let errorsAndWarnings
@@ -206,15 +204,22 @@ function executeCode(url, code, compilerVersion, targetPlatform, args, hiddenDep
   }).then(response => response.json())
 }
 
-function executeCodeStreaming(url, code, compilerVersion, targetPlatform, args, hiddenDependencies, callback) {
+function executeCodeStreaming(url, code, compilerVersion, targetPlatform, args, hiddenDependencies, onDone, onData) {
   const body = createBodyForCodeExecution(code, compilerVersion, targetPlatform, args, hiddenDependencies)
 
-  jsonpipe.flow(url + targetPlatform.id, {
+  let xmlHttpRequest;
+  xmlHttpRequest = jsonpipe.flow(url + targetPlatform.id, {
     success: data => {
-      callback({'data': data})
+      onData({'data': data})
     },
     complete: () => {
-      callback({'done': true})
+      if (xmlHttpRequest && xmlHttpRequest.status === 0) {
+        onDone({errorText: "REQUEST CANCELLED"})
+      } else if (xmlHttpRequest && (xmlHttpRequest.status < 200 || xmlHttpRequest.status > 299)) {
+        onDone({errorText: `SERVER RETURNED CODE ${xmlHttpRequest.status}`})
+      } else {
+        onDone({})
+      }
     },
     method: 'POST',
     headers: {

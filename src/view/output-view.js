@@ -6,7 +6,7 @@ import escapeHtml from "escape-html"
 const ACCESS_CONTROL_EXCEPTION = "java.security.AccessControlException";
 const SECURITY_MESSAGE = "Access control exception due to security reasons in web playground";
 const UNHANDLED_JS_EXCEPTION = "Unhandled JavaScript exception";
-const NO_TEST_FOUND = "No tests methods are found";
+const NO_TEST_FOUND = "No test methods were found";
 
 const TEST_STATUS = {
   FAIL : { value: "FAIL", text: "Fail" },
@@ -25,17 +25,21 @@ export function processJVMStdout(output, theme) {
   return `<span class="standard-output ${theme}">${processedOutput}</span>`
 }
 
-export function processJVMStderr(output, theme) {
-  if (output === BUG_FLAG) {
-    output = BUG_REPORT_MESSAGE
-  }
+export function createErrorText(output, theme) {
   const processedOutput = escapeBrackets(output);
   return `<span class="error-output ${theme}">${processedOutput}</span>`
 }
 
-export function processJUnitTotalResults(testResults, onTestPassed, onTestFailed) {
+export function processJVMStderr(output, theme) {
+  if (output === BUG_FLAG) {
+    output = BUG_REPORT_MESSAGE
+  }
+  return createErrorText(output, theme)
+}
+
+export function processJUnitTotalResults(testResults, theme, onTestPassed, onTestFailed) {
   if (testResults.testsRun === 0) {
-    return NO_TEST_FOUND
+    return createErrorText(NO_TEST_FOUND, theme)
   }
   if (testResults.success) {
     if (onTestPassed) onTestPassed()

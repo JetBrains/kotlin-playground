@@ -21,6 +21,9 @@ const KEY_CODES = {
   F9: 120
 };
 const DEBOUNCE_TIME = 500;
+const CODE_OUTPUT_CLASS_NAME = "code-output"
+const STANDARD_OUTPUT_CLASS_NAME = "standard-output"
+const ERROR_OUTPUT_CLASS_NAME = "error-output"
 
 const SELECTORS = {
   JS_CODE_OUTPUT_EXECUTOR: ".js-code-output-executor",
@@ -189,27 +192,30 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
   }
 
   removeAllOutputNodes() {
-    const outputNode = this.element.getElementsByClassName("code-output").item(0)
-    while (outputNode && outputNode.lastChild) {
-      outputNode.removeChild(outputNode.lastChild)
+    const outputNode = this.element.getElementsByClassName(CODE_OUTPUT_CLASS_NAME).item(0)
+    if (outputNode) {
+      outputNode.innerHTML = ""
     }
   }
 
   applyStateUpdate(stateUpdate) {
-    if (stateUpdate.errors === null) {
-      stateUpdate.errors = []
-    } else if (stateUpdate.errors !== undefined) {
-      this.state.errors.push(...stateUpdate.errors)
-      stateUpdate.errors = this.state.errors
+    const filteredStateUpdate = Object.keys(stateUpdate)
+      .reduce((result, key) => {
+        if (stateUpdate[key] !== undefined) {
+          result[key] = stateUpdate[key]
+        }
+        return result
+      }, {})
+
+    if (filteredStateUpdate.errors === null) {
+      filteredStateUpdate.errors = []
+    } else if (filteredStateUpdate.errors !== undefined) {
+      this.state.errors.push(...filteredStateUpdate.errors)
+      filteredStateUpdate.errors = this.state.errors
     }
 
-    Object.keys(stateUpdate).forEach(key => {
-      if (stateUpdate[key] === undefined) {
-        delete stateUpdate[key];
-      }
-    })
-    Object.assign(this.state, stateUpdate, {
-      isShouldBeFolded: this.isShouldBeFolded && stateUpdate.isFoldedButton
+    Object.assign(this.state, filteredStateUpdate, {
+      isShouldBeFolded: this.isShouldBeFolded && filteredStateUpdate.isFoldedButton
     })
   }
 
@@ -218,9 +224,11 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
       const template = document.createElement("template");
       template.innerHTML = stateUpdate.output.trim();
       const newNode = template.content.firstChild;
-      const parent = this.element.getElementsByClassName("code-output").item(0)
-      const isMergeable = newNode.className.startsWith("standard-output") || newNode.className.startsWith("error-output")
-      if (isMergeable && parent.lastChild !== null && parent.lastChild.className === newNode.className) {
+      const parent = this.element.getElementsByClassName(CODE_OUTPUT_CLASS_NAME).item(0)
+      const isMergeable = newNode.className.startsWith(STANDARD_OUTPUT_CLASS_NAME) ||
+        newNode.className.startsWith(ERROR_OUTPUT_CLASS_NAME)
+
+      if (isMergeable && parent.lastChild && parent.lastChild.className === newNode.className) {
         parent.lastChild.textContent += newNode.textContent
       } else {
         parent.appendChild(newNode)
@@ -228,7 +236,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
     }
 
     if (stateUpdate.exception) {
-      const outputNode = this.element.getElementsByClassName("code-output").item(0)
+      const outputNode = this.element.getElementsByClassName(CODE_OUTPUT_CLASS_NAME).item(0)
       const exceptionView = Monkberry.render(Exception, outputNode, {
         'directives': directives
       })
@@ -328,14 +336,18 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
             this.update(state)
             return
           }
-          // all chunks were processed
+          // no more chunks will be received
 
-          if (this.state.output || this.state.exception) { // previous chunk contained some text
+          const hasOutput = state.output || this.state.output
+          const hasException = state.exception || this.state.exception
+          const hasErrors = this.state.errors.length > 0 || (state.errors && state.errors.length > 0)
+
+          if (hasOutput || hasException) {
             state.openConsole = true;
           } else if (onCloseConsole) {
             onCloseConsole()
           }
-          if ((this.state.errors.length > 0 || this.state.exception) && onError) onError();
+          if ((hasErrors || hasException) && onError) onError();
           this.update(state);
         }
       )
