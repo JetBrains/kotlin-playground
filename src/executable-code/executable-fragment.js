@@ -260,6 +260,10 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
         onExceptionClick: this.onExceptionClick.bind(this)
       })
     }
+
+    if ((stateUpdate.output || stateUpdate.exception) && this.state.onOutputAddedToDom) {
+      this.state.onOutputAddedToDom()
+    }
   }
 
   markPlaceHolders() {
