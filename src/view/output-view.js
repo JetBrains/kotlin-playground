@@ -1,5 +1,4 @@
-import {arrayFrom, convertToHtmlTag, escapeBrackets, processingHtmlBrackets} from "../utils";
-import isEmptyObject from "is-empty-object"
+import {convertToHtmlTag, escapeBrackets} from "../utils";
 import escapeHtml from "escape-html"
 
 
