@@ -261,8 +261,8 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
       })
     }
 
-    if ((stateUpdate.output || stateUpdate.exception) && this.state.onOutputAddedToDom) {
-      this.state.onOutputAddedToDom()
+    if ((stateUpdate.output || stateUpdate.exception) && this.state.onOutputUpdate) {
+      this.state.onOutputUpdate()
     }
   }
 

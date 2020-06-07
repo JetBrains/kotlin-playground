@@ -115,7 +115,7 @@ playground('.selector', options)
 
 - `onOpenConsole` — Is called after the console's opened.
 
-- `onOutputAddedToDom` - Is called after the output is added to DOM.
+- `onOutputUpdate` - Is called after the output is added to DOM.
 
 - `getJsCode(code)` — Is called after compilation Kotlin to JS. Use for target platform `js`.
    _code_ — converted JS code from Kotlin.
