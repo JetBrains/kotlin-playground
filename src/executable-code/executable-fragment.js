@@ -1,9 +1,9 @@
-import merge from 'deepmerge';
 import CodeMirror from 'codemirror';
 import Monkberry from 'monkberry';
 import directives from 'monkberry-directives';
 import 'monkberry-events';
 import ExecutableCodeTemplate from './executable-fragment.monk';
+import Exception from './exception';
 import WebDemoApi from '../webdemo-api';
 import TargetPlatform from "../target-platform";
 import JsExecutor from "../js-executor"
@@ -21,6 +21,9 @@ const KEY_CODES = {
   F9: 120
 };
 const DEBOUNCE_TIME = 500;
+const CODE_OUTPUT_CLASS_NAME = "code-output"
+const STANDARD_OUTPUT_CLASS_NAME = "standard-output"
+const ERROR_OUTPUT_CLASS_NAME = "error-output"
 
 const SELECTORS = {
   JS_CODE_OUTPUT_EXECUTOR: ".js-code-output-executor",
@@ -51,9 +54,12 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
       code: '',
       foldButtonHover: false,
       folded: true,
+      exception: null,
       output: null,
+      errors: []
     };
     instance.codemirror = new CodeMirror();
+    instance.element = element
 
     instance.on('click', SELECTORS.FOLD_BUTTON, () => {
       instance.update({folded: !instance.state.folded});
@@ -123,16 +129,20 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
       }
     }
 
-    this.state = merge.all([this.state, state, {
-      isShouldBeFolded: this.isShouldBeFolded && state.isFoldedButton
-    }]);
-
+    if (state.output === null) {
+      this.removeAllOutputNodes()
+    }
+    this.applyStateUpdate(state)
     super.update(this.state);
+    this.renderNewOutputNodes(state)
+
     if (!this.initialized) {
       this.initializeCodeMirror(state);
       this.initialized = true;
     } else {
-      this.showDiagnostics(state.errors);
+      if (state.errors !== undefined) { // rerender errors if the array was explicitly changed
+        this.showDiagnostics(this.state.errors);
+      }
       if (state.folded === undefined) {
         return
       }
@@ -181,6 +191,81 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
     }
   }
 
+  removeAllOutputNodes() {
+    const outputNode = this.element.getElementsByClassName(CODE_OUTPUT_CLASS_NAME).item(0)
+    if (outputNode) {
+      outputNode.innerHTML = ""
+    }
+  }
+
+  applyStateUpdate(stateUpdate) {
+    const filteredStateUpdate = Object.keys(stateUpdate)
+      .reduce((result, key) => {
+        if (stateUpdate[key] !== undefined) {
+          result[key] = stateUpdate[key]
+        }
+        return result
+      }, {})
+
+    if (filteredStateUpdate.errors === null) {
+      filteredStateUpdate.errors = []
+    } else if (filteredStateUpdate.errors !== undefined) {
+      this.state.errors.push(...filteredStateUpdate.errors)
+      filteredStateUpdate.errors = this.state.errors
+    }
+
+    Object.assign(this.state, filteredStateUpdate, {
+      isShouldBeFolded: this.isShouldBeFolded && filteredStateUpdate.isFoldedButton
+    })
+  }
+
+  appendOneNodeToDOM(parent, newNode) { // used for streaming
+    const isMergeable = newNode.className.startsWith(STANDARD_OUTPUT_CLASS_NAME) ||
+      newNode.className.startsWith(ERROR_OUTPUT_CLASS_NAME)
+
+    if (isMergeable && parent.lastChild && parent.lastChild.className === newNode.className) {
+      parent.lastChild.textContent += newNode.textContent
+    } else {
+      parent.appendChild(newNode)
+    }
+  }
+
+  appendMultipleNodesToDOM(parent, newNodes) { // used for synchronous batch output update
+    const documentFragment = document.createDocumentFragment()
+    while (newNodes.item(0)) {
+      documentFragment.append(newNodes.item(0))
+    }
+    parent.appendChild(documentFragment)
+  }
+
+  renderNewOutputNodes(stateUpdate) {
+    if (stateUpdate.output) {
+      const parent = this.element.getElementsByClassName(CODE_OUTPUT_CLASS_NAME).item(0)
+      const template = document.createElement("template");
+      template.innerHTML = stateUpdate.output.trim();
+      if (template.content.childElementCount !== 1) { // synchronous mode
+        this.appendMultipleNodesToDOM(parent, template.content.childNodes)
+      } else { // streaming
+        this.appendOneNodeToDOM(parent, template.content.firstChild)
+      }
+    }
+
+    if (stateUpdate.exception) {
+      const outputNode = this.element.getElementsByClassName(CODE_OUTPUT_CLASS_NAME).item(0)
+      const exceptionView = Monkberry.render(Exception, outputNode, {
+        'directives': directives
+      })
+      exceptionView.update({
+        ...stateUpdate.exception,
+        onExceptionClick: this.onExceptionClick.bind(this)
+      })
+    }
+
+    if ((stateUpdate.output || stateUpdate.exception) && this.state.onOutputUpdate) {
+      this.state.onOutputUpdate()
+    }
+  }
+
   markPlaceHolders() {
     let taskRanges = this.getTaskRanges();
     this.codemirror.setValue(this.codemirror.getValue()
@@ -226,11 +311,11 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
   }
 
   onConsoleCloseButtonEnter() {
-    const {jsLibs, onCloseConsole, targetPlatform } = this.state;
+    const {jsLibs, onCloseConsole, targetPlatform} = this.state;
     // creates a new iframe and removes the old one, thereby stops execution of any running script
     if (targetPlatform === TargetPlatform.CANVAS || targetPlatform === TargetPlatform.JS)
       this.jsExecutor.reloadIframeScripts(jsLibs, this.getNodeForMountIframe());
-    this.update({output: "", openConsole: false, exception: null});
+    this.update({output: null, openConsole: false, exception: null});
     if (onCloseConsole) onCloseConsole();
   }
 
@@ -248,6 +333,9 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
       return
     }
     this.update({
+      errors: null,
+      output: null,
+      exception: null,
       waitingForOutput: true,
       openConsole: false
     });
@@ -261,18 +349,26 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
         theme,
         hiddenDependencies,
         onTestPassed,
-        onTestFailed).then(
+        onTestFailed,
         state => {
-          state.waitingForOutput = false;
-          if (state.output || state.exception) {
-            state.openConsole = true;
-          } else {
-            if (onCloseConsole) onCloseConsole();
+          if (state.waitingForOutput) {
+            this.update(state)
+            return
           }
-          if ((state.errors.length > 0 || state.exception) && onError) onError();
+          // no more chunks will be received
+
+          const hasOutput = state.output || this.state.output
+          const hasException = state.exception || this.state.exception
+          const hasErrors = this.state.errors.length > 0 || (state.errors && state.errors.length > 0)
+
+          if (hasOutput || hasException) {
+            state.openConsole = true;
+          } else if (onCloseConsole) {
+            onCloseConsole()
+          }
+          if ((hasErrors || hasException) && onError) onError();
           this.update(state);
-        },
-        () => this.update({waitingForOutput: false})
+        }
       )
     } else {
       this.jsExecutor.reloadIframeScripts(jsLibs, this.getNodeForMountIframe());
@@ -357,7 +453,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
       return;
     }
     diagnostics.forEach(diagnostic => {
-      const interval = diagnostic.interval;
+      const interval = Object.assign({}, diagnostic.interval);
       interval.start = this.recalculatePosition(interval.start);
       interval.end = this.recalculatePosition(interval.end);
 

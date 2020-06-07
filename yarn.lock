@@ -3430,10 +3430,6 @@ is-directory@^0.3.1:
   version "0.3.1"
   resolved "https://registry.yarnpkg.com/is-directory/-/is-directory-0.3.1.tgz#61339b6f2475fc772fd9c9d83f5c8575dc154ae1"
 
-is-empty-object@^1.1.1:
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/is-empty-object/-/is-empty-object-1.1.1.tgz#86d5d4d5c5229cea31ec2772f528bf5efc519f23"
-
 is-extendable@^0.1.0, is-extendable@^0.1.1:
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/is-extendable/-/is-extendable-0.1.1.tgz#62b110e289a471418e3ec36a617d472e301dfc89"
@@ -3682,6 +3678,11 @@ json5@^2.1.0:
 jsonify@~0.0.0:
   version "0.0.0"
   resolved "https://registry.yarnpkg.com/jsonify/-/jsonify-0.0.0.tgz#2c74b6ee41d93ca51b7b5aaee8f503631d252a73"
+
+jsonpipe@2.2.0:
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/jsonpipe/-/jsonpipe-2.2.0.tgz#70a1344b9f9111d8ff4a7c23a95f22c90d87d214"
+  integrity sha512-K+vnwaebP0Zu61Q6Dmdw6QLrHQVTVun7PbiUSqQmdcyOx00KmHCJnY+x1oWxAtmOrGTOkW5TcpGcJ5NV8ugCFQ==
 
 jsprim@^1.2.2:
   version "1.4.1"

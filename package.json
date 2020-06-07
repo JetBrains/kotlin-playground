@@ -33,7 +33,7 @@
     "flatten": "^1.0.2",
     "github-markdown-css": "^3.0.1",
     "html-webpack-plugin": "^3.2.0",
-    "is-empty-object": "^1.1.1",
+    "jsonpipe": "2.2.0",
     "markdown-it": "^8.4.2",
     "markdown-it-highlightjs": "^3.0.0",
     "monkberry": "4.0.8",

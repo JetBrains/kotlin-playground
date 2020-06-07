@@ -102,7 +102,7 @@ export function insertAfter(newNode, referenceNode) {
  * @param string
  * @returns {*}
  */
-export function processingHtmlBrackets(string) {
+export function escapeBrackets(string) {
   const tagsToReplace = {
     "&lt;": "<",
     "&gt;": ">"
@@ -134,7 +134,7 @@ export function unEscapeString(string) {
 }
 
 /**
- * convert all `<` and `>` to `&lt;` and `&gt;`
+ * convert all `&amp;lt;` and `&amp;gt;` to `&lt;` and `&gt;`
  * @param string
  * @returns {*}
  */

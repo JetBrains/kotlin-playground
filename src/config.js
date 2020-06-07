@@ -11,8 +11,15 @@ export const RUNTIME_CONFIG = {...getConfigFromElement(currentScript)};
  */
 export const API_URLS = {
   server: RUNTIME_CONFIG.server || __WEBDEMO_URL__,
+  asyncServer: RUNTIME_CONFIG.asyncServer || __ASYNC_SERVER_URL__,
   get COMPILE() {
     return `${this.server}/kotlinServer?type=run&runConf=`;
+  },
+  get COMPILE_ASYNC() {
+    if (this.asyncServer) {
+      return `${this.asyncServer}/kotlinServer?type=run&runConf=`
+    }
+    return null;
   },
   get HIGHLIGHT() {
     return `${this.server}/kotlinServer?type=highlight&runConf=`;
