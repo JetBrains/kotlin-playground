@@ -1,4 +1,5 @@
 import {getConfigFromElement, getCurrentScript} from './utils';
+import TargetPlatform from "./target-platform";
 
 const currentScript = getCurrentScript();
 
@@ -11,17 +12,39 @@ export const RUNTIME_CONFIG = {...getConfigFromElement(currentScript)};
  */
 export const API_URLS = {
   server: RUNTIME_CONFIG.server || __WEBDEMO_URL__,
-  get COMPILE() {
-    return `${this.server}/kotlinServer?type=run&runConf=`;
+  COMPILE(platform, version) {
+    let url;
+
+    switch (platform) {
+      case TargetPlatform.JAVA:
+        url = `${this.server}/api/${version}/compiler/run`;
+        break;
+      case TargetPlatform.CANVAS:
+        url = `${this.server}/api/${version}/compiler/translate`;
+        break;
+      case TargetPlatform.JS:
+        url = `${this.server}/api/${version}/compiler/translate`;
+        break;
+      case TargetPlatform.JUNIT:
+        url = `${this.server}/api/${version}/compiler/test`;
+        break;
+      default:
+        console.warn(`Unknown ${platform.id} , used by default JVM`)
+        url = `${this.server}/api/${version}/compiler/run`;
+        break;
+    }
+
+    return url;
   },
-  get HIGHLIGHT() {
-    return `${this.server}/kotlinServer?type=highlight&runConf=`;
+
+  HIGHLIGHT(version) {
+    return `${this.server}/api/${version}/compiler/highlight`;
   },
-  get COMPLETE() {
-    return `${this.server}/kotlinServer?type=complete&runConf=`;
+  COMPLETE(version) {
+    return `${this.server}/api/${version}/compiler/complete`;
   },
   get VERSIONS() {
-    return `${this.server}/kotlinServer?type=getKotlinVersions`;
+    return `${this.server}/versions`;
   },
   get JQUERY() {
     return `https://cdn.jsdelivr.net/npm/jquery@1/dist/jquery.min.js`;
