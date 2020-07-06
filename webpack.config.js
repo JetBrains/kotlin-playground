@@ -8,7 +8,7 @@ module.exports = (params = {}) => {
   const mainEntryName = isProduction ? 'playground.min' : 'playground';
   const isServer = process.argv[1].includes('webpack-dev-server');
   const libraryName = 'KotlinPlayground';
-  const webDemoUrl = params.webDemoUrl || 'https://try.kotlinlang.org';
+  const webDemoUrl = params.webDemoUrl || 'https://api.kotlinlang.org/';
   const examplesPath = isServer ? '' : 'examples/';
 
   const config = {

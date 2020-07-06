@@ -424,7 +424,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
 
     /**
      * Register own helper for autocomplete.
-     * Getting completions from try.kotlinlang.org.
+     * Getting completions from api.kotlinlang.org.
      * CodeMirror.hint.default => getting list from codemirror kotlin keywords.
      *
      * {@see WebDemoApi}      - getting data from WebDemo

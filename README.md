@@ -137,7 +137,7 @@ playground('.selector', options)
 
 Use the following attributes on elements that are converted to editors to adjust their behavior.
 
-- `data-version`: Target Kotlin [compiler version](https://try.kotlinlang.org/kotlinServer?type=getKotlinVersions):
+- `data-version`: Target Kotlin [compiler version](https://api.kotlinlang.org/versions):
 
    ```html
     <code data-version="1.0.7">
@@ -213,7 +213,7 @@ Use the following attributes on elements that are converted to editors to adjust
 
 - `mode="kotlin|js|java|groovy|xml|c|shell|swift|obj-c"`: Different languages styles. Runnable snippets only with `kotlin`. Default to `kotlin`.
 
-- `data-min-compiler-version="1.0.7"`: Minimum target Kotlin [compiler version](https://try.kotlinlang.org/kotlinServer?type=getKotlinVersions)
+- `data-min-compiler-version="1.0.7"`: Minimum target Kotlin [compiler version](https://api.kotlinlang.org/versions)
 
 - `data-autocomplete="true|false"`: Get completion on every key press. If `false` => Press ctrl-space to activate autocompletion. Defaults to `false`.
 

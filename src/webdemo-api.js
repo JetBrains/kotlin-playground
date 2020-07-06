@@ -51,7 +51,7 @@ export default class WebDemoApi {
    * @returns {*|PromiseLike<T>|Promise<T>}
    */
   static translateKotlinToJs(code, compilerVersion, platform, args, hiddenDependencies) {
-    return executeCode(API_URLS.COMPILE, code, compilerVersion, platform, args, hiddenDependencies).then(function (data) {
+    return executeCode(API_URLS.COMPILE(platform, compilerVersion), code, compilerVersion, platform, args, hiddenDependencies).then(function (data) {
       let output = "";
       let errorsAndWarnings = flatten(Object.values(data.errors));
       return {
@@ -76,7 +76,7 @@ export default class WebDemoApi {
    * @returns {*|PromiseLike<T>|Promise<T>}
    */
   static executeKotlinCode(code, compilerVersion, platform, args, theme, hiddenDependencies, onTestPassed, onTestFailed) {
-    return executeCode(API_URLS.COMPILE, code, compilerVersion, platform, args, hiddenDependencies).then(function (data) {
+    return executeCode(API_URLS.COMPILE(platform, compilerVersion), code, compilerVersion, platform, args, hiddenDependencies).then(function (data) {
       let output = "";
       let errorsAndWarnings = flatten(Object.values(data.errors));
       let errors = errorsAndWarnings.filter(error => error.severity === "ERROR");
@@ -117,7 +117,9 @@ export default class WebDemoApi {
    * @param callback
    */
   static getAutoCompletion(code, cursor, compilerVersion, platform, hiddenDependencies, callback) {
-    executeCode(API_URLS.COMPLETE, code, compilerVersion, platform, "", hiddenDependencies, cursor)
+    const { line, ch, ...options } = cursor;
+    const url = API_URLS.COMPLETE(compilerVersion) + `?line=${line}&ch=${ch}`;
+    executeCode(url, code, compilerVersion, platform, "", hiddenDependencies, options)
       .then(data => {
         callback(data);
       })
@@ -133,7 +135,7 @@ export default class WebDemoApi {
    * @return {*|PromiseLike<T>|Promise<T>}
    */
   static getHighlight(code, compilerVersion, platform, hiddenDependencies) {
-    return executeCode(API_URLS.HIGHLIGHT, code, compilerVersion, platform, "", hiddenDependencies)
+    return executeCode(API_URLS.HIGHLIGHT(compilerVersion), code, compilerVersion, platform, "", hiddenDependencies)
       .then(data => data[DEFAULT_FILE_NAME])
   }
 }
@@ -141,31 +143,18 @@ export default class WebDemoApi {
 function executeCode(url, code, compilerVersion, targetPlatform, args, hiddenDependencies, options) {
   const files = [buildFileObject(code, DEFAULT_FILE_NAME)]
     .concat(hiddenDependencies.map((file, index) => buildFileObject(file, `hiddenDependency${index}.kt`)));
-  const projectJson = JSON.stringify({
-    "id": "",
-    "name": "",
-    "args": args,
-    "compilerVersion": compilerVersion,
-    "confType": targetPlatform.id,
-    "originUrl": null,
-    "files": files,
-    "readOnlyFileNames": []
-  });
 
-  const body = new URLSearchParams();
-  body.set('filename', DEFAULT_FILE_NAME);
-  body.set('project', projectJson);
+  const body = {
+    args,
+    files,
+    ...(options || {}),
+  };
 
-  if (options !== undefined) {
-    for (let option in options) {
-      body.set(option, options[option])
-    }
-  }
-  return fetch(url + targetPlatform.id, {
+  return fetch(url, {
     method: 'POST',
-    body: body.toString(),
+    body: JSON.stringify(body),
     headers: {
-      'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+      'Content-Type': 'application/json; charset=utf-8',
     }
   }).then(response => response.json())
 }
