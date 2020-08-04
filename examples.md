@@ -37,13 +37,14 @@ fun main(args: Array<String>) {
 
 Turns into:
 
-<div class="kotlin-code">
+<div class="kotlin-code" highlight-on-fly="false">
 
 ```kotlin
 class Contact(val id: Int, var email: String) 
 
 fun main(args: Array<String>) {
     val contact = Contact(1, "mary@gmail.com")
+    val s = sin
     println(contact.id)
 }
 ```

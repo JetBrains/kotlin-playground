@@ -76,6 +76,7 @@ export default class WebDemoApi {
    * @returns {*|PromiseLike<T>|Promise<T>}
    */
   static executeKotlinCode(code, compilerVersion, platform, args, theme, hiddenDependencies, onTestPassed, onTestFailed) {
+    console.log("Hello from execute kotlin code")
     return executeCode(API_URLS.COMPILE(platform, compilerVersion), code, compilerVersion, platform, args, hiddenDependencies).then(function (data) {
       let output = "";
       let errorsAndWarnings = flatten(Object.values(data.errors));
@@ -125,6 +126,16 @@ export default class WebDemoApi {
       })
   }
 
+  static getAutoImports(code, cursor, compilerVersion, platform, hiddenDependencies, callback) {
+    console.log("Hello from get auto imports callback")
+    const { line, ch, ...options } = cursor;
+    const url = API_URLS.IMPORT_COMPLETE(compilerVersion) + `?line=${line}&ch=${ch}`;
+    return executeCode(url, code, compilerVersion, platform, "", hiddenDependencies, options)
+      .then(data => {
+        callback(data);
+      })
+  }
+
   /**
    * Request for getting errors of current file
    *
@@ -136,6 +147,11 @@ export default class WebDemoApi {
    */
   static getHighlight(code, compilerVersion, platform, hiddenDependencies) {
     return executeCode(API_URLS.HIGHLIGHT(compilerVersion), code, compilerVersion, platform, "", hiddenDependencies)
+      .then(data => data[DEFAULT_FILE_NAME])
+  }
+
+  static getHighlightWithImports(code, compilerVersion, platform, hiddenDependencies) {
+    return executeCode(API_URLS.HIGHLIGHT_IMPORTS(compilerVersion), code, compilerVersion, platform, "", hiddenDependencies)
       .then(data => data[DEFAULT_FILE_NAME])
   }
 }

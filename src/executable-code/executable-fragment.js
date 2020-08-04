@@ -10,6 +10,7 @@ import JsExecutor from "../js-executor"
 import {countLines, escapeRegExp, THEMES, unEscapeString} from "../utils";
 import debounce from 'debounce';
 import CompletionView from "../view/completion-view";
+import ImportView from "../view/import-view";
 import {processErrors} from "../view/output-view";
 
 const SAMPLE_START = '//sampleStart';
@@ -422,6 +423,19 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
     // don't need to create additional editor options in readonly mode.
     if (readOnly) return;
 
+    let highlightWithImports = () => {
+      const {compilerVersion, targetPlatform, hiddenDependencies} = this.state;
+      this.removeStyles();
+      WebDemoApi.getHighlightWithImports(
+        this.getCode(),
+        compilerVersion,
+        targetPlatform,
+        hiddenDependencies).then(data => {
+          this.showDiagnostics(data)
+        }
+      )
+    }
+
     /**
      * Register own helper for autocomplete.
      * Getting completions from api.kotlinlang.org.
@@ -469,11 +483,49 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
       }
     });
 
+    CodeMirror.registerHelper('hint', 'kotlinImport', (mirror, callback) => {
+      console.log("registerHelper")
+      let cur = mirror.getCursor();
+      let token = mirror.getTokenAt(cur);
+      let code = this.state.folded
+        ? this.prefix + mirror.getValue() + this.suffix
+        : mirror.getValue();
+      let currentCursor = this.state.folded
+        ? {line: cur.line + this.prefix.split('\n').length - 1, ch: cur.ch}
+        : cur;
+      WebDemoApi.getAutoImports(
+        code,
+        currentCursor,
+        this.state.compilerVersion,
+        this.state.targetPlatform,
+        this.state.hiddenDependencies,
+        processingCompletionsList
+      );
+
+      function processingCompletionsList(results) {
+        callback({
+          list: results.map(result => {
+            const {importName, fullName} = result
+            let t = (fullName + " : " + importName)
+            let s = {text:  t, displayText: fullName, tail: importName, icon: ""}
+            return new ImportView(s)
+          }),
+          from: {line: cur.line, ch: token.start},
+          to: {line: cur.line, ch: token.end}
+        })
+      }
+    });
+
     CodeMirror.hint.kotlin.async = true;
+    CodeMirror.hint.kotlinImport.async = true;
 
     CodeMirror.commands.autocomplete = (cm) => {
       CodeMirror.showHint(cm, CodeMirror.hint.kotlin);
     };
+
+    let kotlinImport = (cm) => {
+      CodeMirror.showHint(cm, CodeMirror.hint.kotlinImport);
+    }
 
     if (window.navigator.appVersion.indexOf("Mac") !== -1) {
       this.codemirror.setOption("extraKeys", {
@@ -482,7 +534,10 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
         "Ctrl-/": "toggleComment",
         "Cmd-[": false,
         "Cmd-]": false,
-        "Ctrl-Space": "autocomplete"
+        // "Ctrl-Space": "autocomplete"
+        "Ctrl-1": "autocomplete",
+        "Ctrl-3": highlightWithImports,
+        "Ctrl-4": kotlinImport
       })
     } else {
       this.codemirror.setOption("extraKeys", {

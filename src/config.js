@@ -14,10 +14,9 @@ export const API_URLS = {
   server: RUNTIME_CONFIG.server || __WEBDEMO_URL__,
   COMPILE(platform, version) {
     let url;
-
     switch (platform) {
       case TargetPlatform.JAVA:
-        url = `${this.server}/api/${version}/compiler/run`;
+        url = `http://localhost:8080/api/compiler/run`;
         break;
       case TargetPlatform.CANVAS:
         url = `${this.server}/api/${version}/compiler/translate`;
@@ -40,8 +39,14 @@ export const API_URLS = {
   HIGHLIGHT(version) {
     return `${this.server}/api/${version}/compiler/highlight`;
   },
+  HIGHLIGHT_IMPORTS(version) {
+    return `http://localhost:8080/api/compiler/highlightWithImports`;
+  },
   COMPLETE(version) {
     return `${this.server}/api/${version}/compiler/complete`;
+  },
+  IMPORT_COMPLETE(version) {
+    return `http://localhost:8080/api/compiler/completeWithImport`
   },
   get VERSIONS() {
     return `${this.server}/versions`;
