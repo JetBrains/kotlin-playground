@@ -24,10 +24,9 @@ class ImportView {
     for(let i = 0; i < textLines.length; ++i) {
       let line = textLines[i]
       if (/package/.test(line)) {
-        console.log(`has package in line ${i}`)
         packageLine = i
         break;
-      } else if (!/^[ \n\r\t]*$/.test(line)) {
+      } else if (!/^\s*$/.test(line)) {
         break;
       }
     }
