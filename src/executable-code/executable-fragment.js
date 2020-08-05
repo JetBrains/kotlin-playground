@@ -508,9 +508,9 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
       function processingCompletionsList(results) {
         callback({
           list: results.map(result => {
-            const {importName, fullName} = result
+            const {importName, fullName, icon} = result
             let t = (fullName + " : " + importName)
-            let s = {text:  t, displayText: fullName, tail: importName, icon: ""}
+            let s = {text:  t, displayText: fullName, tail: importName, icon: icon}
             return new ImportView(s)
           }),
           from: {line: cur.line, ch: token.start},
