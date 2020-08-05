@@ -19,9 +19,21 @@ class ImportView {
   }
 
   hint(mirror, self, data) {
-    console.log("Hello from import")
-    let importText = "import " + this.completion.tail + "\n"
-    mirror.replaceRange(importText, {line: 0, ch: 0})
+    let packageLine = -1
+    let textLines = mirror.getValue().split("\n");
+    for(let i = 0; i < textLines.length; ++i) {
+      let line = textLines[i]
+      if (/package/.test(line)) {
+        console.log(`has package in line ${i}`)
+        packageLine = i
+        break;
+      } else if (!/^[ \n\r\t]*$/.test(line)) {
+        break;
+      }
+    }
+    let line = ++packageLine;
+    let importText = "import " + this.completion.tail + "\n";
+    mirror.replaceRange(importText, {line: line, ch: 0})
   }
 }
 

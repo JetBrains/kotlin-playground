@@ -436,6 +436,18 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
       )
     }
 
+    let getPosition = (mirror) => {
+      let cur = mirror.getCursor();
+      let token = mirror.getTokenAt(cur);
+      let code = this.state.folded
+        ? this.prefix + mirror.getValue() + this.suffix
+        : mirror.getValue();
+      let currentCursor = this.state.folded
+        ? {line: cur.line + this.prefix.split('\n').length - 1, ch: cur.ch}
+        : cur;
+      return {cur: cur, token: token, code: code, currentCursor: currentCursor}
+    }
+
     /**
      * Register own helper for autocomplete.
      * Getting completions from api.kotlinlang.org.
@@ -445,14 +457,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
      * {@see CompletionView} - implementation completion view
      */
     CodeMirror.registerHelper('hint', 'kotlin', (mirror, callback) => {
-      let cur = mirror.getCursor();
-      let token = mirror.getTokenAt(cur);
-      let code = this.state.folded
-        ? this.prefix + mirror.getValue() + this.suffix
-        : mirror.getValue();
-      let currentCursor = this.state.folded
-        ? {line: cur.line + this.prefix.split('\n').length - 1, ch: cur.ch}
-        : cur;
+      const {cur, token, code, currentCursor} = getPosition(mirror);
       WebDemoApi.getAutoCompletion(
         code,
         currentCursor,
@@ -483,16 +488,14 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
       }
     });
 
+    /**
+     * Register own helper for autoimport.
+     *
+     * {@see WebDemoApi}      - getting data from WebDemo
+     * {@see ImportView}      - implementation import view
+     */
     CodeMirror.registerHelper('hint', 'kotlinImport', (mirror, callback) => {
-      console.log("registerHelper")
-      let cur = mirror.getCursor();
-      let token = mirror.getTokenAt(cur);
-      let code = this.state.folded
-        ? this.prefix + mirror.getValue() + this.suffix
-        : mirror.getValue();
-      let currentCursor = this.state.folded
-        ? {line: cur.line + this.prefix.split('\n').length - 1, ch: cur.ch}
-        : cur;
+      const {cur, token, code, currentCursor} = getPosition(mirror);
       WebDemoApi.getAutoImports(
         code,
         currentCursor,
@@ -546,7 +549,9 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
         "Ctrl-/": "toggleComment",
         "Ctrl-[": false,
         "Ctrl-]": false,
-        "Ctrl-Space": "autocomplete"
+        "Ctrl-Space": "autocomplete",
+        "Ctrl-3": highlightWithImports,
+        "Ctrl-4": kotlinImport
       })
     }
 
