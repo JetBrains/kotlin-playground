@@ -37,16 +37,10 @@ export const API_URLS = {
   },
 
   HIGHLIGHT(version) {
-    return `${this.server}/api/${version}/compiler/highlight`;
-  },
-  HIGHLIGHT_IMPORTS(version) {
-    return `http://localhost:8080/api/compiler/highlightWithImports`;
+    return `http://localhost:8080/api/${version}/compiler/highlight`;
   },
   COMPLETE(version) {
-    return `${this.server}/api/${version}/compiler/complete`;
-  },
-  IMPORT_COMPLETE(version) {
-    return `http://localhost:8080/api/compiler/completeWithImport`
+    return `http://localhost:8080/api/${version}/compiler/complete`;
   },
   get VERSIONS() {
     return `${this.server}/versions`;

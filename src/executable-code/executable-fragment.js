@@ -10,7 +10,6 @@ import JsExecutor from "../js-executor"
 import {countLines, escapeRegExp, THEMES, unEscapeString} from "../utils";
 import debounce from 'debounce';
 import CompletionView from "../view/completion-view";
-import ImportView from "../view/import-view";
 import {processErrors} from "../view/output-view";
 
 const SAMPLE_START = '//sampleStart';
@@ -426,7 +425,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
     let highlightWithImports = () => {
       const {compilerVersion, targetPlatform, hiddenDependencies} = this.state;
       this.removeStyles();
-      WebDemoApi.getHighlightWithImports(
+      WebDemoApi.getHighlight(
         this.getCode(),
         compilerVersion,
         targetPlatform,
@@ -434,18 +433,6 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
           this.showDiagnostics(data)
         }
       )
-    }
-
-    let getPosition = (mirror) => {
-      let cur = mirror.getCursor();
-      let token = mirror.getTokenAt(cur);
-      let code = this.state.folded
-        ? this.prefix + mirror.getValue() + this.suffix
-        : mirror.getValue();
-      let currentCursor = this.state.folded
-        ? {line: cur.line + this.prefix.split('\n').length - 1, ch: cur.ch}
-        : cur;
-      return {cur: cur, token: token, code: code, currentCursor: currentCursor}
     }
 
     /**
@@ -457,7 +444,14 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
      * {@see CompletionView} - implementation completion view
      */
     CodeMirror.registerHelper('hint', 'kotlin', (mirror, callback) => {
-      const {cur, token, code, currentCursor} = getPosition(mirror);
+      let cur = mirror.getCursor();
+      let token = mirror.getTokenAt(cur);
+      let code = this.state.folded
+        ? this.prefix + mirror.getValue() + this.suffix
+        : mirror.getValue();
+      let currentCursor = this.state.folded
+        ? {line: cur.line + this.prefix.split('\n').length - 1, ch: cur.ch}
+        : cur;
       WebDemoApi.getAutoCompletion(
         code,
         currentCursor,
@@ -488,47 +482,11 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
       }
     });
 
-    /**
-     * Register own helper for autoimport.
-     *
-     * {@see WebDemoApi}      - getting data from WebDemo
-     * {@see ImportView}      - implementation import view
-     */
-    CodeMirror.registerHelper('hint', 'kotlinImport', (mirror, callback) => {
-      const {cur, token, code, currentCursor} = getPosition(mirror);
-      WebDemoApi.getAutoImports(
-        code,
-        currentCursor,
-        this.state.compilerVersion,
-        this.state.targetPlatform,
-        this.state.hiddenDependencies,
-        processingCompletionsList
-      );
-
-      function processingCompletionsList(results) {
-        callback({
-          list: results.map(result => {
-            const {importName, fullName, icon} = result
-            let t = (fullName + " : " + importName)
-            let s = {text:  t, displayText: fullName, tail: importName, icon: icon}
-            return new ImportView(s)
-          }),
-          from: {line: cur.line, ch: token.start},
-          to: {line: cur.line, ch: token.end}
-        })
-      }
-    });
-
     CodeMirror.hint.kotlin.async = true;
-    CodeMirror.hint.kotlinImport.async = true;
 
     CodeMirror.commands.autocomplete = (cm) => {
       CodeMirror.showHint(cm, CodeMirror.hint.kotlin);
     };
-
-    let kotlinImport = (cm) => {
-      CodeMirror.showHint(cm, CodeMirror.hint.kotlinImport);
-    }
 
     if (window.navigator.appVersion.indexOf("Mac") !== -1) {
       this.codemirror.setOption("extraKeys", {
@@ -539,8 +497,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
         "Cmd-]": false,
         // "Ctrl-Space": "autocomplete"
         "Ctrl-1": "autocomplete",
-        "Ctrl-3": highlightWithImports,
-        "Ctrl-4": kotlinImport
+        "Ctrl-3": highlightWithImports
       })
     } else {
       this.codemirror.setOption("extraKeys", {
@@ -550,8 +507,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
         "Ctrl-[": false,
         "Ctrl-]": false,
         "Ctrl-Space": "autocomplete",
-        "Ctrl-3": highlightWithImports,
-        "Ctrl-4": kotlinImport
+        "Ctrl-3": highlightWithImports
       })
     }
 

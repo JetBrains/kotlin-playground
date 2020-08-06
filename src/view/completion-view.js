@@ -36,32 +36,49 @@ class CompletionView {
    * @param data
    */
   hint(mirror, self, data) {
-    let cur = mirror.getCursor();
-    let token = mirror.getTokenAt(cur);
-    let from = {line: cur.line, ch: token.start};
-    let to = {line: cur.line, ch: token.end};
-    const currentSymbol = token.string.trim();
-    if ([".", "", "(", ":"].includes(currentSymbol)) {
-      mirror.replaceRange(this.completion.text, to)
-    } else {
-      /*
-      Replace string with $ in string in case=>
-      val world = "world"
-      println("Hello $world)
+    if (this.completion.import === "") {
+      let cur = mirror.getCursor();
+      let token = mirror.getTokenAt(cur);
+      let from = {line: cur.line, ch: token.start};
+      let to = {line: cur.line, ch: token.end};
+      const currentSymbol = token.string.trim();
+      if ([".", "", "(", ":"].includes(currentSymbol)) {
+        mirror.replaceRange(this.completion.text, to)
+      } else {
+        /*
+        Replace string with $ in string in case=>
+        val world = "world"
+        println("Hello $world)
 
-      Plain string => cursorInStringIndex = -1
-      completionText will be equals result.text
-       */
-      let cursorInStringIndex = cur.ch - token.start;
-      let sentence$index = currentSymbol.substring(0, cursorInStringIndex).lastIndexOf('$');
-      let firstSentence = currentSymbol.substring(0, sentence$index + 1);
-      let completionText = firstSentence + this.completion.text + currentSymbol.substring(cursorInStringIndex, token.string.length);
-      mirror.replaceRange(completionText, from, to);
-      mirror.setCursor(cur.line, token.start + sentence$index + this.completion.text.length + 1);
-      if (completionText.endsWith('(')) {
-        mirror.replaceRange(")", {line: cur.line, ch: token.start + this.completion.text.length});
-        mirror.execCommand("goCharLeft")
+        Plain string => cursorInStringIndex = -1
+        completionText will be equals result.text
+         */
+        let cursorInStringIndex = cur.ch - token.start;
+        let sentence$index = currentSymbol.substring(0, cursorInStringIndex).lastIndexOf('$');
+        let firstSentence = currentSymbol.substring(0, sentence$index + 1);
+        let completionText = firstSentence + this.completion.text + currentSymbol.substring(cursorInStringIndex, token.string.length);
+        mirror.replaceRange(completionText, from, to);
+        mirror.setCursor(cur.line, token.start + sentence$index + this.completion.text.length + 1);
+        if (completionText.endsWith('(')) {
+          mirror.replaceRange(")", {line: cur.line, ch: token.start + this.completion.text.length});
+          mirror.execCommand("goCharLeft")
+        }
       }
+    } else {
+      let packageLine = -1
+      let textLines = mirror.getValue().split("\n");
+      for(let i = 0; i < textLines.length; ++i) {
+        let line = textLines[i]
+        if (/^\s*package/.test(line)) {
+          packageLine = i
+          break;
+        } else if (!/^\s*$/.test(line)) {
+          break;
+        }
+      }
+      let line = ++packageLine;
+      let importText = "import " + this.completion.import + "\n";
+      mirror.replaceRange(importText, {line: line, ch: 0})
     }
   }
 }
