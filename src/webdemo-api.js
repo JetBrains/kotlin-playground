@@ -76,7 +76,6 @@ export default class WebDemoApi {
    * @returns {*|PromiseLike<T>|Promise<T>}
    */
   static executeKotlinCode(code, compilerVersion, platform, args, theme, hiddenDependencies, onTestPassed, onTestFailed) {
-    console.log("Hello from execute kotlin code")
     return executeCode(API_URLS.COMPILE(platform, compilerVersion), code, compilerVersion, platform, args, hiddenDependencies).then(function (data) {
       let output = "";
       let errorsAndWarnings = flatten(Object.values(data.errors));

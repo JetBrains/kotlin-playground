@@ -36,7 +36,7 @@ class CompletionView {
    * @param data
    */
   hint(mirror, self, data) {
-    if (this.completion.import === "") {
+    if (this.completion.import === null) {
       let cur = mirror.getCursor();
       let token = mirror.getTokenAt(cur);
       let from = {line: cur.line, ch: token.start};

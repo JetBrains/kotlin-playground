@@ -16,7 +16,7 @@ export const API_URLS = {
     let url;
     switch (platform) {
       case TargetPlatform.JAVA:
-        url = `http://localhost:8080/api/compiler/run`;
+        url = `http://localhost:8080/api/${version}/compiler/run`;
         break;
       case TargetPlatform.CANVAS:
         url = `${this.server}/api/${version}/compiler/translate`;
