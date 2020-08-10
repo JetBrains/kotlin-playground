@@ -132,7 +132,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
       this.initializeCodeMirror(state);
       this.initialized = true;
     } else {
-      this.showDiagnostics(state.errors);
+      this.showDiagnostics(state.errors, state.imports, this.codemirror);
       if (state.folded === undefined) {
         return
       }
@@ -351,7 +351,8 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
     return newPosition
   }
 
-  showDiagnostics(diagnostics) {
+
+  showDiagnostics(diagnostics, imports, cm) {
     this.removeStyles();
     if (diagnostics === undefined) {
       return;
@@ -364,11 +365,13 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
       const errorMessage = unEscapeString(diagnostic.message);
       const severity = diagnostic.severity;
 
+      // Добавление всплывающего окошка с сообщением об ошибке + подчеркивание
       this.arrayClasses.push(this.codemirror.markText(interval.start, interval.end, {
         "className": "cm__" + diagnostic.className,
         "title": errorMessage
       }));
 
+      // Левое окошко с предупреждением
       if ((this.codemirror.lineInfo(interval.start.line) != null) &&
         (this.codemirror.lineInfo(interval.start.line).gutterMarkers == null)) {
         const gutter = document.createElement("div");
@@ -383,6 +386,35 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
         }
       }
     });
+
+    let elements = document.getElementsByClassName("cm__ERROR");
+    for (let i = 0; i < elements.length; ++i) {
+      let element = elements[i];
+      let splitErrMessage = element.title.split(": ");
+      let errName = splitErrMessage[0];
+      let name = splitErrMessage[1];
+      if (errName !== undefined
+        && name !== undefined
+        && errName === "Unresolved reference"
+        && imports[name] !== undefined) {
+        element.addEventListener("click", () => {
+          let results = imports[name];
+          let options = {
+            hint: function () {
+              return {
+                from: cm.getDoc().getCursor(),
+                to: cm.getDoc().getCursor(),
+                list: results.map(result => {
+                  return new CompletionView(result)
+                })
+              }
+            }
+          };
+          cm.showHint(options);
+        })
+      }
+    }
+
   }
 
   removeStyles() {
@@ -422,15 +454,16 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
     // don't need to create additional editor options in readonly mode.
     if (readOnly) return;
 
-    let highlightWithImports = () => {
+    let highlightWithImports = (cm) => {
       const {compilerVersion, targetPlatform, hiddenDependencies} = this.state;
       this.removeStyles();
       WebDemoApi.getHighlight(
         this.getCode(),
         compilerVersion,
         targetPlatform,
-        hiddenDependencies).then(data => {
-          this.showDiagnostics(data)
+        hiddenDependencies
+      ).then(data => {
+          this.showDiagnostics(data.err, data.imports, cm);
         }
       )
     }
@@ -525,7 +558,10 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
           this.getCode(),
           compilerVersion,
           targetPlatform,
-          hiddenDependencies).then(data => this.showDiagnostics(data))
+          hiddenDependencies).then(data => {
+            this.showDiagnostics(data.err, data.imports, cm);
+          }
+        )
       }
     }, DEBOUNCE_TIME));
 

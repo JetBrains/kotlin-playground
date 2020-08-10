@@ -101,7 +101,8 @@ export default class WebDemoApi {
       return {
         errors: errorsAndWarnings,
         output: output,
-        exception: exceptions
+        exception: exceptions,
+        imports: data.importsSuggestions
       }
     })
   }
@@ -130,14 +131,14 @@ export default class WebDemoApi {
    * Request for getting errors of current file
    *
    * @param code - string code
-   * @param compilerVersion - string kotlin compiler
+   * @param compißlerVersion - string kotlin compiler
    * @param platform - kotlin platform {@see TargetPlatform}
    * @param hiddenDependencies   - read only additional files
    * @return {*|PromiseLike<T>|Promise<T>}
    */
   static getHighlight(code, compilerVersion, platform, hiddenDependencies) {
     return executeCode(API_URLS.HIGHLIGHT(compilerVersion), code, compilerVersion, platform, "", hiddenDependencies)
-      .then(data => data[DEFAULT_FILE_NAME])
+      .then(data => {return {err: data.errors[DEFAULT_FILE_NAME], imports: data.importsSuggestions}})
   }
 }
 
