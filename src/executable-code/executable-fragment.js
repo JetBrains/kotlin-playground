@@ -18,7 +18,8 @@ const MARK_PLACEHOLDER_OPEN = "[mark]";
 const MARK_PLACEHOLDER_CLOSE = "[/mark]";
 const KEY_CODES = {
   R: 82,
-  F9: 120
+  F9: 120,
+  K2: 50
 };
 const DEBOUNCE_TIME = 500;
 
@@ -31,6 +32,7 @@ const SELECTORS = {
   MARK_PLACEHOLDER_START: "markPlaceholder-start",
   MARK_PLACEHOLDER_END: "markPlaceholder-end",
   GUTTER: "gutter",
+  ERROR: "ERROR",
   FOLD_GUTTER: "CodeMirror-foldgutter",
   ERROR_GUTTER: "ERRORgutter",
   ERROR_AND_WARNING_GUTTER: "errors-and-warnings-gutter",
@@ -132,7 +134,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
       this.initializeCodeMirror(state);
       this.initialized = true;
     } else {
-      this.showDiagnostics(state.errors, state.imports, this.codemirror);
+      this.showDiagnostics(state.errors, state.imports);
       if (state.folded === undefined) {
         return
       }
@@ -352,7 +354,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
   }
 
 
-  showDiagnostics(diagnostics, imports, cm) {
+  showDiagnostics(diagnostics, imports) {
     this.removeStyles();
     if (diagnostics === undefined) {
       return;
@@ -365,13 +367,11 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
       const errorMessage = unEscapeString(diagnostic.message);
       const severity = diagnostic.severity;
 
-      // Добавление всплывающего окошка с сообщением об ошибке + подчеркивание
       this.arrayClasses.push(this.codemirror.markText(interval.start, interval.end, {
         "className": "cm__" + diagnostic.className,
         "title": errorMessage
       }));
 
-      // Левое окошко с предупреждением
       if ((this.codemirror.lineInfo(interval.start.line) != null) &&
         (this.codemirror.lineInfo(interval.start.line).gutterMarkers == null)) {
         const gutter = document.createElement("div");
@@ -387,39 +387,13 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
       }
     });
 
-    let elements = document.getElementsByClassName("cm__ERROR");
-    for (let i = 0; i < elements.length; ++i) {
-      let element = elements[i];
-      let splitErrMessage = element.title.split(": ");
-      let errName = splitErrMessage[0];
-      let name = splitErrMessage[1];
-      if (errName !== undefined
-        && name !== undefined
-        && errName === "Unresolved reference"
-        && imports[name] !== undefined) {
-        element.addEventListener("click", () => {
-          let results = imports[name];
-          let options = {
-            hint: function () {
-              return {
-                from: cm.getDoc().getCursor(),
-                to: cm.getDoc().getCursor(),
-                list: results.map(result => {
-                  return new CompletionView(result)
-                })
-              }
-            }
-          };
-          cm.showHint(options);
-        })
-      }
-    }
-
+    this.imports = imports
   }
 
   removeStyles() {
     this.arrayClasses.forEach(it => it.clear());
     this.codemirror.clearGutter(SELECTORS.ERROR_AND_WARNING_GUTTER)
+    this.imports = null
   }
 
   initializeCodeMirror(options = {}) {
@@ -463,7 +437,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
         targetPlatform,
         hiddenDependencies
       ).then(data => {
-          this.showDiagnostics(data.err, data.imports, cm);
+          this.showDiagnostics(data.err, data.imports);
         }
       )
     }
@@ -559,7 +533,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
           compilerVersion,
           targetPlatform,
           hiddenDependencies).then(data => {
-            this.showDiagnostics(data.err, data.imports, cm);
+            this.showDiagnostics(data.err, data.imports);
           }
         )
       }
@@ -592,9 +566,33 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
         }
       }
     });
+
+    this.codemirror.on('keypress', (mirror, event) => {
+      if (event.ctrlKey && event.keyCode === KEY_CODES.K2) {
+        let cur = mirror.getCursor();
+        let token = mirror.getTokenAt(cur);
+        let name = token.string;
+        if (name !== undefined && this.imports[name] !== undefined) {
+          let results = this.imports[name];
+          let options = {
+            hint: function () {
+              return {
+                from: mirror.getDoc().getCursor(),
+                to: mirror.getDoc().getCursor(),
+                list: results.map(result => {
+                  return new CompletionView(result)
+                })
+              }
+            }
+          };
+          mirror.showHint(options);
+        }
+      }
+    })
   }
 
   destroy() {
+    this.imports = null;
     this.arrayClasses = null;
     this.initialized = false;
     this.jsExecutor = false;
