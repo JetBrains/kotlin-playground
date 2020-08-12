@@ -1,8 +1,6 @@
 /**
  * Class for drawing own autocomplection view
  */
-import {setScrollLeft} from "codemirror/src/display/scrolling";
-
 class CompletionView {
 
   constructor(completion) {
@@ -85,8 +83,12 @@ class CompletionView {
         let importText = "import " + this.completion.import + "\n";
         mirror.replaceRange(importText, {line: importLine, ch: 0})
       } else {
+        let importText = "";
+        if (packageLine !== -1) {
+          importText += "\n";
+        }
+        importText += ("import " + this.completion.import + "\n");
         let line = ++packageLine
-        let importText = "\nimport " + this.completion.import + "\n";
         let nextLine = mirror.getLine(line)
         if (!/^\s*$/.test(nextLine)) {
           importText += "\n"
