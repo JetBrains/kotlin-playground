@@ -1,6 +1,8 @@
 /**
  * Class for drawing own autocomplection view
  */
+import {setScrollLeft} from "codemirror/src/display/scrolling";
+
 class CompletionView {
 
   constructor(completion) {
@@ -36,7 +38,7 @@ class CompletionView {
    * @param data
    */
   hint(mirror, self, data) {
-    if (this.completion.import === null) {
+    if (this.completion.import === undefined) {
       let cur = mirror.getCursor();
       let token = mirror.getTokenAt(cur);
       let from = {line: cur.line, ch: token.start};
@@ -66,19 +68,31 @@ class CompletionView {
       }
     } else {
       let packageLine = -1
+      let importLine = -1
       let textLines = mirror.getValue().split("\n");
       for(let i = 0; i < textLines.length; ++i) {
         let line = textLines[i]
         if (/^\s*package/.test(line)) {
           packageLine = i
+        } else if (/^\s*import/.test(line)) {
+          importLine = i
           break;
         } else if (!/^\s*$/.test(line)) {
           break;
         }
       }
-      let line = ++packageLine;
-      let importText = "import " + this.completion.import + "\n";
-      mirror.replaceRange(importText, {line: line, ch: 0})
+      if (importLine !== -1) {
+        let importText = "import " + this.completion.import + "\n";
+        mirror.replaceRange(importText, {line: importLine, ch: 0})
+      } else {
+        let line = ++packageLine
+        let importText = "\nimport " + this.completion.import + "\n";
+        let nextLine = mirror.getLine(line)
+        if (!/^\s*$/.test(nextLine)) {
+          importText += "\n"
+        }
+        mirror.replaceRange(importText, {line: line, ch: 0})
+      }
     }
   }
 }
