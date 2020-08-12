@@ -102,7 +102,7 @@ export default class WebDemoApi {
         errors: errorsAndWarnings,
         output: output,
         exception: exceptions,
-        imports: data.importsSuggestions
+        importsSuggestions: data.importsSuggestions
       }
     })
   }
@@ -138,7 +138,7 @@ export default class WebDemoApi {
    */
   static getHighlight(code, compilerVersion, platform, hiddenDependencies) {
     return executeCode(API_URLS.HIGHLIGHT(compilerVersion), code, compilerVersion, platform, "", hiddenDependencies)
-      .then(data => {return {err: data.errors[DEFAULT_FILE_NAME], imports: data.importsSuggestions}})
+      .then(data => {return {err: data.errors[DEFAULT_FILE_NAME], importsSuggestions: data.importsSuggestions}})
   }
 }
 

@@ -134,7 +134,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
       this.initializeCodeMirror(state);
       this.initialized = true;
     } else {
-      this.showDiagnostics(state.errors, state.imports);
+      this.showDiagnostics(state.errors, state.importsSuggestions);
       if (state.folded === undefined) {
         return
       }
@@ -354,7 +354,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
   }
 
 
-  showDiagnostics(diagnostics, imports) {
+  showDiagnostics(diagnostics, importsSuggestions) {
     this.removeStyles();
     if (diagnostics === undefined) {
       return;
@@ -387,13 +387,20 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
       }
     });
 
-    this.imports = imports
+    for (let key in importsSuggestions){
+      importsSuggestions[key].intervals.map( interval => {
+          interval.start = this.recalculatePosition(interval.start);
+          interval.end = this.recalculatePosition(interval.end);
+        }
+      )
+    }
+    this.importsSuggestions = importsSuggestions;
   }
 
   removeStyles() {
     this.arrayClasses.forEach(it => it.clear());
     this.codemirror.clearGutter(SELECTORS.ERROR_AND_WARNING_GUTTER)
-    this.imports = null
+    this.importsSuggestions = null
   }
 
   initializeCodeMirror(options = {}) {
@@ -428,7 +435,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
     // don't need to create additional editor options in readonly mode.
     if (readOnly) return;
 
-    let highlightWithImports = (cm) => {
+    let highlightWithImports = () => {
       const {compilerVersion, targetPlatform, hiddenDependencies} = this.state;
       this.removeStyles();
       WebDemoApi.getHighlight(
@@ -437,7 +444,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
         targetPlatform,
         hiddenDependencies
       ).then(data => {
-          this.showDiagnostics(data.err, data.imports);
+          this.showDiagnostics(data.err, data.importsSuggestions);
         }
       )
     }
@@ -533,7 +540,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
           compilerVersion,
           targetPlatform,
           hiddenDependencies).then(data => {
-            this.showDiagnostics(data.err, data.imports);
+            this.showDiagnostics(data.err, data.importsSuggestions);
           }
         )
       }
@@ -572,27 +579,35 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
         let cur = mirror.getCursor();
         let token = mirror.getTokenAt(cur);
         let name = token.string;
-        if (name !== undefined && this.imports[name] !== undefined) {
-          let results = this.imports[name];
-          let options = {
-            hint: function () {
-              return {
-                from: mirror.getDoc().getCursor(),
-                to: mirror.getDoc().getCursor(),
-                list: results.map(result => {
-                  return new CompletionView(result)
-                })
+        let interval = {
+          start: {line: cur.line, ch: token.start},
+          end: {line: cur.line, ch: token.end}
+        };
+        if (name !== undefined && this.importsSuggestions[name] !== undefined) {
+          let importsSuggestions = this.importsSuggestions[name];
+          let intervals = importsSuggestions.intervals;
+          if (intervals.some(inter => JSON.stringify(inter) === JSON.stringify(interval))) {
+            let results = importsSuggestions.imports;
+            let options = {
+              hint: function () {
+                return {
+                  from: mirror.getDoc().getCursor(),
+                  to: mirror.getDoc().getCursor(),
+                  list: results.map(result => {
+                    return new CompletionView(result)
+                  })
+                }
               }
-            }
-          };
-          mirror.showHint(options);
+            };
+            mirror.showHint(options);
+          }
         }
       }
     })
   }
 
   destroy() {
-    this.imports = null;
+    this.importsSuggestions = null;
     this.arrayClasses = null;
     this.initialized = false;
     this.jsExecutor = false;
