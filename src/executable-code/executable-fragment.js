@@ -356,9 +356,21 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
 
   showDiagnostics(diagnostics, importsSuggestions) {
     this.removeStyles();
+
+    // recalculate unresolved references positions
+    for (let key in importsSuggestions){
+      importsSuggestions[key].intervals.map( interval => {
+          interval.start = this.recalculatePosition(interval.start);
+          interval.end = this.recalculatePosition(interval.end);
+        }
+      )
+    }
+    this.importsSuggestions = importsSuggestions;
+
     if (diagnostics === undefined) {
       return;
     }
+
     diagnostics.forEach(diagnostic => {
       const interval = diagnostic.interval;
       interval.start = this.recalculatePosition(interval.start);
@@ -371,6 +383,21 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
         "className": "cm__" + diagnostic.className,
         "title": errorMessage
       }));
+
+      // contains suggestions => red wavy line
+      let errorInfo = errorMessage.split(": ")
+      let errorCause = errorInfo[0]
+      let errorText = errorInfo[1]
+      if (errorCause !== undefined &&
+          errorCause === "Unresolved reference" &&
+          errorText !== undefined &&
+          this.containsInImportsSuggestions(errorText, interval)
+      ) {
+        this.arrayClasses.push(this.codemirror.markText(interval.start, interval.end, {
+          "className": "cm__IMPORT",
+          "title": (`${errorMessage}\nimports: ctrl + 2`)
+        }));
+      }
 
       if ((this.codemirror.lineInfo(interval.start.line) != null) &&
         (this.codemirror.lineInfo(interval.start.line).gutterMarkers == null)) {
@@ -386,15 +413,18 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
         }
       }
     });
+  }
 
-    for (let key in importsSuggestions){
-      importsSuggestions[key].intervals.map( interval => {
-          interval.start = this.recalculatePosition(interval.start);
-          interval.end = this.recalculatePosition(interval.end);
-        }
-      )
+  containsInImportsSuggestions(name, interval) {
+    if (this.importsSuggestions === undefined) return false;
+    if (name !== undefined && this.importsSuggestions[name] !== undefined) {
+      let importsSuggestions = this.importsSuggestions[name];
+      let intervals = importsSuggestions.intervals;
+      if (intervals.some(inter => JSON.stringify(inter) === JSON.stringify(interval))) {
+        return true;
+      }
     }
-    this.importsSuggestions = importsSuggestions;
+    return false;
   }
 
   removeStyles() {
@@ -575,6 +605,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
     });
 
     this.codemirror.on('keypress', (mirror, event) => {
+      if (this.importsSuggestions === null) return;
       if (event.ctrlKey && event.keyCode === KEY_CODES.K2) {
         let cur = mirror.getCursor();
         let token = mirror.getTokenAt(cur);
@@ -583,24 +614,20 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
           start: {line: cur.line, ch: token.start},
           end: {line: cur.line, ch: token.end}
         };
-        if (name !== undefined && this.importsSuggestions[name] !== undefined) {
-          let importsSuggestions = this.importsSuggestions[name];
-          let intervals = importsSuggestions.intervals;
-          if (intervals.some(inter => JSON.stringify(inter) === JSON.stringify(interval))) {
-            let results = importsSuggestions.imports;
-            let options = {
-              hint: function () {
-                return {
-                  from: mirror.getDoc().getCursor(),
-                  to: mirror.getDoc().getCursor(),
-                  list: results.map(result => {
-                    return new CompletionView(result)
-                  })
-                }
+        if (this.containsInImportsSuggestions(name, interval)) {
+          let results = this.importsSuggestions[name].imports;
+          let options = {
+            hint: function () {
+              return {
+                from: mirror.getDoc().getCursor(),
+                to: mirror.getDoc().getCursor(),
+                list: results.map(result => {
+                  return new CompletionView(result)
+                })
               }
-            };
-            mirror.showHint(options);
-          }
+            }
+          };
+          mirror.showHint(options);
         }
       }
     })

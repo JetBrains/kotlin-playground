@@ -182,6 +182,11 @@ $wt-color-azure: #167dff;
   color: $wt-color-tomato !important;
 }
 
+.cm__IMPORT {
+  background: url("https://try.kotlinlang.org/static/images/wavyline-red.gif") repeat-x 100% 100%;
+  padding-bottom: 2px;
+}
+
 .errors-and-warnings-gutter {
   width: 16px;
 }
