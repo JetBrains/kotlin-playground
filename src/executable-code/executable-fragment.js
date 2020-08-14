@@ -384,7 +384,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
         "title": errorMessage
       }));
 
-      // contains suggestions => red wavy line
+      // contains suggestions => red underline
       let errorInfo = errorMessage.split(": ")
       let errorCause = errorInfo[0]
       let errorText = errorInfo[1]
@@ -394,8 +394,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
           this.containsInImportsSuggestions(errorText, interval)
       ) {
         this.arrayClasses.push(this.codemirror.markText(interval.start, interval.end, {
-          "className": "cm__IMPORT",
-          "title": (`${errorMessage}\nimports: ctrl + 2`)
+          "className": "cm__IMPORT"
         }));
       }
 
@@ -415,17 +414,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
     });
   }
 
-  containsInImportsSuggestions(name, interval) {
-    if (this.importsSuggestions === undefined) return false;
-    if (name !== undefined && this.importsSuggestions[name] !== undefined) {
-      let importsSuggestions = this.importsSuggestions[name];
-      let intervals = importsSuggestions.intervals;
-      if (intervals.some(inter => JSON.stringify(inter) === JSON.stringify(interval))) {
-        return true;
-      }
-    }
-    return false;
-  }
+
 
   removeStyles() {
     this.arrayClasses.forEach(it => it.clear());
@@ -605,8 +594,8 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
     });
 
     this.codemirror.on('keypress', (mirror, event) => {
-      if (this.importsSuggestions === null) return;
       if (event.ctrlKey && event.keyCode === KEY_CODES.K2) {
+        if (this.importsSuggestions === null) return;
         let cur = mirror.getCursor();
         let token = mirror.getTokenAt(cur);
         let name = token.string;
@@ -631,6 +620,18 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
         }
       }
     })
+  }
+
+  containsInImportsSuggestions(name, interval) {
+    if (this.importsSuggestions === undefined) return false;
+    if (name !== undefined && this.importsSuggestions[name] !== undefined) {
+      let importsSuggestions = this.importsSuggestions[name];
+      let intervals = importsSuggestions.intervals;
+      if (intervals.some(inter => JSON.stringify(inter) === JSON.stringify(interval))) {
+        return true;
+      }
+    }
+    return false;
   }
 
   destroy() {
