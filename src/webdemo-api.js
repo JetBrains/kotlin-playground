@@ -131,7 +131,7 @@ export default class WebDemoApi {
    * Request for getting errors of current file
    *
    * @param code - string code
-   * @param compißlerVersion - string kotlin compiler
+   * @param compilerVersion - string kotlin compiler
    * @param platform - kotlin platform {@see TargetPlatform}
    * @param hiddenDependencies   - read only additional files
    * @return {*|PromiseLike<T>|Promise<T>}
