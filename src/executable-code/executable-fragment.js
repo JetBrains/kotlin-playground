@@ -454,6 +454,9 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
     // don't need to create additional editor options in readonly mode.
     if (readOnly) return;
 
+    /**
+     * Show highlight for extraKey Ctrl + 3
+     */
     let highlightWithImports = () => {
       const {compilerVersion, targetPlatform, hiddenDependencies} = this.state;
       this.removeStyles();
@@ -593,7 +596,10 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
       }
     });
 
-    this.codemirror.on('keypress', (mirror, event) => {
+    /**
+     * Show import suggestions on Ctrl + 2
+     */
+    this.codemirror.on('keypress', debounce((mirror, event) => {
       if (event.ctrlKey && event.keyCode === KEY_CODES.K2) {
         if (this.importsSuggestions === null) return;
         let cur = mirror.getCursor();
@@ -619,9 +625,12 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
           mirror.showHint(options);
         }
       }
-    })
+    }), DEBOUNCE_TIME)
   }
 
+  /**
+   * Check that word(name, interval) contains in import suggestions
+   */
   containsInImportsSuggestions(name, interval) {
     if (this.importsSuggestions === undefined) return false;
     if (name !== undefined && this.importsSuggestions[name] !== undefined) {
