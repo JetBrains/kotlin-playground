@@ -134,7 +134,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
       this.initializeCodeMirror(state);
       this.initialized = true;
     } else {
-      this.showDiagnostics(state.errors, state.importsSuggestions);
+      this.showDiagnostics(state.errors);
       if (state.folded === undefined) {
         return
       }
@@ -354,18 +354,8 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
   }
 
 
-  showDiagnostics(diagnostics, importsSuggestions) {
+  showDiagnostics(diagnostics) {
     this.removeStyles();
-
-    // recalculate unresolved references positions
-    for (let key in importsSuggestions){
-      importsSuggestions[key].intervals.map( interval => {
-          interval.start = this.recalculatePosition(interval.start);
-          interval.end = this.recalculatePosition(interval.end);
-        }
-      )
-    }
-    this.importsSuggestions = importsSuggestions;
 
     if (diagnostics === undefined) {
       return;
@@ -378,6 +368,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
 
       const errorMessage = unEscapeString(diagnostic.message);
       const severity = diagnostic.severity;
+      const containsSuggestions = diagnostic.imports !== undefined;
 
       this.arrayClasses.push(this.codemirror.markText(interval.start, interval.end, {
         "className": "cm__" + diagnostic.className,
@@ -385,14 +376,8 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
       }));
 
       // contains suggestions => red underline
-      let errorInfo = errorMessage.split(": ")
-      let errorCause = errorInfo[0]
-      let errorText = errorInfo[1]
-      if (errorCause !== undefined &&
-          errorCause === "Unresolved reference" &&
-          errorText !== undefined &&
-          this.containsInImportsSuggestions(errorText, interval)
-      ) {
+      if (containsSuggestions) {
+        this.importsSuggestions.push({interval: interval, imports: diagnostic.imports})
         this.arrayClasses.push(this.codemirror.markText(interval.start, interval.end, {
           "className": "cm__IMPORT"
         }));
@@ -414,12 +399,10 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
     });
   }
 
-
-
   removeStyles() {
     this.arrayClasses.forEach(it => it.clear());
     this.codemirror.clearGutter(SELECTORS.ERROR_AND_WARNING_GUTTER)
-    this.importsSuggestions = null
+    this.importsSuggestions = []
   }
 
   initializeCodeMirror(options = {}) {
@@ -465,10 +448,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
         compilerVersion,
         targetPlatform,
         hiddenDependencies
-      ).then(data => {
-          this.showDiagnostics(data.err, data.importsSuggestions);
-        }
-      )
+      ).then(data => this.showDiagnostics(data))
     }
 
     /**
@@ -561,10 +541,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
           this.getCode(),
           compilerVersion,
           targetPlatform,
-          hiddenDependencies).then(data => {
-            this.showDiagnostics(data.err, data.importsSuggestions);
-          }
-        )
+          hiddenDependencies).then(data => this.showDiagnostics(data))
       }
     }, DEBOUNCE_TIME));
 
@@ -601,16 +578,20 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
      */
     this.codemirror.on('keypress', debounce((mirror, event) => {
       if (event.ctrlKey && event.keyCode === KEY_CODES.K2) {
-        if (this.importsSuggestions === null) return;
+        if (this.importsSuggestions.length === 0) return;
+        console.log(this.importsSuggestions)
         let cur = mirror.getCursor();
         let token = mirror.getTokenAt(cur);
-        let name = token.string;
         let interval = {
           start: {line: cur.line, ch: token.start},
           end: {line: cur.line, ch: token.end}
         };
-        if (this.containsInImportsSuggestions(name, interval)) {
-          let results = this.importsSuggestions[name].imports;
+        let results = this.importsSuggestions
+          .filter( it => JSON.stringify(it.interval) === JSON.stringify(interval) )
+          .map ( it => it.imports )
+          .flat()
+        console.log(results)
+        if (results.length !== 0) {
           let options = {
             hint: function () {
               return {
@@ -628,23 +609,8 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
     }), DEBOUNCE_TIME)
   }
 
-  /**
-   * Check that word(name, interval) contains in import suggestions
-   */
-  containsInImportsSuggestions(name, interval) {
-    if (this.importsSuggestions === undefined) return false;
-    if (name !== undefined && this.importsSuggestions[name] !== undefined) {
-      let importsSuggestions = this.importsSuggestions[name];
-      let intervals = importsSuggestions.intervals;
-      if (intervals.some(inter => JSON.stringify(inter) === JSON.stringify(interval))) {
-        return true;
-      }
-    }
-    return false;
-  }
-
   destroy() {
-    this.importsSuggestions = null;
+    this.importsSuggestions = [];
     this.arrayClasses = null;
     this.initialized = false;
     this.jsExecutor = false;
