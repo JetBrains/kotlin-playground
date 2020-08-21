@@ -36,7 +36,7 @@ class CompletionView {
    * @param data
    */
   hint(mirror, self, data) {
-    if (this.completion.import === undefined || this.completion.hasOtherImports !== undefined) {
+    if (!this.completion.import || this.completion.hasOtherImports) {
       this.completeText(mirror)
     } else {
       this.addImport(mirror)
