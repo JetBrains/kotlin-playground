@@ -353,14 +353,11 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
     return newPosition
   }
 
-
   showDiagnostics(diagnostics) {
     this.removeStyles();
-
     if (diagnostics === undefined) {
       return;
     }
-
     diagnostics.forEach(diagnostic => {
       const interval = diagnostic.interval;
       interval.start = this.recalculatePosition(interval.start);
