@@ -511,8 +511,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
         "Ctrl-/": "toggleComment",
         "Cmd-[": false,
         "Cmd-]": false,
-        // "Ctrl-Space": "autocomplete"
-        "Ctrl-1": "autocomplete",
+        "Ctrl-Space": "autocomplete",
         "Ctrl-3": highlightWithImports
       })
     } else {

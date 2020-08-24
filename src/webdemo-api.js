@@ -125,7 +125,6 @@ export default class WebDemoApi {
       })
   }
 
-
   /**
    * Request for getting errors of current file
    *
