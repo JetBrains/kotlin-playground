@@ -68,7 +68,7 @@ class CompletionView {
       mirror.setCursor(cur.line, token.start + sentence$index + this.completion.text.length + 1);
       if (completionText.endsWith('(')) {
         mirror.replaceRange(")", {line: cur.line, ch: token.start + this.completion.text.length});
-        mirror.execCommand("goCharLeft");
+        mirror.execCommand("goCharLeft")
       }
     }
   }
