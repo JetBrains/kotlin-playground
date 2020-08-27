@@ -489,6 +489,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
         this.state.hiddenDependencies,
         processingCompletionsList
       );
+      let withImports = this.canAddImport;
 
       function processingCompletionsList(results) {
         const anchorCharPosition = mirror.findWordAt({line: cur.line, ch: cur.ch}).anchor.ch;
@@ -497,7 +498,6 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
           line: cur.line,
           ch: headCharPosition
         });
-        let withImports = this.canAddImport;
         if (results.length === 0 && /^[a-zA-Z]+$/.test(currentSymbol)) {
           CodeMirror.showHint(mirror, CodeMirror.hint.default, {completeSingle: false});
         } else {
