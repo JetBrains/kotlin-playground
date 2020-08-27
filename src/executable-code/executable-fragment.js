@@ -109,8 +109,12 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
 
       if (hasMarkers) {
         this.prefix = code.substring(0, startIndex);
+        this.canAddImport = this.prefixEmptyOrContainsOnlyImports();
+        console.log(this.canAddImport)
         this.suffix = code.substring(endIndex + SAMPLE_END.length);
         sample = code.substring(startIndex + SAMPLE_START.length + 1, endIndex - 1);
+      } else {
+        this.canAddImport = true
       }
 
       if (this.suffix.endsWith('\n')) {
@@ -332,6 +336,21 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
     }
   }
 
+  prefixEmptyOrContainsOnlyImports() {
+    console.log(this.prefix)
+    if (!this.prefix) return true
+    let prefix = this.prefix
+    let textLines = prefix.split("\n");
+    for(let i = textLines.length - 1; i >= 0; --i) {
+      let line = textLines[i]
+      console.log(line)
+      if (!/^\s*package/.test(line) && !/^\s*import/.test(line) && !/^\s*$/.test(line)) {
+        return false
+      }
+    }
+    return true
+  }
+
   recalculatePosition(position) {
     const newPosition = {
       line: position.line,
@@ -481,11 +500,15 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
           line: cur.line,
           ch: headCharPosition
         });
+        let withImports = this.canAddImport;
         if (results.length === 0 && /^[a-zA-Z]+$/.test(currentSymbol)) {
           CodeMirror.showHint(mirror, CodeMirror.hint.default, {completeSingle: false});
         } else {
           callback({
             list: results.map(result => {
+              if (!withImports) {
+                result.import = undefined
+              }
               return new CompletionView(result)
             }),
             from: {line: cur.line, ch: token.start},
@@ -575,7 +598,6 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
     this.codemirror.on('keypress', debounce((mirror, event) => {
       if (event.ctrlKey && event.keyCode === KEY_CODES.K2) {
         if (this.importsSuggestions.length === 0) return;
-        console.log(this.importsSuggestions)
         let cur = mirror.getCursor();
         let token = mirror.getTokenAt(cur);
         let interval = {
@@ -586,7 +608,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
           .filter( it => JSON.stringify(it.interval) === JSON.stringify(interval) )
           .map ( it => it.imports )
           .flat()
-        console.log(results)
+        let withImports = this.canAddImport;
         if (results.length !== 0) {
           let options = {
             hint: function () {
@@ -594,6 +616,9 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
                 from: mirror.getDoc().getCursor(),
                 to: mirror.getDoc().getCursor(),
                 list: results.map(result => {
+                  if (!withImports) {
+                    result.import = undefined
+                  }
                   return new CompletionView(result)
                 })
               }
@@ -606,6 +631,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
   }
 
   destroy() {
+    this.canAddImport = false;
     this.importsSuggestions = [];
     this.arrayClasses = null;
     this.initialized = false;
