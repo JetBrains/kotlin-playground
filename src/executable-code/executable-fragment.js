@@ -19,7 +19,7 @@ const MARK_PLACEHOLDER_CLOSE = "[/mark]";
 const KEY_CODES = {
   R: 82,
   F9: 120,
-  K2: 50
+  ENTER: 13
 };
 const DEBOUNCE_TIME = 500;
 
@@ -590,10 +590,10 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
     });
 
     /**
-     * Show import suggestions on Ctrl + 2
+     * Show import suggestions on Alt + Enter
      */
     this.codemirror.on('keypress', debounce((mirror, event) => {
-      if (event.ctrlKey && event.keyCode === KEY_CODES.K2) {
+      if (event.altKey && event.keyCode === KEY_CODES.ENTER) {
         if (this.importsSuggestions.length === 0) return;
         let cur = mirror.getCursor();
         let token = mirror.getTokenAt(cur);
