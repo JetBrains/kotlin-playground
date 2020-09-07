@@ -529,7 +529,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
         "Cmd-[": false,
         "Cmd-]": false,
         "Ctrl-Space": "autocomplete",
-        "Ctrl-3": highlightWithImports
+        "Cmd-Alt-H": highlightWithImports
       })
     } else {
       this.codemirror.setOption("extraKeys", {
@@ -539,7 +539,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
         "Ctrl-[": false,
         "Ctrl-]": false,
         "Ctrl-Space": "autocomplete",
-        "Ctrl-3": highlightWithImports
+        "Ctrl-Alt-H": highlightWithImports
       })
     }
 
