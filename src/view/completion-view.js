@@ -36,7 +36,7 @@ class CompletionView {
    * @param data
    */
   hint(mirror, self, data) {
-    if (!this.completion.import || this.completion.hasOtherImports) {
+    if (!this.completion['import'] || this.completion.hasOtherImports) {
       this.completeText(mirror)
     } else {
       this.addImport(mirror)
@@ -89,14 +89,14 @@ class CompletionView {
       }
     }
     if (importLine !== -1) {
-      let importText = "import " + this.completion.import + "\n";
+      let importText = "import " + this.completion['import'] + "\n";
       mirror.replaceRange(importText, {line: importLine, ch: 0})
     } else {
       let importText = "";
       if (packageLine !== -1) {
         importText += "\n";
       }
-      importText += ("import " + this.completion.import + "\n");
+      importText += ("import " + this.completion['import'] + "\n");
       let line = ++packageLine
       let nextLine = mirror.getLine(line)
       if (!/^\s*$/.test(nextLine)) {

@@ -498,7 +498,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
           callback({
             list: results.map(result => {
               if (!withImports) {
-                result.import = undefined
+                result['import'] = null
               }
               return new CompletionView(result)
             }),
@@ -608,7 +608,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
                 to: mirror.getDoc().getCursor(),
                 list: results.map(result => {
                   if (!withImports) {
-                    result.import = undefined
+                    result['import'] = null
                   }
                   return new CompletionView(result)
                 })
