@@ -375,7 +375,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
 
       const errorMessage = unEscapeString(diagnostic.message);
       const severity = diagnostic.severity;
-      const containsSuggestions = diagnostic.imports !== undefined;
+      const containsSuggestions = !!diagnostic.imports;
 
       this.arrayClasses.push(this.codemirror.markText(interval.start, interval.end, {
         "className": "cm__" + diagnostic.className,
