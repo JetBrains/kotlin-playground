@@ -1,5 +1,6 @@
 import merge from 'deepmerge';
 import CodeMirror from 'codemirror';
+import equal from 'fast-deep-equal';
 import Monkberry from 'monkberry';
 import directives from 'monkberry-directives';
 import 'monkberry-events';
@@ -595,7 +596,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
           end: {line: cur.line, ch: token.end}
         };
         let results = this.importsSuggestions
-          .filter( it => JSON.stringify(it.interval) === JSON.stringify(interval) )
+          .filter( it => equal(it.interval, interval) )
           .map ( it => it.imports )
           .flat()
         let withImports = this.canAddImport;
