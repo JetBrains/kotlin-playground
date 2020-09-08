@@ -103,13 +103,11 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
       const endIndex = code.indexOf(SAMPLE_END);
       hasMarkers = !state.noneMarkers && (startIndex > -1 && endIndex > -1);
 
-      if (!hasMarkers) {
-        this.canAddImport = true;
-      }
-
       this.prefix = '';
       this.suffix = '';
       sample = code;
+
+      this.canAddImport = true;
 
       if (hasMarkers) {
         this.prefix = code.substring(0, startIndex);
@@ -338,16 +336,9 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
   }
 
   prefixEmptyOrContainsOnlyImports() {
-    if (!this.prefix) return true
-    let prefix = this.prefix
-    let textLines = prefix.split("\n");
-    for(let i = textLines.length - 1; i >= 0; --i) {
-      let line = textLines[i]
-      if (!/^\s*(package |import |$)/.test(line)) {
-        return false
-      }
-    }
-    return true
+    return this.prefix.split("\n").every(line =>
+      (/^\s*(package |import |$)/.test(line))
+    )
   }
 
   recalculatePosition(position) {
