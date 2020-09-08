@@ -103,6 +103,10 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
       const endIndex = code.indexOf(SAMPLE_END);
       hasMarkers = !state.noneMarkers && (startIndex > -1 && endIndex > -1);
 
+      if (!hasMarkers) {
+        this.canAddImport = true;
+      }
+
       this.prefix = '';
       this.suffix = '';
       sample = code;
@@ -112,8 +116,6 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
         this.canAddImport = this.prefixEmptyOrContainsOnlyImports();
         this.suffix = code.substring(endIndex + SAMPLE_END.length);
         sample = code.substring(startIndex + SAMPLE_START.length + 1, endIndex - 1);
-      } else {
-        this.canAddImport = true
       }
 
       if (this.suffix.endsWith('\n')) {
@@ -341,7 +343,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
     let textLines = prefix.split("\n");
     for(let i = textLines.length - 1; i >= 0; --i) {
       let line = textLines[i]
-      if (!/^\s*package/.test(line) && !/^\s*import/.test(line) && !/^\s*$/.test(line)) {
+      if (!/^\s*(package |import |$)/.test(line)) {
         return false
       }
     }
