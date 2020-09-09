@@ -446,7 +446,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
     if (readOnly) return;
 
     /**
-     * Show highlight for extraKey Ctrl + 3
+     * Show highlight for extraKey Ctrl+Alt+H/Cmd+Option+H 
      */
     let highlight = () => {
       const {compilerVersion, targetPlatform, hiddenDependencies} = this.state;
