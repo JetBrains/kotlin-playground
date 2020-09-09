@@ -422,7 +422,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
     // don't need to create additional editor options in readonly mode.
     if (readOnly) return;
 
-    let highlightWithImports = () => {
+    let highlight = () => {
       const {compilerVersion, targetPlatform, hiddenDependencies} = this.state;
       this.removeStyles();
       WebDemoApi.getHighlight(
@@ -496,7 +496,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
         "Cmd-[": false,
         "Cmd-]": false,
         "Ctrl-Space": "autocomplete",
-        "Ctrl-3": highlightWithImports
+        "Ctrl-3": highlight
       })
     } else {
       this.codemirror.setOption("extraKeys", {
@@ -506,7 +506,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
         "Ctrl-[": false,
         "Ctrl-]": false,
         "Ctrl-Space": "autocomplete",
-        "Ctrl-3": highlightWithImports
+        "Ctrl-3": highlight
       })
     }
 
