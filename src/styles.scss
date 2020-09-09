@@ -182,6 +182,11 @@ $wt-color-azure: #167dff;
   color: $wt-color-tomato !important;
 }
 
+.cm__IMPORT {
+  text-decoration: underline;
+  padding-bottom: 2px;
+}
+
 .errors-and-warnings-gutter {
   width: 16px;
 }

@@ -1,5 +1,6 @@
 import merge from 'deepmerge';
 import CodeMirror from 'codemirror';
+import equal from 'fast-deep-equal';
 import Monkberry from 'monkberry';
 import directives from 'monkberry-directives';
 import 'monkberry-events';
@@ -16,9 +17,11 @@ const SAMPLE_START = '//sampleStart';
 const SAMPLE_END = '//sampleEnd';
 const MARK_PLACEHOLDER_OPEN = "[mark]";
 const MARK_PLACEHOLDER_CLOSE = "[/mark]";
+const IMPORT_NAME = 'import';
 const KEY_CODES = {
   R: 82,
-  F9: 120
+  F9: 120,
+  ENTER: 13
 };
 const DEBOUNCE_TIME = 500;
 
@@ -31,6 +34,7 @@ const SELECTORS = {
   MARK_PLACEHOLDER_START: "markPlaceholder-start",
   MARK_PLACEHOLDER_END: "markPlaceholder-end",
   GUTTER: "gutter",
+  ERROR: "ERROR",
   FOLD_GUTTER: "CodeMirror-foldgutter",
   ERROR_GUTTER: "ERRORgutter",
   ERROR_AND_WARNING_GUTTER: "errors-and-warnings-gutter",
@@ -105,8 +109,11 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
       this.suffix = '';
       sample = code;
 
+      this.canAddImport = true;
+
       if (hasMarkers) {
         this.prefix = code.substring(0, startIndex);
+        this.canAddImport = this.prefixEmptyOrContainsOnlyImports();
         this.suffix = code.substring(endIndex + SAMPLE_END.length);
         sample = code.substring(startIndex + SAMPLE_START.length + 1, endIndex - 1);
       }
@@ -330,6 +337,12 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
     }
   }
 
+  prefixEmptyOrContainsOnlyImports() {
+    return this.prefix.split("\n").every(line =>
+      (/^\s*(package |import |$)/.test(line))
+    )
+  }
+
   recalculatePosition(position) {
     const newPosition = {
       line: position.line,
@@ -363,11 +376,20 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
 
       const errorMessage = unEscapeString(diagnostic.message);
       const severity = diagnostic.severity;
+      const containsSuggestions = !!diagnostic.imports;
 
       this.arrayClasses.push(this.codemirror.markText(interval.start, interval.end, {
         "className": "cm__" + diagnostic.className,
         "title": errorMessage
       }));
+
+      // contains suggestions => red underline
+      if (containsSuggestions) {
+        this.importsSuggestions.push({interval: interval, imports: diagnostic.imports})
+        this.arrayClasses.push(this.codemirror.markText(interval.start, interval.end, {
+          "className": "cm__IMPORT"
+        }));
+      }
 
       if ((this.codemirror.lineInfo(interval.start.line) != null) &&
         (this.codemirror.lineInfo(interval.start.line).gutterMarkers == null)) {
@@ -388,6 +410,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
   removeStyles() {
     this.arrayClasses.forEach(it => it.clear());
     this.codemirror.clearGutter(SELECTORS.ERROR_AND_WARNING_GUTTER)
+    this.importsSuggestions = []
   }
 
   initializeCodeMirror(options = {}) {
@@ -422,6 +445,9 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
     // don't need to create additional editor options in readonly mode.
     if (readOnly) return;
 
+    /**
+     * Show highlight for extraKey Ctrl+Alt+H/Cmd+Option+H 
+     */
     let highlight = () => {
       const {compilerVersion, targetPlatform, hiddenDependencies} = this.state;
       this.removeStyles();
@@ -429,10 +455,8 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
         this.getCode(),
         compilerVersion,
         targetPlatform,
-        hiddenDependencies).then(data => {
-          this.showDiagnostics(data)
-        }
-      )
+        hiddenDependencies
+      ).then(data => this.showDiagnostics(data))
     }
 
     /**
@@ -460,6 +484,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
         this.state.hiddenDependencies,
         processingCompletionsList
       );
+      let withImports = this.canAddImport;
 
       function processingCompletionsList(results) {
         const anchorCharPosition = mirror.findWordAt({line: cur.line, ch: cur.ch}).anchor.ch;
@@ -473,6 +498,9 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
         } else {
           callback({
             list: results.map(result => {
+              if (!withImports) {
+                result[IMPORT_NAME] = null
+              }
               return new CompletionView(result)
             }),
             from: {line: cur.line, ch: token.start},
@@ -496,8 +524,8 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
         "Cmd-[": false,
         "Cmd-]": false,
         "Ctrl-Space": "autocomplete",
-        "Ctrl-3": highlight
-      })
+        "Cmd-Alt-H": highlight
+      });
     } else {
       this.codemirror.setOption("extraKeys", {
         "Ctrl-Alt-L": "indentAuto",
@@ -506,8 +534,8 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
         "Ctrl-[": false,
         "Ctrl-]": false,
         "Ctrl-Space": "autocomplete",
-        "Ctrl-3": highlight
-      })
+        "Ctrl-Alt-H": highlight
+      });
     }
 
     /**
@@ -555,9 +583,48 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
         }
       }
     });
+
+    /**
+     * Show import suggestions on Alt + Enter
+     */
+    this.codemirror.on('keypress', debounce((mirror, event) => {
+      if (event.altKey && event.keyCode === KEY_CODES.ENTER) {
+        if (this.importsSuggestions.length === 0) return;
+        let cur = mirror.getCursor();
+        let token = mirror.getTokenAt(cur);
+        let interval = {
+          start: {line: cur.line, ch: token.start},
+          end: {line: cur.line, ch: token.end}
+        };
+        let results = this.importsSuggestions
+          .filter( it => equal(it.interval, interval) )
+          .map ( it => it.imports )
+          .flat()
+        let withImports = this.canAddImport;
+        if (results.length !== 0) {
+          let options = {
+            hint: function () {
+              return {
+                from: mirror.getDoc().getCursor(),
+                to: mirror.getDoc().getCursor(),
+                list: results.map(result => {
+                  if (!withImports) {
+                    result[IMPORT_NAME] = null
+                  }
+                  return new CompletionView(result)
+                })
+              }
+            }
+          };
+          mirror.showHint(options);
+        }
+      }
+    }), DEBOUNCE_TIME)
   }
 
   destroy() {
+    this.canAddImport = false;
+    this.importsSuggestions = [];
     this.arrayClasses = null;
     this.initialized = false;
     this.jsExecutor = false;
