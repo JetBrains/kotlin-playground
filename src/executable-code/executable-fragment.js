@@ -17,6 +17,7 @@ const SAMPLE_START = '//sampleStart';
 const SAMPLE_END = '//sampleEnd';
 const MARK_PLACEHOLDER_OPEN = "[mark]";
 const MARK_PLACEHOLDER_CLOSE = "[/mark]";
+const IMPORT_NAME = 'import';
 const KEY_CODES = {
   R: 82,
   F9: 120,
@@ -447,7 +448,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
     /**
      * Show highlight for extraKey Ctrl + 3
      */
-    let highlightWithImports = () => {
+    let highlight = () => {
       const {compilerVersion, targetPlatform, hiddenDependencies} = this.state;
       this.removeStyles();
       WebDemoApi.getHighlight(
@@ -498,7 +499,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
           callback({
             list: results.map(result => {
               if (!withImports) {
-                result['import'] = null
+                result[IMPORT_NAME] = null
               }
               return new CompletionView(result)
             }),
@@ -523,8 +524,8 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
         "Cmd-[": false,
         "Cmd-]": false,
         "Ctrl-Space": "autocomplete",
-        "Cmd-Alt-H": highlightWithImports
-      })
+        "Cmd-Alt-H": highlight
+      });
     } else {
       this.codemirror.setOption("extraKeys", {
         "Ctrl-Alt-L": "indentAuto",
@@ -533,8 +534,8 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
         "Ctrl-[": false,
         "Ctrl-]": false,
         "Ctrl-Space": "autocomplete",
-        "Ctrl-Alt-H": highlightWithImports
-      })
+        "Ctrl-Alt-H": highlight
+      });
     }
 
     /**
@@ -608,7 +609,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
                 to: mirror.getDoc().getCursor(),
                 list: results.map(result => {
                   if (!withImports) {
-                    result['import'] = null
+                    result[IMPORT_NAME] = null
                   }
                   return new CompletionView(result)
                 })

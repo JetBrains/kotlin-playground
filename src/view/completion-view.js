@@ -1,3 +1,6 @@
+const IMPORT_NAME = 'import';
+const NO_LINE_NUMBER = -1;
+
 /**
  * Class for drawing own autocompletion view
  */
@@ -36,7 +39,7 @@ class CompletionView {
    * @param data
    */
   hint(mirror, self, data) {
-    if (!this.completion['import'] || this.completion.hasOtherImports) {
+    if (!this.completion[IMPORT_NAME] || this.completion.hasOtherImports) {
       this.completeText(mirror)
     } else {
       this.addImport(mirror)
@@ -74,36 +77,46 @@ class CompletionView {
   }
 
   addImport(mirror) {
-    let packageLine = -1
-    let importLine = -1
+    const {packageLine, importLine} = this.findPackageLineAndFirstImportLine(mirror);
+    let importText = "import " + this.completion[IMPORT_NAME] + "\n";
+
+    // if there are other imports => insert before them
+    if (importLine !== NO_LINE_NUMBER) {
+      mirror.replaceRange(importText, {line: importLine, ch: 0});
+      return;
+    }
+
+    if (packageLine !== NO_LINE_NUMBER) {
+      importText = "\n" + importText;
+    }
+    let nextPackageLine = packageLine + 1;
+    if (!this.lineIsEmpty(mirror, nextPackageLine)) {
+      importText += "\n";
+    }
+    mirror.replaceRange(importText, {line: nextPackageLine, ch: 0});
+  }
+
+  lineIsEmpty(mirror, lineNumber) {
+    let line = mirror.getLine(lineNumber);
+    return /^\s*$/.test(line);
+  }
+
+  findPackageLineAndFirstImportLine(mirror) {
+    let packageLine = NO_LINE_NUMBER;
+    let importLine = NO_LINE_NUMBER;
     let textLines = mirror.getValue().split("\n");
     for(let i = 0; i < textLines.length; ++i) {
-      let line = textLines[i]
-      if (/^\s*package/.test(line)) {
-        packageLine = i
-      } else if (/^\s*import/.test(line)) {
-        importLine = i
+      let line = textLines[i];
+      if (/^\s*package /.test(line)) {
+        packageLine = i;
+      } else if (/^\s*import /.test(line)) {
+        importLine = i;
         break;
       } else if (!/^\s*$/.test(line)) {
         break;
       }
     }
-    if (importLine !== -1) {
-      let importText = "import " + this.completion['import'] + "\n";
-      mirror.replaceRange(importText, {line: importLine, ch: 0})
-    } else {
-      let importText = "";
-      if (packageLine !== -1) {
-        importText += "\n";
-      }
-      importText += ("import " + this.completion['import'] + "\n");
-      let line = ++packageLine
-      let nextLine = mirror.getLine(line)
-      if (!/^\s*$/.test(nextLine)) {
-        importText += "\n"
-      }
-      mirror.replaceRange(importText, {line: line, ch: 0})
-    }
+    return {packageLine: packageLine, importLine: importLine};
   }
 }
 
