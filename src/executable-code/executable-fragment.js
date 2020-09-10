@@ -376,7 +376,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
 
       const errorMessage = unEscapeString(diagnostic.message);
       const severity = diagnostic.severity;
-      const containsSuggestions = !!diagnostic.imports;
+      const containsSuggestions = !!diagnostic.imports && diagnostic.imports.length !== 0;
 
       this.arrayClasses.push(this.codemirror.markText(interval.start, interval.end, {
         "className": "cm__" + diagnostic.className,
@@ -446,7 +446,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
     if (readOnly) return;
 
     /**
-     * Show highlight for extraKey Ctrl+Alt+H/Cmd+Option+H 
+     * Show highlight for extraKey Ctrl+Alt+H/Cmd+Option+H
      */
     let highlight = () => {
       const {compilerVersion, targetPlatform, hiddenDependencies} = this.state;
