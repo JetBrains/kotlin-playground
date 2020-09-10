@@ -135,6 +135,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
     }]);
 
     super.update(this.state);
+
     if (!this.initialized) {
       this.initializeCodeMirror(state);
       this.initialized = true;
@@ -459,15 +460,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
       ).then(data => this.showDiagnostics(data))
     }
 
-    /**
-     * Register own helper for autocomplete.
-     * Getting completions from api.kotlinlang.org.
-     * CodeMirror.hint.default => getting list from codemirror kotlin keywords.
-     *
-     * {@see WebDemoApi}      - getting data from WebDemo
-     * {@see CompletionView} - implementation completion view
-     */
-    CodeMirror.registerHelper('hint', 'kotlin', (mirror, callback) => {
+    const hint = (mirror, callback) => {
       let cur = mirror.getCursor();
       let token = mirror.getTokenAt(cur);
       let code = this.state.folded
@@ -494,13 +487,11 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
           ch: headCharPosition
         });
         if (results.length === 0 && /^[a-zA-Z]+$/.test(currentSymbol)) {
-          CodeMirror.showHint(mirror, CodeMirror.hint.default, {completeSingle: false});
+          CodeMirror.showHint(mirror, CodeMirror.hint.auto, {completeSingle: false});
         } else {
           callback({
             list: results.map(result => {
-              if (!withImports) {
-                result[IMPORT_NAME] = null
-              }
+              if (!withImports) result[IMPORT_NAME] = null;
               return new CompletionView(result)
             }),
             from: {line: cur.line, ch: token.start},
@@ -508,13 +499,23 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
           })
         }
       }
-    });
+    }
+
+    CodeMirror.registerHelper('hint', 'kotlin', hint);
 
     CodeMirror.hint.kotlin.async = true;
 
-    CodeMirror.commands.autocomplete = (cm) => {
-      CodeMirror.showHint(cm, CodeMirror.hint.kotlin);
-    };
+    CodeMirror.commands.autocomplete = (cm) => { cm.showHint(cm); };
+
+    /**
+     * Register own helper for autocomplete.
+     * Getting completions from api.kotlinlang.org.
+     * CodeMirror.hint.default => getting list from codemirror kotlin keywords.
+     *
+     * {@see WebDemoApi}      - getting data from WebDemo
+     * {@see CompletionView} - implementation completion view
+     */
+    this.codemirror.setOption('hintOptions', { hint });
 
     if (window.navigator.appVersion.indexOf("Mac") !== -1) {
       this.codemirror.setOption("extraKeys", {
