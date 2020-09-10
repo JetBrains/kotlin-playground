@@ -1,3 +1,4 @@
+import { isEmpty } from "../utils"
 const IMPORT_NAME = 'import';
 const NO_LINE_NUMBER = -1;
 
@@ -90,15 +91,10 @@ class CompletionView {
       importText = "\n" + importText;
     }
     let nextPackageLine = packageLine + 1;
-    if (!this.lineIsEmpty(mirror, nextPackageLine)) {
+    if (!isEmpty(mirror.getLine(nextPackageLine))) {
       importText += "\n";
     }
     mirror.replaceRange(importText, {line: nextPackageLine, ch: 0});
-  }
-
-  lineIsEmpty(mirror, lineNumber) {
-    let line = mirror.getLine(lineNumber);
-    return /^\s*$/.test(line);
   }
 
   findPackageLineAndFirstImportLine(mirror) {
@@ -112,11 +108,11 @@ class CompletionView {
       } else if (/^\s*import /.test(line)) {
         importLine = i;
         break;
-      } else if (!/^\s*$/.test(line)) {
+      } else if (!isEmpty(line)) {
         break;
       }
     }
-    return {packageLine: packageLine, importLine: importLine};
+    return {packageLine, importLine};
   }
 }
 
