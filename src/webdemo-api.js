@@ -147,6 +147,7 @@ function executeCode(url, code, compilerVersion, targetPlatform, args, hiddenDep
   const body = {
     args,
     files,
+    confType: targetPlatform.id,
     ...(options || {}),
   };
 

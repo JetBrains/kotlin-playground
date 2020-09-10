@@ -182,6 +182,11 @@ $wt-color-azure: #167dff;
   color: $wt-color-tomato !important;
 }
 
+.cm__IMPORT {
+  text-decoration: underline;
+  padding-bottom: 2px;
+}
+
 .errors-and-warnings-gutter {
   width: 16px;
 }
@@ -435,13 +440,31 @@ li.CodeMirror-hint-active {
   color: #000000;
 }
 
+li.CodeMirror-hint-active .name {
+  overflow: auto;
+  white-space: normal;
+}
+
 .CodeMirror-hint .name {
   margin-right: 20px;
+  max-width: 60ch;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+li.CodeMirror-hint-active .tail {
+  overflow: auto;
+  white-space: normal;
 }
 
 .CodeMirror-hint .tail {
   margin-left: auto;
   margin-right: 5px;
+  max-width: 30ch;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .CodeMirror-hint .icon {

@@ -181,3 +181,12 @@ export function waitForNode(selector, callback) {
     }
   }, 100);
 }
+
+/**
+ * Check that string consists only of blanks.
+ * @param line
+ * @returns {boolean}
+ */
+export function isEmpty(line) {
+  return /^\s*$/.test(line);
+}

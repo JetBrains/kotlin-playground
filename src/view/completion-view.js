@@ -1,5 +1,9 @@
+import { isEmpty } from "../utils"
+const IMPORT_NAME = 'import';
+const NO_LINE_NUMBER = -1;
+
 /**
- * Class for drawing own autocomplection view
+ * Class for drawing own autocompletion view
  */
 class CompletionView {
 
@@ -8,7 +12,7 @@ class CompletionView {
   }
 
   /**
-   * Implementation of replacing text after choosing complection.
+   * Implementation of replacing text after choosing completion.
    *
    * @param elt - node element
    * @param data
@@ -36,6 +40,14 @@ class CompletionView {
    * @param data
    */
   hint(mirror, self, data) {
+    if (!this.completion[IMPORT_NAME] || this.completion.hasOtherImports) {
+      this.completeText(mirror)
+    } else {
+      this.addImport(mirror)
+    }
+  }
+
+  completeText(mirror) {
     let cur = mirror.getCursor();
     let token = mirror.getTokenAt(cur);
     let from = {line: cur.line, ch: token.start};
@@ -63,6 +75,44 @@ class CompletionView {
         mirror.execCommand("goCharLeft")
       }
     }
+  }
+
+  addImport(mirror) {
+    const {packageLine, importLine} = this.findPackageLineAndFirstImportLine(mirror);
+    let importText = "import " + this.completion[IMPORT_NAME] + "\n";
+
+    // if there are other imports => insert before them
+    if (importLine !== NO_LINE_NUMBER) {
+      mirror.replaceRange(importText, {line: importLine, ch: 0});
+      return;
+    }
+
+    if (packageLine !== NO_LINE_NUMBER) {
+      importText = "\n" + importText;
+    }
+    let nextPackageLine = packageLine + 1;
+    if (!isEmpty(mirror.getLine(nextPackageLine))) {
+      importText += "\n";
+    }
+    mirror.replaceRange(importText, {line: nextPackageLine, ch: 0});
+  }
+
+  findPackageLineAndFirstImportLine(mirror) {
+    let packageLine = NO_LINE_NUMBER;
+    let importLine = NO_LINE_NUMBER;
+    let textLines = mirror.getValue().split("\n");
+    for(let i = 0; i < textLines.length; ++i) {
+      let line = textLines[i];
+      if (/^\s*package /.test(line)) {
+        packageLine = i;
+      } else if (/^\s*import /.test(line)) {
+        importLine = i;
+        break;
+      } else if (!isEmpty(line)) {
+        break;
+      }
+    }
+    return {packageLine, importLine};
   }
 }
 
