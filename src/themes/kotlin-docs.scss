@@ -1,0 +1,177 @@
+.cm-s-kotlin-docs {
+  font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, Courier, monospace;
+
+  &,
+  &.CodeMirror pre.CodeMirror-line,
+  &.CodeMirror pre.CodeMirror-line-like,
+  &.CodeMirror .CodeMirror-linenumber {
+    color: #999;
+    font-size: 15px;
+    line-height: 24px;
+  }
+
+  &.CodeMirror {
+    background: #f5f5f5;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+  }
+}
+
+.kotlin-docs.executable-fragment {
+  border: 0 none transparent;
+}
+
+.kotlin-docs .js-code-output-executor,
+.kotlin-docs .output-wrapper {
+  background: #F4F4F4;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
+
+.kotlin-docs .js-code-output-executor {
+  min-height: 8px;
+  border: 0 none transparent;
+};
+
+.kotlin-docs .output-wrapper {
+  border-top: 1px solid  rgba(39, 40, 44, 0.2);
+  border-bottom: 0 none transparent;
+}
+
+.kotlin-docs .run-button {
+  background-image: url("./themes/kotlin-docs-run.svg");
+  background-position: center;
+  background-size: 24px;
+  right: 9px;
+  top: 8px;
+  height: 24px;
+  width: 24px;
+}
+
+.kotlin-docs .fold-button,
+.kotlin-docs .fold-button:hover{
+  background-image: url("./themes/kotlin-docs-fold.svg");
+  background-position: center;
+  background-size: 24px;
+  height: 24px;
+  width: 24px;
+}
+
+.kotlin-docs .fold-button:hover {
+  opacity: 0.5;
+}
+
+.kotlin-docs ._unfolded .fold-button {
+  transform: rotate(-45deg);
+  top: -13px;
+}
+
+.kotlin-docs .console-close {
+  background: url("./themes/kotlin-docs-close.svg") center center no-repeat;
+  background-size: 24px;
+  height: 24px;
+  width: 24px;
+  right: 6px;
+  top: 7px;
+}
+
+.kotlin-docs .console-icon.attention,
+.kotlin-docs .ERRORgutter,
+.kotlin-docs .WARNINGgutter {
+  background: url("./themes/kotlin-docs-error.svg") center center no-repeat;
+  background-size: 16px;
+  height: 16px;
+  width: 16px;
+}
+
+.kotlin-docs .console-icon.attention {
+  background-position: -1px -1px;
+}
+
+.kotlin-docs .ERRORgutter,
+.kotlin-docs .WARNINGgutter {
+  margin-top: 5px;
+  margin-left: 5px;
+}
+
+.kotlin-docs .WARNINGgutter {
+  background-image: url("./themes/kotlin-docs-warning.svg");
+}
+
+.kotlin-docs .errors-and-warnings-gutter {
+  width: 24px;
+}
+
+.CodeMirror-linebackground.unmodifiable-line {
+  background: rgba(39, 40, 44, 0.05);
+}
+
+.cm-s-kotlin-docs .CodeMirror-lines { margin: 0; padding: 12px 0; }
+.cm-s-kotlin-docs .CodeMirror-gutters { border: 0 none transparent; }
+
+.cm-s-kotlin-docs .cm-type { color: #27282c; }
+
+.cm-s-kotlin-docs span.cm-keyword { color: #07a; font-weight: 700; }
+.cm-s-kotlin-docs span.cm-operator { color: #9a6e3a; }
+.cm-s-kotlin-docs span.cm-number { color: #905; }
+.cm-s-kotlin-docs span.cm-comment { color: #708090; }
+
+.cm-s-kotlin-docs span.cm-def { color: #27282c; /* #dd4a68; */ }
+.cm-s-kotlin-docs span.cm-property { color: #27282c; }
+
+.cm-s-kotlin-docs .cm-variable { color: #27282c; }
+.cm-s-kotlin-docs .cm-variable-2 { color: #27282c; }
+.cm-s-kotlin-docs .cm-variable-3 { color: #27282c; }
+
+.cm-s-kotlin-docs span.cm-string { color: #690; font-weight: 700; }
+.cm-s-kotlin-docs span.cm-string-2 { color: #690; font-weight: 700; }
+
+
+/*
+.cm-s-kotlin-docs.CodeMirror { background: #2B2B2B; color: #A9B7C6; }
+
+.cm-s-kotlin-docs span.cm-meta { color: #BBB529; }
+.cm-s-kotlin-docs span.cm-number { color: #6897BB; }
+.cm-s-kotlin-docs span.cm-def { color: #A9B7C6; font-style: italic; }
+.cm-s-kotlin-docs span.cm-variable { color: #A9B7C6; }
+.cm-s-kotlin-docs span.cm-variable-2 { color: #A9B7C6; }
+.cm-s-kotlin-docs span.cm-variable-3 { color: #9876AA; }
+.cm-s-kotlin-docs span.cm-type { color: #AABBCC; font-weight: bold; }
+.cm-s-kotlin-docs span.cm-property { color: #FFC66D; }
+.cm-s-kotlin-docs span.cm-operator { color: #A9B7C6; }
+.cm-s-kotlin-docs span.cm-string { color: #6A8759; }
+.cm-s-kotlin-docs span.cm-string-2 { color: #6A8759; }
+.cm-s-kotlin-docs span.cm-comment { color: #61A151; font-style: italic; }
+.cm-s-kotlin-docs span.cm-link { color: #CC7832; }
+.cm-s-kotlin-docs span.cm-atom { color: #CC7832; }
+.cm-s-kotlin-docs span.cm-error { color: #BC3F3C; }
+.cm-s-kotlin-docs span.cm-tag { color: #629755; font-weight: bold; font-style: italic; text-decoration: underline; }
+.cm-s-kotlin-docs span.cm-attribute { color: #6897bb; }
+.cm-s-kotlin-docs span.cm-qualifier { color: #6A8759; }
+.cm-s-kotlin-docs span.cm-bracket { color: #A9B7C6; }
+.cm-s-kotlin-docs span.cm-builtin { color: #FF9E59; }
+.cm-s-kotlin-docs span.cm-special { color: #FF9E59; }
+.cm-s-kotlin-docs span.cm-matchhighlight { color: #FFFFFF; background-color: rgba(50, 89, 48, .7); font-weight: normal;}
+.cm-s-kotlin-docs span.cm-searching { color: #FFFFFF; background-color: rgba(61, 115, 59, .7); font-weight: normal;}
+
+.cm-s-kotlin-docs .CodeMirror-cursor { border-left: 1px solid #A9B7C6; }
+.cm-s-kotlin-docs .CodeMirror-activeline-background { background: #323232; }
+.cm-s-kotlin-docs .CodeMirror-gutters { background: #313335; border-right: 1px solid #313335; }
+.cm-s-kotlin-docs .CodeMirror-guttermarker { color: #FFEE80; }
+.cm-s-kotlin-docs .CodeMirror-guttermarker-subtle { color: #D0D0D0; }
+.cm-s-kotlin-docs .CodeMirrir-linenumber { color: #606366; }
+.cm-s-kotlin-docs .CodeMirror-matchingbracket { background-color: #3B514D; color: #FFEF28 !important; font-weight: bold; }
+
+.cm-s-kotlin-docs div.CodeMirror-selected { background: #214283; }
+
+.CodeMirror-hints.kotlin-docs {
+  font-family: Menlo, Monaco, Consolas, 'Courier New', monospace;
+  color: #9C9E9E;
+  background-color: #3B3E3F !important;
+}
+
+.CodeMirror-hints.kotlin-docs .CodeMirror-hint-active {
+  background-color: #494D4E !important;
+  color: #9C9E9E !important;
+}
+*/

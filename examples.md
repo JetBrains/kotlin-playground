@@ -74,6 +74,64 @@ fun main(args: Array<String>) {
     println("Hello World!")
 }
 ```
+</div>
+
+Or theme `kotlin-docs`
+
+<div class="kotlin-code" theme="kotlin-docs">
+
+```kotlin
+fun main(args: Array<String>) {
+//sampleStart
+    fun decimalDigitValue(c: Char): Int {
+        if (c !in '0'..'9')
+            throw IllegalArgumentException("Out of range")
+        return c.toInt() - '0'.toInt() // Explicit conversions to numbers
+    }
+
+    val l = 1L + 3 /* Long + Int => Long */
+    val x = (1 shl 2) and 0x000FF000
+    val b: UByte = 1u  /* Long + Int => Long */
+
+    val text = """
+        for (c in "foo")
+            print(c)
+    """
+
+    val text = """
+        |Tell me and I forget.
+        |Teach me and I remember.
+        |Involve me and I learn.
+        |(Benjamin Franklin)
+        """.trimMargin()
+
+    val price = """
+    ${'$'}9.99
+    """
+
+    class Array<T> private constructor() {
+        val size: Int
+        operator fun get(index: Int): T
+        operator fun set(index: Int, value: T): Unit
+    
+        operator fun iterator(): Iterator<T>
+        // ...
+    }
+
+    // Array of int of size 5 with values [0, 0, 0, 0, 0]
+    val arr = IntArray(5)
+    
+    // e.g. initialise the values in the array with a constant
+    // Array of int of size 5 with values [42, 42, 42, 42, 42]
+    val arr = IntArray(5) { 42 }
+    
+    // e.g. initialise the values in the array using a lambda
+    // Array of int of size 5 with values [0, 1, 2, 3, 4] (values initialised to their index value)
+    var arr = IntArray(5) { it * 1 }
+
+//sampleEnd
+}
+```
 
 </div>
 
