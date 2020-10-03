@@ -24,6 +24,7 @@ const KEY_CODES = {
   ENTER: 13
 };
 const DEBOUNCE_TIME = 500;
+const MAC = "Mac";
 
 const SELECTORS = {
   JS_CODE_OUTPUT_EXECUTOR: ".js-code-output-executor",
@@ -64,7 +65,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
     });
 
     instance.on('keyup', (event) => {
-      if (window.navigator.appVersion.indexOf("Mac") !== -1) {
+      if (window.navigator.appVersion.indexOf(MAC) !== -1) {
         if (event.keyCode === KEY_CODES.R && event.ctrlKey) {
           instance.execute();
         }
@@ -460,6 +461,38 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
       ).then(data => this.showDiagnostics(data))
     }
 
+    const showImportSuggestions = (mirror) => {
+      if (this.importsSuggestions.length === 0) return;
+      let cur = mirror.getCursor();
+      let token = mirror.getTokenAt(cur);
+      let interval = {
+        start: {line: cur.line, ch: token.start},
+        end: {line: cur.line, ch: token.end}
+      };
+      let results = this.importsSuggestions
+        .filter( it => equal(it.interval, interval) )
+        .map ( it => it.imports )
+        .flat()
+      let withImports = this.canAddImport;
+      if (results.length !== 0) {
+        let options = {
+          hint: function () {
+            return {
+              from: mirror.getDoc().getCursor(),
+              to: mirror.getDoc().getCursor(),
+              list: results.map(result => {
+                if (!withImports) {
+                  result[IMPORT_NAME] = null
+                }
+                return new CompletionView(result)
+              })
+            }
+          }
+        };
+        mirror.showHint(options);
+      }
+    }
+
     const hint = (mirror, callback) => {
       let cur = mirror.getCursor();
       let token = mirror.getTokenAt(cur);
@@ -517,7 +550,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
      */
     this.codemirror.setOption('hintOptions', { hint });
 
-    if (window.navigator.appVersion.indexOf("Mac") !== -1) {
+    if (window.navigator.appVersion.indexOf(MAC) !== -1) {
       this.codemirror.setOption("extraKeys", {
         "Cmd-Alt-L": "indentAuto",
         "Shift-Tab": "indentLess",
@@ -525,7 +558,8 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
         "Cmd-[": false,
         "Cmd-]": false,
         "Ctrl-Space": "autocomplete",
-        "Cmd-Alt-H": highlight
+        "Cmd-Alt-H": highlight,
+        "Alt-Enter": debounce(showImportSuggestions, DEBOUNCE_TIME)
       });
     } else {
       this.codemirror.setOption("extraKeys", {
@@ -535,7 +569,8 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
         "Ctrl-[": false,
         "Ctrl-]": false,
         "Ctrl-Space": "autocomplete",
-        "Ctrl-Alt-H": highlight
+        "Ctrl-Alt-H": highlight,
+        "Alt-Enter": debounce(showImportSuggestions, DEBOUNCE_TIME)
       });
     }
 
@@ -584,43 +619,6 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
         }
       }
     });
-
-    /**
-     * Show import suggestions on Alt + Enter
-     */
-    this.codemirror.on('keypress', debounce((mirror, event) => {
-      if (event.altKey && event.keyCode === KEY_CODES.ENTER) {
-        if (this.importsSuggestions.length === 0) return;
-        let cur = mirror.getCursor();
-        let token = mirror.getTokenAt(cur);
-        let interval = {
-          start: {line: cur.line, ch: token.start},
-          end: {line: cur.line, ch: token.end}
-        };
-        let results = this.importsSuggestions
-          .filter( it => equal(it.interval, interval) )
-          .map ( it => it.imports )
-          .flat()
-        let withImports = this.canAddImport;
-        if (results.length !== 0) {
-          let options = {
-            hint: function () {
-              return {
-                from: mirror.getDoc().getCursor(),
-                to: mirror.getDoc().getCursor(),
-                list: results.map(result => {
-                  if (!withImports) {
-                    result[IMPORT_NAME] = null
-                  }
-                  return new CompletionView(result)
-                })
-              }
-            }
-          };
-          mirror.showHint(options);
-        }
-      }
-    }), DEBOUNCE_TIME)
   }
 
   destroy() {
