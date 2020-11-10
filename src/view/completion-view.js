@@ -41,20 +41,20 @@ class CompletionView {
    */
   hint(mirror, self, data) {
     if (!this.completion[IMPORT_NAME] || this.completion.hasOtherImports) {
-      this.completeText(mirror)
+      this.completeText(mirror, this.completion.text);
     } else {
-      this.addImport(mirror)
+      this.addImport(mirror);
     }
   }
 
-  completeText(mirror) {
+  completeText(mirror, text) {
     let cur = mirror.getCursor();
     let token = mirror.getTokenAt(cur);
     let from = {line: cur.line, ch: token.start};
     let to = {line: cur.line, ch: token.end};
     const currentSymbol = token.string.trim();
     if ([".", "", "(", ":"].includes(currentSymbol)) {
-      mirror.replaceRange(this.completion.text, to)
+      mirror.replaceRange(text, to)
     } else {
       /*
       Replace string with $ in string in case=>
@@ -67,12 +67,12 @@ class CompletionView {
       let cursorInStringIndex = cur.ch - token.start;
       let sentence$index = currentSymbol.substring(0, cursorInStringIndex).lastIndexOf('$');
       let firstSentence = currentSymbol.substring(0, sentence$index + 1);
-      let completionText = firstSentence + this.completion.text + currentSymbol.substring(cursorInStringIndex, token.string.length);
+      let completionText = firstSentence + text + currentSymbol.substring(cursorInStringIndex, token.string.length);
       mirror.replaceRange(completionText, from, to);
       mirror.setCursor(cur.line, token.start + sentence$index + this.completion.text.length + 1);
       if (completionText.endsWith('(')) {
         mirror.replaceRange(")", {line: cur.line, ch: token.start + this.completion.text.length});
-        mirror.execCommand("goCharLeft")
+        mirror.execCommand("goCharLeft");
       }
     }
   }
@@ -95,6 +95,10 @@ class CompletionView {
       importText += "\n";
     }
     mirror.replaceRange(importText, {line: nextPackageLine, ch: 0});
+
+    let parts = this.completion.text.split('.');
+    let completionText = parts[parts.length - 1];
+    this.completeText(mirror, completionText);
   }
 
   findPackageLineAndFirstImportLine(mirror) {
