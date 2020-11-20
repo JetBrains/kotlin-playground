@@ -180,7 +180,7 @@ import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLCanvasElement
 import kotlin.browser.document
 import kotlin.browser.window
-import kotlin.js.Math
+import kotlin.random.Random
 
 
 
@@ -198,8 +198,8 @@ class FancyLines() {
     val context = canvas.getContext("2d") as CanvasRenderingContext2D
     val height = canvas.height
     val width = canvas.width
-    var x = width * Math.random()
-    var y = height * Math.random()
+    var x = width * Random.nextDouble()
+    var y = height * Random.nextDouble()
     var hue = 0;
 
     fun line() {
@@ -207,16 +207,16 @@ class FancyLines() {
 
         context.beginPath();
 
-        context.lineWidth = 20.0 * Math.random();
+        context.lineWidth = 20.0 * Random.nextDouble();
         context.moveTo(x, y);
 
-        x = width * Math.random();
-        y = height * Math.random();
+        x = width * Random.nextDouble();
+        y = height * Random.nextDouble();
 
-        context.bezierCurveTo(width * Math.random(), height * Math.random(),
-                width * Math.random(), height * Math.random(), x, y);
+        context.bezierCurveTo(width * Random.nextDouble(), height * Random.nextDouble(),
+                width * Random.nextDouble(), height * Random.nextDouble(), x, y);
 
-        hue += (Math.random() * 10).toInt();
+        hue += (Random.nextDouble() * 10).toInt();
 
         context.strokeStyle = "hsl($hue, 50%, 50%)";
 
