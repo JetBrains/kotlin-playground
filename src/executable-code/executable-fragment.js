@@ -559,7 +559,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
         "Cmd-]": false,
         "Ctrl-Space": "autocomplete",
         "Cmd-Alt-H": highlight,
-        "Alt-Enter": debounce(showImportSuggestions, DEBOUNCE_TIME)
+        "Cmd-Alt-Enter": debounce(showImportSuggestions, DEBOUNCE_TIME)
       });
     } else {
       this.codemirror.setOption("extraKeys", {
@@ -570,7 +570,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
         "Ctrl-]": false,
         "Ctrl-Space": "autocomplete",
         "Ctrl-Alt-H": highlight,
-        "Alt-Enter": debounce(showImportSuggestions, DEBOUNCE_TIME)
+        "Ctrl-Alt-Enter": debounce(showImportSuggestions, DEBOUNCE_TIME)
       });
     }
 

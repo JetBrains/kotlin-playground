@@ -238,7 +238,7 @@ Use the following attributes on elements that are converted to editors to adjust
   - Ctrl+Alt+L/Cmd+Alt+L   — format code
   - Shift+Tab		   — decrease indent
   - Ctrl+Alt+H/Cmd+Alt+H             — highlight code
-  - Alt+Enter/Option+Enter    — show import suggestions
+  - Ctrl+Alt+Enter/Cmd+Alt+Enter    — show import suggestions
 
 
 ## Develop and contribute
