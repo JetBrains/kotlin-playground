@@ -90,7 +90,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
     let sample;
     let hasMarkers = false;
     let platform = state.targetPlatform;
-    if (state.compilerVersion && (platform === TargetPlatform.JS || platform === TargetPlatform.CANVAS)) {
+    if (state.compilerVersion && TargetPlatform.isJsRelated(platform)) {
       this.jsExecutor = new JsExecutor(state.compilerVersion);
     }
 
@@ -237,8 +237,8 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
   onConsoleCloseButtonEnter() {
     const {jsLibs, onCloseConsole, targetPlatform } = this.state;
     // creates a new iframe and removes the old one, thereby stops execution of any running script
-    if (targetPlatform === TargetPlatform.CANVAS || targetPlatform === TargetPlatform.JS)
-      this.jsExecutor.reloadIframeScripts(jsLibs, this.getNodeForMountIframe());
+    if (TargetPlatform.isJsRelated(targetPlatform))
+      this.jsExecutor.reloadIframeScripts(jsLibs, this.getNodeForMountIframe(), targetPlatform);
     this.update({output: "", openConsole: false, exception: null});
     if (onCloseConsole) onCloseConsole();
   }
@@ -262,7 +262,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
     });
     if (onOpenConsole) onOpenConsole(); //open when waitingForOutput=true
     if (onRun) onRun();
-    if (targetPlatform === TargetPlatform.JAVA || targetPlatform === TargetPlatform.JUNIT) {
+    if (TargetPlatform.isJavaRelated(targetPlatform)) {
       WebDemoApi.executeKotlinCode(
         this.getCode(),
         compilerVersion,
@@ -284,7 +284,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
         () => this.update({waitingForOutput: false})
       )
     } else {
-      this.jsExecutor.reloadIframeScripts(jsLibs, this.getNodeForMountIframe());
+      this.jsExecutor.reloadIframeScripts(jsLibs, this.getNodeForMountIframe(), targetPlatform);
       WebDemoApi.translateKotlinToJs(this.getCode(), compilerVersion, targetPlatform, args, hiddenDependencies).then(
         state => {
           state.waitingForOutput = false;

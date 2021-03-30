@@ -160,7 +160,7 @@ export default class ExecutableCode {
    * @returns {Set} - set of additional libraries
    */
   getJsLibraries(targetNode, platform) {
-    if (platform === TargetPlatform.JS || platform === TargetPlatform.CANVAS) {
+    if (TargetPlatform.isJsRelated(platform)) {
       const jsLibs = targetNode.getAttribute(ATTRIBUTES.JS_LIBS);
       let additionalLibs = new Set(API_URLS.JQUERY.split());
       if (jsLibs) {

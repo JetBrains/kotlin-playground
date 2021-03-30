@@ -96,6 +96,25 @@ fun main(args: Array<String>) {
 
 </div>
 
+You can use JS IR compiler also.
+
+```html
+<div class="kotlin-code" data-target-platform="js-ir"></div>
+```
+<div class="kotlin-code" data-target-platform="js-ir">
+
+```kotlin
+fun mul(a: Int, b: Int): Int {
+    return a * b
+}
+
+fun main(args: Array<String>) {
+    print(mul(-2, 4))
+}
+```
+
+</div>
+
 
 Use `data-target-platform` attribute with value `junit` for creating examples with tests:
 
