@@ -7,7 +7,7 @@ import {processingHtmlBrackets} from "../utils";
 const INIT_SCRIPT = "if(kotlin.BufferedOutput!==undefined){kotlin.out = new kotlin.BufferedOutput()}" +
   "else{kotlin.kotlin.io.output = new kotlin.kotlin.io.BufferedOutput()}";
 
-const INIT_SCRIPT_IR = "var isRewrite = true;";
+const INIT_SCRIPT_IR = "var kotlin = kotlin || {}; kotlin.isRewrite = true;";
 
 const normalizeJsVersion = version => {
   const match = version.match(/-M\d+$/);
