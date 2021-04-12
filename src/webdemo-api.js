@@ -1,5 +1,4 @@
 import {fetch} from 'whatwg-fetch';
-import URLSearchParams from 'url-search-params';
 import TargetPlatform from "./target-platform";
 import {API_URLS} from "./config";
 import flatten from 'flatten'
@@ -51,15 +50,27 @@ export default class WebDemoApi {
    * @returns {*|PromiseLike<T>|Promise<T>}
    */
   static translateKotlinToJs(code, compilerVersion, platform, args, hiddenDependencies) {
-    return executeCode(API_URLS.COMPILE(platform, compilerVersion), code, compilerVersion, platform, args, hiddenDependencies).then(function (data) {
-      let output = "";
-      let errorsAndWarnings = flatten(Object.values(data.errors));
-      return {
-        output: output,
-        errors: errorsAndWarnings,
-        jsCode: data.jsCode
-      }
-    })
+    const MINIMAL_MINOR_VERSION_IR = 5
+    if (platform === TargetPlatform.JS_IR && parseInt(compilerVersion.split(".")[1]) < MINIMAL_MINOR_VERSION_IR) {
+      return Promise.resolve({
+        output: "",
+        errors: [{
+          severity: "ERROR",
+          message: "JS IR compiler backend accessible only since 1.5.0 version"
+        }],
+        jsCode: ""
+      })
+    } else {
+      return executeCode(API_URLS.COMPILE(platform, compilerVersion), code, compilerVersion, platform, args, hiddenDependencies).then(function (data) {
+        let output = "";
+        let errorsAndWarnings = flatten(Object.values(data.errors));
+        return {
+          output: output,
+          errors: errorsAndWarnings,
+          jsCode: data.jsCode
+        }
+      })
+    }
   }
 
   /**
@@ -117,7 +128,7 @@ export default class WebDemoApi {
    * @param callback
    */
   static getAutoCompletion(code, cursor, compilerVersion, platform, hiddenDependencies, callback) {
-    const { line, ch, ...options } = cursor;
+    const {line, ch, ...options} = cursor;
     const url = API_URLS.COMPLETE(compilerVersion) + `?line=${line}&ch=${ch}`;
     executeCode(url, code, compilerVersion, platform, "", hiddenDependencies, options)
       .then(data => {
