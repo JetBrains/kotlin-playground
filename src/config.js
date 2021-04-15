@@ -25,6 +25,9 @@ export const API_URLS = {
       case TargetPlatform.JS:
         url = `${this.server}/api/${version}/compiler/translate`;
         break;
+      case TargetPlatform.JS_IR:
+        url = `${this.server}/api/${version}/compiler/translate?ir=true`;
+        break;
       case TargetPlatform.JUNIT:
         url = `${this.server}/api/${version}/compiler/test`;
         break;
