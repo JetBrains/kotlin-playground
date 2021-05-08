@@ -227,7 +227,7 @@ Use the following attributes on elements that are converted to editors to adjust
 
 - `data-output-height="200"`: Set the iframe height in `px` in output. Use for target platform `canvas`.
 
-- `match-brackets="true|false""`: Determines whether brackets are matched whenever the cursor is moved next to a bracket. Defaults to `false`.
+- `match-brackets="true|false"`: Determines whether brackets are matched whenever the cursor is moved next to a bracket. Defaults to `false`.
 
 
 ## Supported keyboard shortcuts
