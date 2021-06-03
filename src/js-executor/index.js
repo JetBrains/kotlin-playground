@@ -36,12 +36,12 @@ export default class JsExecutor {
   async execute(jsCode, jsLibs, theme, onError, platform) {
     const loadedScripts = (this.iframe.contentDocument || this.iframe.document).getElementsByTagName('script').length;
     let offset;
-    if (platform === TargetPlatform.JS) {
-      // 2 scripts by default: INIT_SCRIPT + kotlin stdlib
-      offset = 2;
-    } else {
+    if (platform === TargetPlatform.JS_IR) {
       // 1 scripts by default: INIT_SCRIPT_IR
       offset = 1;
+    } else {
+      // 2 scripts by default: INIT_SCRIPT + kotlin stdlib
+      offset = 2;
     }
     if (loadedScripts === jsLibs.size + offset) {
       try {
