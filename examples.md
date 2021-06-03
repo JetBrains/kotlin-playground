@@ -193,8 +193,6 @@ Use `data-target-platform` attribute with value `canvas` for working with canvas
 ```kotlin
 package fancylines
 
-
-import jquery.*
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLCanvasElement
 import kotlin.browser.document
