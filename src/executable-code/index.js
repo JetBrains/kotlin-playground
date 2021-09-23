@@ -46,7 +46,8 @@ const ATTRIBUTES = {
   FOLDED_BUTTON: 'folded-button',
   ARGUMENTS: 'args',
   LINES: 'lines',
-  AUTO_INDENT: 'auto-indent'
+  AUTO_INDENT: 'auto-indent',
+  TRACK_RUN_ID: 'data-track-run-id'
 };
 
 const MODES = {
@@ -90,6 +91,7 @@ export default class ExecutableCode {
     const autoComplete = targetNode.getAttribute(ATTRIBUTES.COMPLETE) === "true";
     const matchBrackets = targetNode.getAttribute(ATTRIBUTES.MATCH_BRACKETS) === "true";
     const autoIndent = targetNode.getAttribute(ATTRIBUTES.AUTO_INDENT) === "true";
+    const dataTrackRunId = targetNode.getAttribute(ATTRIBUTES.TRACK_RUN_ID);
     const mode = this.getMode(targetNode);
     const code = replaceWhiteSpaces(targetNode.textContent);
     const cfg = merge(defaultConfig, config);
@@ -125,6 +127,7 @@ export default class ExecutableCode {
       targetPlatform: targetPlatform,
       jsLibs: jsLibs,
       isFoldedButton: isFoldedButton,
+      dataTrackRunId,
       outputHeight
     }, eventFunctions));
 
