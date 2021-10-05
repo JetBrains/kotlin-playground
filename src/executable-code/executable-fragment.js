@@ -281,7 +281,18 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
           if ((state.errors.length > 0 || state.exception) && onError) onError();
           this.update(state);
         },
-        () => this.update({waitingForOutput: false})
+        (error) => {
+          if (onError) onError();
+          this.update({
+            waitingForOutput: false,
+            output: processErrors([{
+              severity: "ERROR",
+              message: error.message
+            }]),
+            openConsole: true,
+            exception: null
+          })
+        }
       )
     } else {
       this.jsExecutor.reloadIframeScripts(jsLibs, this.getNodeForMountIframe(), targetPlatform);
@@ -317,7 +328,18 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
             });
           }
         },
-        () => this.update({waitingForOutput: false})
+        (error) => {
+          if (onError) onError();
+          this.update({
+            waitingForOutput: false,
+            output: processErrors([{
+              severity: "ERROR",
+              message: error.message
+            }]),
+            openConsole: true,
+            exception: null
+          })
+        }
       )
 
     }
