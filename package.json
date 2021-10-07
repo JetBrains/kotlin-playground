@@ -30,10 +30,12 @@
     "es6-set": "^0.1.5",
     "escape-html": "^1.0.3",
     "fast-async": "7",
+    "fast-deep-equal": "^3.1.3",
     "flatten": "^1.0.2",
     "github-markdown-css": "^3.0.1",
     "html-webpack-plugin": "^3.2.0",
     "is-empty-object": "^1.1.1",
+    "lz-string": "^1.4.4",
     "markdown-it": "^8.4.2",
     "markdown-it-highlightjs": "^3.0.0",
     "monkberry": "4.0.8",
@@ -52,8 +54,7 @@
     "webpack": "^4.31.0",
     "webpack-cli": "^3.3.2",
     "webpack-dev-server": "^3.3.1",
-    "whatwg-fetch": "^3.0.0",
-    "fast-deep-equal": "^3.1.3"
+    "whatwg-fetch": "^3.0.0"
   },
   "scripts": {
     "build": "webpack",

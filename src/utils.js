@@ -11,6 +11,12 @@ export const THEMES = {
   DEFAULT: "default"
 };
 
+export const SAMPLE_START = '//sampleStart';
+export const SAMPLE_END = '//sampleEnd';
+
+export const MARK_PLACEHOLDER_OPEN = "[mark]";
+export const MARK_PLACEHOLDER_CLOSE = "[/mark]";
+
 /**
  * CodeMirror readonly tag
  * @type {string}
