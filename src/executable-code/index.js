@@ -57,7 +57,7 @@ const ATTRIBUTES = {
   LINES: 'lines',
   AUTO_INDENT: 'auto-indent',
   TRACK_RUN_ID: 'data-track-run-id',
-  HIDE_CROSSLINK: 'crosslink'
+  CROSSLINK: 'data-crosslink'
 };
 
 const MODES = {
@@ -115,7 +115,7 @@ export default class ExecutableCode {
 
     const isCrosslinkDisabled = (
       highlightOnly || // highlighted only not worked in...
-      targetNode.hasAttribute(ATTRIBUTES.HIDE_CROSSLINK === 'disabled') || // disabled by developer
+      targetNode.getAttribute(ATTRIBUTES.CROSSLINK) === 'disabled' || // disabled by developer
       ( // Unsupported external deps
         (jsLibs && jsLibs.length > 0) ||
         (hiddenDependencies && hiddenDependencies.length > 0)
