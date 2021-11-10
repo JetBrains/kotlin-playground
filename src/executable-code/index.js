@@ -113,12 +113,16 @@ export default class ExecutableCode {
 
     let crosslink = null;
 
+    const crosslinkValue = targetNode.getAttribute(ATTRIBUTES.CROSSLINK);
+
     const isCrosslinkDisabled = (
-      highlightOnly || // highlighted only not worked in...
-      targetNode.getAttribute(ATTRIBUTES.CROSSLINK) === 'disabled' || // disabled by developer
-      ( // Unsupported external deps
-        (jsLibs && jsLibs.length > 0) ||
-        (hiddenDependencies && hiddenDependencies.length > 0)
+      crosslinkValue !== 'enabled' && (
+        crosslinkValue === 'disabled' || // disabled by developer
+        highlightOnly || // highlighted only not worked in...
+        ( // Unsupported external deps
+          (jsLibs && jsLibs.length > 0) ||
+          (hiddenDependencies && hiddenDependencies.length > 0)
+        )
       )
     );
 
