@@ -410,9 +410,9 @@ $wt-color-azure: #167dff;
   }
 
   display: flex;
-  justify-content: space-between;
-  margin-top: 5px;
-  margin-bottom: 5px;
+  justify-content: flex-end;
+
+  padding-top: 5px;
 
   position: absolute;
   right: 0;
@@ -422,7 +422,11 @@ $wt-color-azure: #167dff;
     margin-left: 15px;
   }
 
-  &__playlink {
+  &_crosslink {
+    justify-content: space-between;
+  }
+
+  &__open-editor {
     flex: 1 1 0;
   }
 }

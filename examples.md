@@ -283,6 +283,20 @@ fun main() {
 
 </div>
 
+
+<div class="kotlin-code" data-crosslink="disabled" data-target-platform="js" data-js-libs="https://unpkg.com/moment@2">
+
+```kotlin
+external fun moment(): dynamic
+
+fun main() {
+    val startOfDay = moment().startOf("day").fromNow()
+    println("The start of the day was $startOfDay")
+}
+```
+
+</div>
+
 ## Manual initialization
 
 If you want to init Kotlin Playground manually - omit `data-selector` attribute and call it when it's needed:
