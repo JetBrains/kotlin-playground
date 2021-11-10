@@ -8,15 +8,19 @@ import ExecutableCodeTemplate from './executable-fragment.monk';
 import WebDemoApi from '../webdemo-api';
 import TargetPlatform from "../target-platform";
 import JsExecutor from "../js-executor"
-import {countLines, escapeRegExp, THEMES, unEscapeString} from "../utils";
+import {
+  countLines,
+  escapeRegExp, MARK_PLACEHOLDER_CLOSE,
+  MARK_PLACEHOLDER_OPEN,
+  SAMPLE_END,
+  SAMPLE_START,
+  THEMES,
+  unEscapeString
+} from "../utils";
 import debounce from 'debounce';
 import CompletionView from "../view/completion-view";
 import {processErrors} from "../view/output-view";
 
-const SAMPLE_START = '//sampleStart';
-const SAMPLE_END = '//sampleEnd';
-const MARK_PLACEHOLDER_OPEN = "[mark]";
-const MARK_PLACEHOLDER_CLOSE = "[/mark]";
 const IMPORT_NAME = 'import';
 const KEY_CODES = {
   R: 82,

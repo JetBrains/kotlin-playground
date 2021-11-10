@@ -44,7 +44,12 @@
     </div>
 
     {% if (!highlightOnly) %}
-        <div class="compiler-info" data-nosnippet>
+        <div class="compiler-info{{ crosslink ? ' compiler-info_crosslink' : '' }}" data-nosnippet>
+            {% if (crosslink) %}
+              <div class="compiler-info__open-editor">
+                <a class="compiler-info__open-editor-link" href="{{ crosslink }}" target="_blank" rel="noopener noreferrer">Open&nbsp;in&nbsp;Playground&nbsp;→</a>
+              </div>
+            {% endif %}
             <span>Target platform: {{ targetPlatform.printableName }}</span>
             <span>Running on kotlin v.{{ compilerVersion }}</span>
         </div>

@@ -18,10 +18,19 @@ import 'codemirror/mode/swift/swift';
 import merge from 'deepmerge';
 import Set from 'es6-set/polyfill';
 import defaultConfig, {API_URLS} from '../config';
-import {arrayFrom, getConfigFromElement, insertAfter, READ_ONLY_TAG, replaceWhiteSpaces, THEMES} from '../utils';
+import {
+  arrayFrom,
+  escapeRegExp,
+  getConfigFromElement,
+  insertAfter, MARK_PLACEHOLDER_CLOSE, MARK_PLACEHOLDER_OPEN,
+  READ_ONLY_TAG,
+  replaceWhiteSpaces, SAMPLE_END, SAMPLE_START,
+  THEMES
+} from '../utils';
 import WebDemoApi from "../webdemo-api";
 import TargetPlatform from '../target-platform'
 import ExecutableFragment from './executable-fragment';
+import { generateCrosslink } from '../lib/crosslink';
 import '../styles.scss';
 
 const INITED_ATTRIBUTE_NAME = 'data-kotlin-playground-initialized';
@@ -47,7 +56,8 @@ const ATTRIBUTES = {
   ARGUMENTS: 'args',
   LINES: 'lines',
   AUTO_INDENT: 'auto-indent',
-  TRACK_RUN_ID: 'data-track-run-id'
+  TRACK_RUN_ID: 'data-track-run-id',
+  CROSSLINK: 'data-crosslink'
 };
 
 const MODES = {
@@ -101,6 +111,33 @@ export default class ExecutableCode {
       highlightOnly = true;
     }
 
+    let crosslink = null;
+
+    const crosslinkValue = targetNode.getAttribute(ATTRIBUTES.CROSSLINK);
+
+    const isCrosslinkDisabled = (
+      crosslinkValue !== 'enabled' && (
+        crosslinkValue === 'disabled' || // disabled by developer
+        highlightOnly || // highlighted only not worked in...
+        ( // Unsupported external deps
+          (jsLibs && jsLibs.length > 0) ||
+          (hiddenDependencies && hiddenDependencies.length > 0)
+        )
+      )
+    );
+
+    if (!isCrosslinkDisabled) crosslink = generateCrosslink({
+      code: code
+        .replace(new RegExp(escapeRegExp(MARK_PLACEHOLDER_OPEN), 'g'), "")
+        .replace(new RegExp(escapeRegExp(MARK_PLACEHOLDER_CLOSE), 'g'), "")
+        .replace(new RegExp(escapeRegExp(SAMPLE_START), 'g'), "")
+        .replace(new RegExp(escapeRegExp(SAMPLE_END), 'g'), ""),
+
+      targetPlatform: targetPlatform.id,
+      // hiddenDependencies, // multi-file support needs
+      compilerVersion: cfg.compilerVersion,
+    });
+
     targetNode.style.display = 'none';
     targetNode.setAttribute(INITED_ATTRIBUTE_NAME, 'true');
     const mountNode = document.createElement('div');
@@ -114,6 +151,7 @@ export default class ExecutableCode {
       indent: indent,
       args: args,
       mode: mode,
+      crosslink,
       matchBrackets: matchBrackets,
       from: from,
       to: to,
