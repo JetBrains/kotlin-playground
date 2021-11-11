@@ -1,6 +1,6 @@
 {% import Exception from './exception' %}
 
-<div class="executable-fragment-wrapper">
+<div class="executable-fragment-wrapper{{ theme ? ' theme-' + theme + '-wrapper' : '' }}">
     <div class="executable-fragment {{ theme }}">
       {% if (!highlightOnly) %}
         <div class="run-button {{ waitingForOutput ? '_disabled' : ''}}" data-track-run-id="{{ dataTrackRunId || '' }}"
