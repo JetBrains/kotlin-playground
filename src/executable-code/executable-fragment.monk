@@ -51,8 +51,8 @@
                 <a class="compiler-info__open-editor-link" href="{{ crosslink }}" target="_blank" rel="noopener noreferrer">Open&nbsp;in&nbsp;Playground&nbsp;→</a>
               </div>
             {% endif %}
-            <span>Target platform: {{ targetPlatform.printableName }}</span>
-            <span>Running on kotlin v.{{ compilerVersion }}</span>
+            <span class="compiler-info__target">Target: {{ targetPlatform.printableName }}</span>
+            <span class="compiler-info__version">Running on v.{{ compilerVersion }}</span>
         </div>
     {% endif %}
     {% if (shorterHeight) %}<button class="executable-fragment-wrapper__shorter" :onclick={{ this.onShorterClick.bind(this) }}>more</button>{% endif %}
