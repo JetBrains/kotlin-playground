@@ -37,6 +37,7 @@ const INITED_ATTRIBUTE_NAME = 'data-kotlin-playground-initialized';
 const DEFAULT_INDENT = 4;
 
 const ATTRIBUTES = {
+  SHORTER_HEIGHT: 'data-shorter-height',
   HIDDEN_DEPENDENCY: 'hidden-dependency',
   INDENT: 'indent',
   HIGHLIGHT_ONLY: 'data-highlight-only',
@@ -102,6 +103,7 @@ export default class ExecutableCode {
     const matchBrackets = targetNode.getAttribute(ATTRIBUTES.MATCH_BRACKETS) === "true";
     const autoIndent = targetNode.getAttribute(ATTRIBUTES.AUTO_INDENT) === "true";
     const dataTrackRunId = targetNode.getAttribute(ATTRIBUTES.TRACK_RUN_ID);
+    const dataShorterHeight = targetNode.getAttribute(ATTRIBUTES.SHORTER_HEIGHT);
     const mode = this.getMode(targetNode);
     const code = replaceWhiteSpaces(targetNode.textContent);
     const cfg = merge(defaultConfig, config);
@@ -138,6 +140,8 @@ export default class ExecutableCode {
       compilerVersion: cfg.compilerVersion,
     });
 
+    let shorterHeight = parseInt(dataShorterHeight, 10) || 0;
+
     targetNode.style.display = 'none';
     targetNode.setAttribute(INITED_ATTRIBUTE_NAME, 'true');
     const mountNode = document.createElement('div');
@@ -166,6 +170,7 @@ export default class ExecutableCode {
       jsLibs: jsLibs,
       isFoldedButton: isFoldedButton,
       dataTrackRunId,
+      shorterHeight,
       outputHeight
     }, eventFunctions));
 

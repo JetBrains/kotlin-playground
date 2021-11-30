@@ -231,6 +231,8 @@ Use the following attributes on elements that are converted to editors to adjust
 
 - `data-crosslink="enabled|disabled"`: Show link for open in playground. Defaults to `undefined` – only supported in playground.
 
+- `data-shorter-height="100"`: show expander if height more than value of attribute
+
 ## Supported keyboard shortcuts
 
   - Ctrl+Space		   — code completion
