@@ -365,6 +365,37 @@ Themes:
 ```
 </div>
 
+<div class="kotlin-code"  theme="kotlin-docs" data-shorter-height="50">
+  fun main(args: Array<String>) {
+  //sampleStart
+      val (name, value) = Pair("Kitty", "Kiss")
+      println(name)
+      println(value)
+  //sampleEnd
+  }
+</div>
+
+
+<div class="kotlin-code" data-shorter-height="50">
+  fun main(args: Array<String>) {
+  //sampleStart
+      val (name, value) = Pair("Kitty", "Kiss")
+      println(name)
+      println(value)
+  //sampleEnd
+  }
+</div>
+
+<div class="kotlin-code" theme="darcula" data-shorter-height="50">
+  fun main(args: Array<String>) {
+  //sampleStart
+      val (name, value) = Pair("Kitty", "Kiss")
+      println(name)
+      println(value)
+  //sampleEnd
+  }
+</div>
+
 <button onclick="KotlinPlayground('.kotlin-code-2',{ onChange: (code)=> {console.log(code)}}); this.disabled = true; document.getElementById('kotlin-example').style.display = 'block';">Create</button>
 
 <div id="kotlin-example" class="kotlin-code-2" style="display: none;">

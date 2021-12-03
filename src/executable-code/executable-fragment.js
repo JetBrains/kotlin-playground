@@ -98,6 +98,10 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
       this.jsExecutor = new JsExecutor(state.compilerVersion);
     }
 
+    if (!state.shorterHeight) {
+      this.codemirror.display.wrapper.style.maxHeight = '';
+    }
+
     if (state.code) {
       let code = state.code;
       if (state.from && state.to && state.to >= state.from && state.from > 0 && state.to > 0) {
@@ -192,6 +196,18 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
         this.codemirror.indentLine(i)
       }
     }
+
+    const shorterHeight = this.state.shorterHeight;
+
+    if (shorterHeight) {
+      const wrapper = this.codemirror.display.wrapper;
+
+      if (wrapper.getBoundingClientRect().height + 10 > shorterHeight) {
+        this.codemirror.display.wrapper.style.maxHeight = `${shorterHeight}px`;
+      } else {
+        super.update({shorterHeight: 0});
+      }
+    }
   }
 
   markPlaceHolders() {
@@ -252,6 +268,14 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
     this.codemirror.focus()
   }
 
+  onFoldButtonClick() {
+    this.update({shorterHeight: 0})
+  }
+
+  onShorterClick() {
+    this.update({shorterHeight: 0})
+  }
+
   execute() {
     const {
       onOpenConsole, targetPlatform, waitingForOutput, compilerVersion, onRun, onError,
@@ -261,6 +285,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
       return
     }
     this.update({
+      shorterHeight: 0,
       waitingForOutput: true,
       openConsole: false
     });

@@ -1,6 +1,6 @@
 {% import Exception from './exception' %}
 
-<div class="executable-fragment-wrapper{{ theme ? ' theme-' + theme + '-wrapper' : '' }}">
+<div class="executable-fragment-wrapper{{ theme ? ' theme-' + theme + '-wrapper' : '' }}{{ shorterHeight ? ' executable-fragment-wrapper_gutter' : '' }}">
     <div class="executable-fragment {{ theme }}">
       {% if (!highlightOnly) %}
         <div class="run-button {{ waitingForOutput ? '_disabled' : ''}}" data-track-run-id="{{ dataTrackRunId || '' }}"
@@ -9,6 +9,7 @@
         <div class="code-area {{ folded ? '_folded' : '_unfolded' }}">
             {% if (isShouldBeFolded) %}
                 <div class="fold-button {{ foldButtonHover ? '_hover' : '' }} {{ theme }}"
+                    :onclick={{ this.onFoldButtonClick.bind(this) }}
                     :onmouseenter={{ this.onFoldButtonMouseEnter.bind(this) }}
                     :onmouseleave={{ this.onFoldButtonMouseLeave.bind(this) }}>
                 </div>
@@ -54,5 +55,5 @@
             <span>Running on kotlin v.{{ compilerVersion }}</span>
         </div>
     {% endif %}
-
+    {% if (shorterHeight) %}<button class="executable-fragment-wrapper__shorter" :onclick={{ this.onShorterClick.bind(this) }}>more</button>{% endif %}
 </div>

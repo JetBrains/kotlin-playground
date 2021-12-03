@@ -26,6 +26,36 @@ $wt-color-azure: #167dff;
 .executable-fragment-wrapper {
   margin-bottom: 35px;
   position: relative;
+
+  &_gutter {
+    .CodeMirror {
+      overflow: hidden;
+    }
+  }
+}
+
+.executable-fragment-wrapper__shorter {
+  &, &:hover, &:active {
+    box-shadow: 0 0 0 transparent;
+    outline: 0 none transparent;
+    text-shadow: 0 0 0 transparent;
+    border: 1px solid #eaeaec;
+    background: #fff url("img/shorter.svg") center center no-repeat;
+    border-radius: 10px;
+    position: absolute;
+    height: 19px;
+    width: 31px;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+    cursor: pointer;
+    text-indent: -99999px;
+
+    .theme-darcula-wrapper & {
+      background-color: $darcula-background-color;
+      border-color: #fff;
+    }
+  }
 }
 
 .executable-fragment {
