@@ -233,6 +233,8 @@ Use the following attributes on elements that are converted to editors to adjust
 
 - `data-shorter-height="100"`: show expander if height more than value of attribute
 
+- `data-scrollbar-style`: Chooses a [scrollbar implementation](https://codemirror.net/doc/manual.html#config). Defaults to `overlay`.
+
 ## Supported keyboard shortcuts
 
   - Ctrl+Space		   — code completion

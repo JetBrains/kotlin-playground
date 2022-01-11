@@ -58,7 +58,8 @@ const ATTRIBUTES = {
   LINES: 'lines',
   AUTO_INDENT: 'auto-indent',
   TRACK_RUN_ID: 'data-track-run-id',
-  CROSSLINK: 'data-crosslink'
+  CROSSLINK: 'data-crosslink',
+  SCROLLBAR_STYLE: 'data-scrollbar-style'
 };
 
 const MODES = {
@@ -104,6 +105,7 @@ export default class ExecutableCode {
     const autoIndent = targetNode.getAttribute(ATTRIBUTES.AUTO_INDENT) === "true";
     const dataTrackRunId = targetNode.getAttribute(ATTRIBUTES.TRACK_RUN_ID);
     const dataShorterHeight = targetNode.getAttribute(ATTRIBUTES.SHORTER_HEIGHT);
+    const dataScrollbarStyle = targetNode.getAttribute(ATTRIBUTES.SCROLLBAR_STYLE);
     const mode = this.getMode(targetNode);
     const code = replaceWhiteSpaces(targetNode.textContent);
     const cfg = merge(defaultConfig, config);
@@ -171,7 +173,8 @@ export default class ExecutableCode {
       isFoldedButton: isFoldedButton,
       dataTrackRunId,
       shorterHeight,
-      outputHeight
+      outputHeight,
+      scrollbarStyle: dataScrollbarStyle
     }, eventFunctions));
 
     this.config = cfg;
