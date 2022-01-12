@@ -1,6 +1,6 @@
 {
   "name": "kotlin-playground",
-  "version": "1.27.0",
+  "version": "1.27.1",
   "description": "Self-contained component to embed in websites for running Kotlin code",
   "keywords": [
     "kotlin",
@@ -42,10 +42,10 @@
     "monkberry-directives": "4.0.8",
     "monkberry-events": "4.0.8",
     "monkberry-loader": "4.0.9",
-    "node-sass": "^4.12.0",
+    "node-sass": "6.0.1",
     "postcss-loader": "3.0.0",
     "query-string": "^6.5.0",
-    "sass-loader": "7.1.0",
+    "sass-loader": "10.2.0",
     "shelljs": "^0.8.3",
     "style-loader": "^0.23.1",
     "svg-fill-loader": "0.0.8",
