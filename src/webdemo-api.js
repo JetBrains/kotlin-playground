@@ -99,7 +99,7 @@ export default class WebDemoApi {
             if (data.text) output = processJVMOutput(data.text, theme);
             break;
           case TargetPlatform.JUNIT:
-            data.testResults ? output = processJUnitResults(data.testResults, onTestPassed, onTestFailed) : output = processJVMOutput(data.text, theme);
+            data.testResults ? output = processJUnitResults(data.testResults, onTestPassed, onTestFailed) : output = processJVMOutput(data.text || '', theme);
             break;
         }
       }
