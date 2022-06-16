@@ -8,10 +8,24 @@ export const RUNTIME_CONFIG = {...getConfigFromElement(currentScript)};
 /**
  * API Paths
  *
- * @type {{COMPILE: string, COMPLETE: string, VERSIONS: string, JQUERY: string, KOTLIN_JS: string}}
+ * @type {{COMPILE: string, COMPLETE: string, VERSIONS: string, JQUERY: string, KOTLIN_JS: string, WITH_DCE: this}}
  */
 export const API_URLS = {
   server: RUNTIME_CONFIG.server || __WEBDEMO_URL__,
+  WITH_DCE(dce) {
+    const self = this;
+    return {
+      ...this,
+      COMPILE(...args) {
+        let url = self.COMPILE(...args);
+        if (url.includes("?")) {
+          url += "&"
+        }
+        url += "dce=" + Boolean(dce)
+        return url
+      }
+    };
+  },
   COMPILE(platform, version) {
     let url;
 

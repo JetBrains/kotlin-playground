@@ -52,6 +52,7 @@ const ATTRIBUTES = {
   COMPLETE: 'data-autocomplete',
   ON_FLY_HIGHLIGHT: 'highlight-on-fly',
   PLATFORM: 'data-target-platform',
+  DCE: 'data-dce',
   JS_LIBS: 'data-js-libs',
   FOLDED_BUTTON: 'folded-button',
   ARGUMENTS: 'args',
@@ -95,6 +96,7 @@ export default class ExecutableCode {
     const hiddenDependencies = this.getHiddenDependencies(targetNode);
     const outputHeight = targetNode.getAttribute(ATTRIBUTES.OUTPUT_HEIGHT) || null;
     const targetPlatform = TargetPlatform.getById(targetNode.getAttribute(ATTRIBUTES.PLATFORM));
+    const dce = targetNode.getAttribute(ATTRIBUTES.DCE) === "true";
     const targetNodeStyle = targetNode.getAttribute(ATTRIBUTES.STYLE);
     const jsLibs = this.getJsLibraries(targetNode, targetPlatform);
     const isFoldedButton = targetNode.getAttribute(ATTRIBUTES.FOLDED_BUTTON) !== "false";
@@ -168,6 +170,7 @@ export default class ExecutableCode {
       onFlyHighLight: onFlyHighLight,
       autoIndent: autoIndent,
       highlightOnly: highlightOnly,
+      dce: dce,
       targetPlatform: targetPlatform,
       jsLibs: jsLibs,
       isFoldedButton: isFoldedButton,

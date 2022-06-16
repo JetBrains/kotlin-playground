@@ -278,7 +278,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
 
   execute() {
     const {
-      onOpenConsole, targetPlatform, waitingForOutput, compilerVersion, onRun, onError,
+      onOpenConsole, targetPlatform, waitingForOutput, compilerVersion, onRun, onError, dce,
       args, theme, hiddenDependencies, onTestPassed, onTestFailed, onCloseConsole, jsLibs, outputHeight, getJsCode
     } = this.state;
     if (waitingForOutput) {
@@ -325,7 +325,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
       )
     } else {
       this.jsExecutor.reloadIframeScripts(jsLibs, this.getNodeForMountIframe(), targetPlatform);
-      WebDemoApi.translateKotlinToJs(this.getCode(), compilerVersion, targetPlatform, args, hiddenDependencies).then(
+      WebDemoApi.translateKotlinToJs(this.getCode(), compilerVersion, targetPlatform, args, hiddenDependencies, { dce }).then(
         state => {
           state.waitingForOutput = false;
           const jsCode = state.jsCode;
