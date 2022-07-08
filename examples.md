@@ -125,7 +125,7 @@ fun mul(a: Int, b: Int): Int {
 }
 
 fun main(args: Array<String>) {
-    console.log(mul(-1, 8))
+    println(mul(-1, 8))
 }
 ```
 
