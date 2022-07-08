@@ -47,9 +47,10 @@ export default class WebDemoApi {
    * @param platform        - TargetPlatform
    * @param args            - command line arguments
    * @param hiddenDependencies   - read only additional files
+   * @param compilationOptions   - options to handle different kind of compilation modes like DCE, PER MODULE, MINIFIED METHOD AND PROPERTY NAMES
    * @returns {*|PromiseLike<T>|Promise<T>}
    */
-  static translateKotlinToJs(code, compilerVersion, platform, args, hiddenDependencies) {
+  static translateKotlinToJs(code, compilerVersion, platform, args, hiddenDependencies, compilationOptions = {}) {
     const MINIMAL_MINOR_VERSION_IR = 5
     if (platform === TargetPlatform.JS_IR && parseInt(compilerVersion.split(".")[1]) < MINIMAL_MINOR_VERSION_IR) {
       return Promise.resolve({
@@ -61,7 +62,14 @@ export default class WebDemoApi {
         jsCode: ""
       })
     } else {
-      return executeCode(API_URLS.COMPILE(platform, compilerVersion), code, compilerVersion, platform, args, hiddenDependencies).then(function (data) {
+      return executeCode(
+        API_URLS.WITH_DCE(compilationOptions.dce).COMPILE(platform, compilerVersion),
+        code,
+        compilerVersion,
+        platform,
+        args,
+        hiddenDependencies
+      ).then(function (data) {
         let output = "";
         let errorsAndWarnings = flatten(Object.values(data.errors));
         return {

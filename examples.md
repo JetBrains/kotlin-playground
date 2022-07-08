@@ -115,6 +115,22 @@ fun main(args: Array<String>) {
 
 </div>
 
+Use `data-dce` attribute with value `true` to get less code from JS IR target:
+
+<div class="kotlin-code" data-target-platform="js-ir" data-dce="true">
+
+```kotlin
+fun mul(a: Int, b: Int): Int {
+    return a * b
+}
+
+fun main(args: Array<String>) {
+    println(mul(-1, 8))
+}
+```
+
+</div>
+
 
 Use `data-target-platform` attribute with value `junit` for creating examples with tests:
 
