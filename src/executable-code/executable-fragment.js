@@ -329,6 +329,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
         state => {
           state.waitingForOutput = false;
           const jsCode = state.jsCode;
+          const wasm = state.wasm;
           delete state.jsCode;
           if (getJsCode) getJsCode(jsCode);
           let errors = state.errors.filter(error => error.severity === "ERROR");
@@ -339,7 +340,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
             state.exception = null;
             this.update(state);
           } else {
-            this.jsExecutor.executeJsCode(jsCode, jsLibs, targetPlatform,
+            this.jsExecutor.executeJsCode(jsCode, wasm, jsLibs, targetPlatform,
               outputHeight, theme, onError).then(output => {
               if (output) {
                 state.openConsole = true;
