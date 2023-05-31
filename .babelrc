@@ -22,6 +22,7 @@
         "regenerator": false
       }
     ],
-    "module:fast-async"
+    "module:fast-async",
+    "@babel/plugin-syntax-dynamic-import"
   ]
 }
