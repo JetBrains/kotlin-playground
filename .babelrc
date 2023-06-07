@@ -23,6 +23,5 @@
       }
     ],
     "module:fast-async",
-    "@babel/plugin-syntax-dynamic-import"
   ]
 }
