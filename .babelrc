@@ -22,6 +22,6 @@
         "regenerator": false
       }
     ],
-    "module:fast-async"
+    "module:fast-async",
   ]
 }

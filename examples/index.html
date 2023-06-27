@@ -79,6 +79,19 @@ fun main(args: Array&lt;String&gt;) {
 }
 </code></pre>
 </div>
+<p>You can use Wasm compiler.</p>
+<pre><code class="hljs language-html"><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"kotlin-code"</span> <span class="hljs-attr">data-target-platform</span>=<span class="hljs-string">"wasm"</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+</code></pre>
+<div class="kotlin-code" data-target-platform="wasm">
+<pre><code class="hljs language-kotlin"><span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">mul</span><span class="hljs-params">(a: <span class="hljs-type">Int</span>, b: <span class="hljs-type">Int</span>)</span></span>: <span class="hljs-built_in">Int</span> {
+    <span class="hljs-keyword">return</span> a * b
+}
+
+<span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">main</span><span class="hljs-params">(args: <span class="hljs-type">Array</span>&lt;<span class="hljs-type">String</span>&gt;)</span></span> {
+    print(mul(-<span class="hljs-number">2</span>, <span class="hljs-number">4</span>))
+}
+</code></pre>
+</div>
 <p>Use <code>data-target-platform</code> attribute with value <code>junit</code> for creating examples with tests:</p>
 <div class="kotlin-code" data-target-platform="junit">
 <pre><code class="hljs language-kotlin"><span class="hljs-keyword">import</span> org.junit.Test

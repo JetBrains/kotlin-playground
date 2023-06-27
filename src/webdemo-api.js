@@ -51,26 +51,41 @@ export default class WebDemoApi {
    */
   static translateKotlinToJs(code, compilerVersion, platform, args, hiddenDependencies) {
     const MINIMAL_MINOR_VERSION_IR = 5
-    if (platform === TargetPlatform.JS_IR && parseInt(compilerVersion.split(".")[1]) < MINIMAL_MINOR_VERSION_IR) {
+    const MINIMAL_MINOR_VERSION_WASM = 9
+    const minor = parseInt(compilerVersion.split(".")[1]);
+
+    if (platform === TargetPlatform.JS_IR && minor < MINIMAL_MINOR_VERSION_IR) {
       return Promise.resolve({
         output: "",
         errors: [{
           severity: "ERROR",
-          message: "JS IR compiler backend accessible only since 1.5.0 version"
+          message: `JS IR compiler backend accessible only since 1.${MINIMAL_MINOR_VERSION_IR}.0 version`
         }],
         jsCode: ""
       })
-    } else {
-      return executeCode(API_URLS.COMPILE(platform, compilerVersion), code, compilerVersion, platform, args, hiddenDependencies).then(function (data) {
-        let output = "";
-        let errorsAndWarnings = flatten(Object.values(data.errors));
-        return {
-          output: output,
-          errors: errorsAndWarnings,
-          jsCode: data.jsCode
-        }
+    }
+
+    if (platform === TargetPlatform.WASM && minor < MINIMAL_MINOR_VERSION_WASM) {
+      return Promise.resolve({
+        output: "",
+        errors: [{
+          severity: "ERROR",
+          message: `Wasm compiler backend accessible only since 1.${MINIMAL_MINOR_VERSION_WASM}.0 version`
+        }],
+        jsCode: ""
       })
     }
+
+    return executeCode(API_URLS.COMPILE(platform, compilerVersion), code, compilerVersion, platform, args, hiddenDependencies).then(function (data) {
+      let output = "";
+      let errorsAndWarnings = flatten(Object.values(data.errors));
+      return {
+        output: output,
+        errors: errorsAndWarnings,
+        jsCode: data.jsCode,
+        wasm: data.wasm
+      }
+    })
   }
 
   /**

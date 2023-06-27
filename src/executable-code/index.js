@@ -210,6 +210,9 @@ export default class ExecutableCode {
    */
   getJsLibraries(targetNode, platform) {
     if (TargetPlatform.isJsRelated(platform)) {
+      if (platform === TargetPlatform.WASM) {
+        return new Set()
+      }
       const jsLibs = targetNode.getAttribute(ATTRIBUTES.JS_LIBS);
       let additionalLibs = new Set(API_URLS.JQUERY.split());
       if (jsLibs) {

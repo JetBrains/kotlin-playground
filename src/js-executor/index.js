@@ -25,10 +25,13 @@ export default class JsExecutor {
     this.kotlinVersion = kotlinVersion;
   }
 
-  async executeJsCode(jsCode, jsLibs, platform, outputHeight, theme, onError) {
+  async executeJsCode(jsCode, wasm, jsLibs, platform, outputHeight, theme, onError) {
     if (platform === TargetPlatform.CANVAS) {
       this.iframe.style.display = "block";
       if (outputHeight) this.iframe.style.height = `${outputHeight}px`;
+    }
+    if (platform === TargetPlatform.WASM) {
+      return await this.executeWasm(jsCode, wasm, theme, onError)
     }
     return await this.execute(jsCode, jsLibs, theme, onError, platform);
   }
@@ -57,6 +60,39 @@ export default class JsExecutor {
     return await this.execute(jsCode, jsLibs, theme, onError, platform);
   }
 
+  async executeWasm(jsCode, wasmCode, theme, onError) {
+    try {
+      const newCode = `
+          class BufferedOutput {
+            constructor() {
+              this.buffer = ""
+            }
+          }
+          export const bufferedOutput = new BufferedOutput()
+          ` +
+        jsCode
+          .replace(
+            "instantiateStreaming(fetch(wasmFilePath)",
+            "instantiate(Uint8Array.from(atob(" + "'" + wasmCode + "'" + "), c => c.charCodeAt(0))"
+          )
+          .replace(
+            "const importObject = {",
+            "js_code['kotlin.io.printImpl'] = (message) => bufferedOutput.buffer += message\n" +
+            "js_code['kotlin.io.printlnImpl'] = (message) => {bufferedOutput.buffer += message;bufferedOutput.buffer += \"\\n\"}\n" +
+            "const importObject = {"
+          )
+      const exports = await import(/* webpackIgnore: true */ 'data:text/javascript;base64,' + btoa(newCode));
+      await exports.instantiate()
+      const output = exports.bufferedOutput.buffer
+      exports.bufferedOutput.buffer = ""
+      return output ? `<span class="standard-output ${theme}">${processingHtmlBrackets(output)}</span>` : "";
+    } catch (e) {
+      if (onError) onError();
+      let exceptionOutput = showJsException(e);
+      return `<span class="error-output">${exceptionOutput}</span>`;
+    }
+  }
+
   timeout(ms) {
     return new Promise(resolve => setTimeout(resolve, ms))
   }
@@ -70,17 +106,19 @@ export default class JsExecutor {
     node.appendChild(this.iframe);
     let iframeDoc = this.iframe.contentDocument || this.iframe.document;
     iframeDoc.open();
-    if (targetPlatform !== TargetPlatform.JS_IR) {
+    if (targetPlatform === TargetPlatform.JS || targetPlatform === TargetPlatform.CANVAS) {
       const kotlinScript = API_URLS.KOTLIN_JS + `${normalizeJsVersion(this.kotlinVersion)}/kotlin.js`;
       iframeDoc.write("<script src='" + kotlinScript + "'></script>");
     }
-    for (let lib of jsLibs) {
-      iframeDoc.write("<script src='" + lib + "'></script>");
-    }
-    if (targetPlatform === TargetPlatform.JS_IR) {
-      iframeDoc.write(`<script>${INIT_SCRIPT_IR}</script>`);
-    } else {
-      iframeDoc.write(`<script>${INIT_SCRIPT}</script>`);
+    if (targetPlatform !== TargetPlatform.WASM) {
+      for (let lib of jsLibs) {
+        iframeDoc.write("<script src='" + lib + "'></script>");
+      }
+      if (targetPlatform === TargetPlatform.JS_IR) {
+        iframeDoc.write(`<script>${INIT_SCRIPT_IR}</script>`);
+      } else {
+        iframeDoc.write(`<script>${INIT_SCRIPT}</script>`);
+      }
     }
     iframeDoc.write('<body style="margin: 0; overflow: hidden;"></body>');
     iframeDoc.close();
