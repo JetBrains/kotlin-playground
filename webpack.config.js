@@ -14,11 +14,11 @@ module.exports = (params = {}) => {
   const config = {
     mode: env,
     entry: {
-      [mainEntryName]: ['./src/index'],
+      [mainEntryName]: ['./src/index.ts'],
       REMOVE_ME: [
         `!!file-loader?name=${examplesPath}examples.css!github-markdown-css/github-markdown.css`,
-        `!!file-loader?name=${examplesPath}examples-highlight.css!highlight.js/styles/github.css`
-      ]
+        `!!file-loader?name=${examplesPath}examples-highlight.css!highlight.js/styles/github.css`,
+      ],
     },
 
     output: {
@@ -26,7 +26,7 @@ module.exports = (params = {}) => {
       filename: '[name].js',
       library: libraryName,
       libraryTarget: 'umd',
-      libraryExport: 'default'
+      libraryExport: 'default',
     },
 
     devtool: 'source-map',
@@ -36,39 +36,41 @@ module.exports = (params = {}) => {
         {
           test: /\.js$/,
           include: path.resolve(__dirname, 'src'),
-          loader: 'babel-loader'
+          loader: 'babel-loader',
+        },
+        {
+          test: /\.tsx?$/,
+          use: 'ts-loader',
+          exclude: /node_modules/,
         },
         {
           test: /\.monk$/,
-          loader: 'monkberry-loader'
+          loader: 'monkberry-loader',
         },
         {
-          test: /\.scss$/,
-          use: [
-            'style-loader',
-            'css-loader',
-            'sass-loader'
-          ]
+          test: /\.s[ac]ss$/i,
+          use: ['style-loader', 'css-loader', 'sass-loader'],
         },
         {
           test: /\.svg$/,
-          use: [
-            'svg-url-loader',
-            'svg-fill-loader'
-          ]
+          use: ['svg-url-loader', 'svg-fill-loader'],
         },
         {
           test: /\.md$/,
-          loader: path.resolve(__dirname, 'utils/markdown-loader.js')
-        }
-      ]
+          loader: path.resolve(__dirname, 'utils/markdown-loader.js'),
+        },
+      ],
+    },
+
+    resolve: {
+      extensions: ['.tsx', '.ts', '.js'],
     },
 
     plugins: [
       new HtmlPlugin({
         template: 'examples.md',
         filename: isServer ? 'index.html' : 'examples/index.html',
-        inject: false
+        inject: false,
       }),
 
       new webpack.optimize.ModuleConcatenationPlugin(),
@@ -78,31 +80,14 @@ module.exports = (params = {}) => {
         __IS_PRODUCTION__: isProduction,
         __LIBRARY_NAME__: JSON.stringify(libraryName),
         'process.env': {
-          NODE_ENV: JSON.stringify(env)
-        }
+          NODE_ENV: JSON.stringify(env),
+        },
       }),
-
-      // Remove all removeme* assets
-      {
-        apply: (compiler) => {
-          compiler.plugin('emit', (compilation, done) => {
-            const { assets } = compilation;
-
-            Object.keys(assets).forEach((name) => {
-              if (name.includes('REMOVE_ME')) {
-                delete assets[name];
-              }
-            });
-
-            done();
-          });
-        }
-      }
     ],
 
     devServer: {
-      contentBase: path.resolve(__dirname, 'src')
-    }
+      static: path.resolve(__dirname, 'src'),
+    },
   };
 
   return config;
