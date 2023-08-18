@@ -14,7 +14,7 @@ module.exports = (params = {}) => {
   const config = {
     mode: env,
     entry: {
-      [mainEntryName]: ['./src/index.ts'],
+      [mainEntryName]: ['./src/index'],
       REMOVE_ME: [
         `!!file-loader?name=${examplesPath}examples.css!github-markdown-css/github-markdown.css`,
         `!!file-loader?name=${examplesPath}examples-highlight.css!highlight.js/styles/github.css`,
