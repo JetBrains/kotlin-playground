@@ -54,6 +54,7 @@ module.exports = (params = {}) => {
         {
           test: /\.svg$/,
           use: ['svg-url-loader', 'svg-fill-loader'],
+          type: 'javascript/auto',
         },
         {
           test: /\.md$/,
