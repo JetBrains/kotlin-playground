@@ -4,39 +4,29 @@ import { defineConfig, devices } from '@playwright/test';
 
 dotenv({ path: `.env.local`, override: true });
 
-const isDevMode = Boolean(env.TEST_MODE !== 'full');
+const PROJECTS_LIST = {
+  DEV: [ 'Desktop Chrome' ],
+  GITHUB_MAC: [ 'Desktop Safari' ],
+  GITHUB_LINUX: [ 'Desktop Chrome', 'Desktop Firefox' ],
+};
 
-function getHeadlessMode() {
-  const { TEST_HEADLESS_MODE } = env;
-  return TEST_HEADLESS_MODE ? TEST_HEADLESS_MODE === 'true' : !isDevMode;
+const envMode = (env.TEST_PROJECT_LIST || 'DEV').toUpperCase();
+
+if (!(envMode && isKeyOfObject(envMode, PROJECTS_LIST))) {
+  const list = Object.keys(PROJECTS_LIST)
+      .map((s) => `'${s.toLowerCase()}'`)
+      .join(' or ');
+
+  throw Error(`TEST_PROJECT_LIST should be ${list}`);
 }
 
-function getProjects() {
-  let projects = [
-    {
-      name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
-    },
-  ];
-
-  if (!isDevMode)
-    projects = projects.concat(
-      {
-        name: 'firefox',
-        use: { ...devices['Desktop Firefox'] },
-      },
-      {
-        name: 'webkit',
-        use: { ...devices['Desktop Safari'] },
-      },
-    );
-
-  return projects;
-}
+const mode = envMode;
+const isDevMode = Boolean(mode === 'DEV');
 
 export default defineConfig({
   testDir: './tests',
   testMatch: /.*\.e2e\.tsx?$/,
+  snapshotPathTemplate: `{testDir}/{testFileDir}/__screenshots__/${mode.toLowerCase()}/{projectName}/{testFilePath}-{arg}{ext}`,
 
   timeout: 60000,
   forbidOnly: !isDevMode,
@@ -52,7 +42,7 @@ export default defineConfig({
 
   use: {
     testIdAttribute: 'data-test',
-    headless: getHeadlessMode(),
+    headless: (value => value ? value === 'true' : !isDevMode)(env.TEST_HEADLESS_MODE),
     ignoreHTTPSErrors: true,
     screenshot: {
       fullPage: true,
@@ -62,5 +52,15 @@ export default defineConfig({
     video: isDevMode ? 'on-first-retry' : 'on',
   },
 
-  projects: getProjects(),
+  projects: PROJECTS_LIST[mode].map(project => ({
+    name: project,
+    use: {...devices[project]},
+  }))
 });
+
+export function isKeyOfObject<T extends object>(
+    key: string | number | symbol,
+    obj: T,
+): key is keyof T {
+  return key in obj;
+}

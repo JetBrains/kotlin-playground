@@ -1,0 +1,86 @@
+name: "Tests: release bundle"
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.number || github.sha }}
+  cancel-in-progress: true
+
+jobs:
+  integration:
+    name: Run end-to-end tests
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            TEST_PROJECT_LIST: github_linux
+          - os: macos-latest
+            TEST_PROJECT_LIST: github_mac
+
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 25
+
+    steps:
+      # prepare core binaries
+      - uses: actions/checkout@v3
+
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: lts/*
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: yarn
+
+      # run lint
+      - name: Run tests
+        run: yarn lint
+
+      # playwright recommends if you cache the binaries to keep it tied to the version of playwright you are using.
+      # https://playwright.dev/docs/ci#caching-browsers
+      - name: Get current Playwright version
+        id: playwright-version
+        run: |
+          echo version=$(npm info @playwright/test version) >> $GITHUB_OUTPUT
+
+      - name: Cache Playwright binaries
+        uses: actions/cache@v3
+        id: playwright-cache
+        with:
+          path: |
+            **/node_modules/playwright
+            ~/.cache/ms-playwright
+            ~/Library/Caches/ms-playwright
+            %USERPROFILE%\AppData\Local\ms-playwright
+          key: ${{ runner.os }}-${{ runner.arch }}-cache-playwright-${{ steps.playwright-version.outputs.version }}
+
+      - name: Playwright info
+        run: |
+          echo "OS: ${{ matrix.os }}"
+          echo "Playwright version: ${{ steps.playwright-version.outputs.version }}"
+          echo "Playwright install dir: ~/.cache/ms-playwright"
+          echo "Cache key: ${{ runner.os }}-${{ runner.arch }}-cache-playwright-${{ steps.playwright-version.outputs.version }}"
+          echo "Cache hit: ${{ steps.playwright-cache.outputs.cache-hit == 'true' }}"
+
+      - name: Install Playwright
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        run: npx playwright install --with-deps
+
+      # run tests
+      - name: Run tests
+        run: TEST_PROJECT_LIST="${{matrix.TEST_PROJECT_LIST}}" yarn test
+
+      - uses: actions/upload-artifact@v3
+        if: failure()
+        with:
+          name: playwright-report
+          path: |
+            test-results/
+            playwright-report/
+            tests/**/__screenshots__
+            !tests/**/__screenshots__/dev
+          retention-days: 5
