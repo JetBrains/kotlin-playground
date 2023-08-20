@@ -6,22 +6,23 @@ export const API_HOST = 'api.kotlinlang.org';
 
 function defaultVersions(route: Route, req: Request) {
   if (req.method() !== 'GET') {
-    route.fallback();
-    return;
+    return route.continue();
   }
 
   return route.fulfill({ path: join(__dirname, 'versions.json') });
 }
 
-export function mockVersions(
+export async function mockVersions(
   context: BrowserContext,
   resp?: Parameters<BrowserContext['route']>[1],
 ) {
-  return context.route(
-    (url) =>
-      url.host === API_HOST && url.pathname.match(/^\/?\/versions$/) !== null,
-    resp || defaultVersions,
-  );
+  const checkUrl = (url: URL) =>
+    url.host === API_HOST && url.pathname.match(/^\/?\/versions$/) !== null;
+  const onMatch = resp || defaultVersions;
+
+  await context.route(checkUrl, onMatch);
+
+  return () => context.unroute(checkUrl, onMatch);
 }
 
 function isRunRequest(url: URL | string) {

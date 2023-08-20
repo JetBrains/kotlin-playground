@@ -19,8 +19,14 @@ import { prepareNetwork, RouteFulfill, toPostData } from './utlis';
 import { mockRunRequest, waitRunRequest } from './utlis/mocks/compiler';
 
 test.describe('basics', () => {
+  let unMockNetwork: CallableFunction;
+
   test.beforeEach(async ({ context, baseURL }) => {
-    await prepareNetwork(context, baseURL); // offline mode
+    unMockNetwork = await prepareNetwork(context, baseURL); // offline mode
+  });
+
+  test.afterEach(async () => {
+    if (unMockNetwork) await unMockNetwork();
   });
 
   test('simple usage', async ({ page }) => {

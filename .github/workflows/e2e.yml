@@ -81,6 +81,5 @@ jobs:
           path: |
             test-results/
             playwright-report/
-            tests/**/__screenshots__
-            !tests/**/__screenshots__/dev
+            tests/**/__screenshots__/github_*
           retention-days: 5
