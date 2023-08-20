@@ -77,7 +77,8 @@
     "start": "webpack-dev-server --port 9002",
     "lint": "eslint . --ext .ts",
     "prettier": "prettier --write .",
-    "test": "playwright test",
+    "test": "npm run build:all && npm run test:run",
+    "test:run": "playwright test",
     "test:server": "node tests/utlis/server/index.js"
   }
 }

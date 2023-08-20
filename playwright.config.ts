@@ -58,7 +58,6 @@ export default defineConfig({
       fullPage: true,
       mode: isDevMode ? 'only-on-failure' : 'on',
     },
-
     trace: isDevMode ? 'on-first-retry' : 'on',
     video: isDevMode ? 'on-first-retry' : 'on',
   },

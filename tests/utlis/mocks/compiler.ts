@@ -1,0 +1,61 @@
+import { BrowserContext, Route, Request, Page } from '@playwright/test';
+import { join } from 'path';
+import { RouteFulfill } from '../index';
+
+export const API_HOST = 'api.kotlinlang.org';
+
+function defaultVersions(route: Route, req: Request) {
+  if (req.method() !== 'GET') {
+    route.fallback();
+    return;
+  }
+
+  return route.fulfill({ path: join(__dirname, 'versions.json') });
+}
+
+export function mockVersions(
+  context: BrowserContext,
+  resp?: Parameters<BrowserContext['route']>[1],
+) {
+  return context.route(
+    (url) =>
+      url.host === API_HOST && url.pathname.match(/^\/?\/versions$/) !== null,
+    resp || defaultVersions,
+  );
+}
+
+function isRunRequest(url: URL | string) {
+  const uri = url instanceof URL ? url : new URL(url);
+
+  return (
+    uri.host === API_HOST &&
+    uri.pathname.match(/^\/?\/api\/\d+\.\d+\.\d+\/compiler\/run$/) !== null
+  );
+}
+
+export async function mockRunRequest(page: Page) {
+  let resolve: (value?: RouteFulfill) => void;
+
+  const promise = new Promise<RouteFulfill>((cb) => {
+    resolve = cb;
+  });
+
+  const checkUrl = (url: URL) => isRunRequest(url);
+  const onMatch = (route: Route) =>
+    route.request().method() !== 'POST'
+      ? route.continue()
+      : promise.then((value) => route.fulfill(value));
+
+  await page.route(checkUrl, onMatch);
+
+  return (value: RouteFulfill) => {
+    resolve(value);
+    page.unroute(checkUrl, onMatch);
+  };
+}
+
+export async function waitRunRequest(page: Page) {
+  return page.waitForRequest(
+    (req) => req.method() === 'POST' && isRunRequest(req.url()),
+  );
+}
