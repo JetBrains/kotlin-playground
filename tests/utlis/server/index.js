@@ -1,6 +1,6 @@
-const http = require("http");
-const fs = require("fs").promises;
-const { join } = require("path");
+const http = require('http');
+const fs = require('fs').promises;
+const { join } = require('path');
 const { getType } = require('mime');
 const { decode } = require('querystring');
 
@@ -8,7 +8,7 @@ const port = 8000;
 
 async function sendFile(res, pathname, cb = null) {
   let content = await fs.readFile(join(__dirname, pathname));
-  if(cb) content = cb(content.toString('utf-8'));
+  if (cb) content = cb(content.toString('utf-8'));
 
   res.setHeader('content-type', getType(pathname));
   res.writeHead(200);
@@ -20,7 +20,9 @@ async function readJSON(req) {
   return new Promise((resolve, reject) => {
     let body = '';
 
-    req.on('data', function (data) { body += data; });
+    req.on('data', function (data) {
+      body += data;
+    });
     req.on('end', function () {
       try {
         resolve(decode(body));
@@ -37,19 +39,27 @@ async function requestListener(req, res) {
     const path = new URL(req.url, `http://localhost:${port}`).pathname;
 
     if (req.method === 'GET' && path.startsWith('/blank.html'))
-      response = '';
+      response = Promise.resolve().then(() => {
+        res.writeHead(200);
+        res.end('');
+      });
 
     if (req.method === 'POST' && path === '/playground.html') {
       const { script, body } = await readJSON(req);
-      response = sendFile(res, './playground.html', content => content
-          .replace(/ data-script-config/, script ? decodeURIComponent(script) : '')
-          .replace(/<!-- content -->/, body ? decodeURIComponent(body) : ''));
+      response = sendFile(res, './playground.html', (content) =>
+        content
+          .replace(
+            / data-script-config/,
+            script ? decodeURIComponent(script) : '',
+          )
+          .replace(/<!-- content -->/, body ? decodeURIComponent(body) : ''),
+      );
     }
 
     if (req.method === 'GET' && path.startsWith('/dist/'))
       response = sendFile(res, '../../../' + path.substring(1));
 
-    if (response) {
+    if (response !== null) {
       await response;
       return;
     }
@@ -64,7 +74,7 @@ async function requestListener(req, res) {
 
 const server = http.createServer(requestListener);
 
-process.on( 'SIGINT', function() {
+process.on('SIGINT', function () {
   process.exit();
 });
 

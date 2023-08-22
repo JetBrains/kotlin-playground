@@ -13,16 +13,16 @@ function defaultVersions(route: Route, req: Request) {
 }
 
 export async function mockVersions(
-  context: BrowserContext,
+  page: Page,
   resp?: Parameters<BrowserContext['route']>[1],
 ) {
   const checkUrl = (url: URL) =>
     url.host === API_HOST && url.pathname.match(/^\/?\/versions$/) !== null;
   const onMatch = resp || defaultVersions;
 
-  await context.route(checkUrl, onMatch);
+  await page.route(checkUrl, onMatch);
 
-  return () => context.unroute(checkUrl, onMatch);
+  return () => page.unroute(checkUrl, onMatch);
 }
 
 function isRunRequest(url: URL | string) {

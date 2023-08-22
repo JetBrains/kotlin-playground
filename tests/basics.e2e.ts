@@ -1,6 +1,6 @@
 import { expect, Locator, Page, test } from '@playwright/test';
 
-import { gotoScriptWidget } from './utlis/server/playground';
+import { gotoHtmlWidget } from './utlis/server/playground';
 
 import {
   LOADER_SELECTOR, OPEN_EDITOR_SELECTOR,
@@ -19,18 +19,16 @@ import { prepareNetwork, RouteFulfill, toPostData } from './utlis';
 import { mockRunRequest, waitRunRequest } from './utlis/mocks/compiler';
 
 test.describe('basics', () => {
-  let unMockNetwork: CallableFunction;
-
-  test.beforeEach(async ({ context, baseURL }) => {
-    unMockNetwork = await prepareNetwork(context, baseURL); // offline mode
-  });
-
-  test.afterEach(async () => {
-    if (unMockNetwork) await unMockNetwork();
+  test.beforeEach(async ({ page, baseURL }) => {
+    await prepareNetwork(page, baseURL); // offline mode
   });
 
   test('simple usage', async ({ page }) => {
-    await gotoScriptWidget(page, `<code>${tplCode('Hello, world!')}</code>`);
+    await gotoHtmlWidget(
+      page,
+      { selector: 'code' },
+      `<code>${tplCode('Hello, world!')}</code>`,
+    );
 
     const editor = page.locator(WIDGET_SELECTOR);
 
@@ -51,6 +49,26 @@ test.describe('basics', () => {
     // Edit and run
     await replaceStringInEditor(page, editor, 'Hello, world!', 'edited');
     await checkPrintlnCase(page, editor, 'edited');
+  });
+
+  test('User init widget', async ({ page }) => {
+    await gotoHtmlWidget(page, `<code>${tplCode('Hello, world!')}</code>`);
+
+    const editor = page.locator(WIDGET_SELECTOR);
+
+    // doesn't rendered by default
+    await expect(editor).toHaveCount(0);
+
+    //language=javascript
+    const content = `(() => {
+      const KotlinPlayground = window.KotlinPlayground;
+      KotlinPlayground('code');
+    })();`;
+
+    await page.addScriptTag({ content });
+
+    // playground loaded
+    await expect(editor).toHaveCount(1);
   });
 });
 
