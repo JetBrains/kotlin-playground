@@ -13,8 +13,8 @@ function defaultVersions(route: Route, req: Request) {
 }
 
 export async function mockVersions(
-  page: Page,
-  resp?: Parameters<BrowserContext['route']>[1],
+  page: Page | BrowserContext,
+  resp?: Parameters<Page['route']>[1] | Parameters<BrowserContext['route']>[1],
 ) {
   const checkUrl = (url: URL) =>
     url.host === API_HOST && url.pathname.match(/^\/?\/versions$/) !== null;
@@ -34,7 +34,7 @@ function isRunRequest(url: URL | string) {
   );
 }
 
-export async function mockRunRequest(page: Page) {
+export async function mockRunRequest(page: Page | BrowserContext) {
   let resolve: (value?: RouteFulfill) => void;
 
   const promise = new Promise<RouteFulfill>((cb) => {

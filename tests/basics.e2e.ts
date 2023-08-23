@@ -3,8 +3,12 @@ import { expect, Locator, Page, test } from '@playwright/test';
 import { gotoHtmlWidget } from './utlis/server/playground';
 
 import {
-  LOADER_SELECTOR, OPEN_EDITOR_SELECTOR,
-  RESULT_SELECTOR, RUN_SELECTOR, TARGET_SELECTOR, VERSION_SELECTOR,
+  LOADER_SELECTOR,
+  OPEN_EDITOR_SELECTOR,
+  RESULT_SELECTOR,
+  RUN_SELECTOR,
+  TARGET_SELECTOR,
+  VERSION_SELECTOR,
   WIDGET_SELECTOR,
 } from './utlis/selectors';
 
@@ -15,7 +19,7 @@ import {
 } from './utlis/interactions';
 
 import { expectScreenshot } from './utlis/expects';
-import { prepareNetwork, RouteFulfill, toPostData } from './utlis';
+import { prepareNetwork, printlnCode, RouteFulfill, toPostData } from './utlis';
 import { mockRunRequest, waitRunRequest } from './utlis/mocks/compiler';
 
 test.describe('basics', () => {
@@ -27,7 +31,7 @@ test.describe('basics', () => {
     await gotoHtmlWidget(
       page,
       { selector: 'code' },
-      `<code>${tplCode('Hello, world!')}</code>`,
+      `<code>${printlnCode('Hello, world!')}</code>`,
     );
 
     const editor = page.locator(WIDGET_SELECTOR);
@@ -35,7 +39,9 @@ test.describe('basics', () => {
     await expect(editor).toHaveCount(1); // playground loaded
     await expect(editor.locator(OPEN_EDITOR_SELECTOR)).toHaveCount(1); // open on play-link exists
     await expect(editor.locator(TARGET_SELECTOR)).toHaveText('Target: JVM'); // default target JVN
-    await expect(editor.locator(VERSION_SELECTOR)).toHaveText('Running on v.1.8.21'); // latest version marker
+    await expect(editor.locator(VERSION_SELECTOR)).toHaveText(
+      'Running on v.1.8.21', // latest version marker
+    );
     await expect(editor.locator(RUN_SELECTOR)).toHaveCount(1); // run button exists
     await expectScreenshot(page, 'initial view is correct');
 
@@ -51,8 +57,8 @@ test.describe('basics', () => {
     await checkPrintlnCase(page, editor, 'edited');
   });
 
-  test('User init widget', async ({ page }) => {
-    await gotoHtmlWidget(page, `<code>${tplCode('Hello, world!')}</code>`);
+  test('user init widget', async ({ page }) => {
+    await gotoHtmlWidget(page, `<code>${printlnCode('Hello, world!')}</code>`);
 
     const editor = page.locator(WIDGET_SELECTOR);
 
@@ -73,7 +79,7 @@ test.describe('basics', () => {
 });
 
 function checkPrintlnCase(page: Page, editor: Locator, text: string) {
-  const source = toPostData(tplCode(text));
+  const source = toPostData(printlnCode(text));
   const postData = `{"args":"","files":[{"name":"File.kt","text":"${source}","publicId":""}],"confType":"java"}`;
 
   const serverOutput = {
@@ -106,11 +112,4 @@ export async function checkRunCase(
 
   await expect(node.locator(RESULT_SELECTOR)).toBeVisible();
   await expectScreenshot(page, 'run code - done!');
-}
-
-function tplCode(text: string) {
-  //language=kotlin
-  return `fun main() {
-    println("${text}")
-  }`;
 }
