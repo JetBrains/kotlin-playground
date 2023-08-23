@@ -1,6 +1,7 @@
 const path = require('path');
 const webpack = require('webpack');
 const HtmlPlugin = require('html-webpack-plugin');
+const UnminifiedWebpackPlugin = require('unminified-webpack-plugin');
 
 module.exports = (params = {}) => {
   const isProduction = params.production;
@@ -84,6 +85,8 @@ module.exports = (params = {}) => {
           NODE_ENV: JSON.stringify(env),
         },
       }),
+
+      new UnminifiedWebpackPlugin()
     ],
 
     devServer: {
