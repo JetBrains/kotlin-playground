@@ -27,6 +27,24 @@ test.describe('basics', () => {
     await prepareNetwork(page, baseURL); // offline mode
   });
 
+  test('highlight only', async ({ page }) => {
+    await gotoHtmlWidget(
+      page,
+      { selector: 'code' },
+      `<code data-highlight-only>${printlnCode('Hello, world!')}</code>`,
+    );
+
+    const editor = page.locator(WIDGET_SELECTOR);
+
+    await expect(editor).toHaveCount(1); // playground loaded
+    await expect(editor.locator(OPEN_EDITOR_SELECTOR)).not.toBeVisible(); // open on play-link
+    await expect(editor.locator(TARGET_SELECTOR)).not.toBeVisible(); // default target JVN
+    await expect(editor.locator(VERSION_SELECTOR)).not.toBeVisible(); // latest version marker
+    await expect(editor.locator(RUN_SELECTOR)).not.toBeVisible();
+
+    await expectScreenshot(page, 'highlight view');
+  });
+
   test('simple usage', async ({ page }) => {
     await gotoHtmlWidget(
       page,
