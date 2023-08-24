@@ -13,6 +13,7 @@ jobs:
   integration:
     name: Run end-to-end tests
     strategy:
+      fail-fast: false
       matrix:
         include:
           - os: ubuntu-latest
