@@ -18,7 +18,7 @@ import {
   runButton,
 } from './utlis/interactions';
 
-import { checkEditorView } from './utlis/expects';
+import { checkEditorView, checkScreenshot } from './utlis/screenshots';
 import { prepareNetwork, printlnCode, RouteFulfill, toPostData } from './utlis';
 import { mockRunRequest, waitRunRequest } from './utlis/mocks/compiler';
 
@@ -44,7 +44,7 @@ test.describe('basics', () => {
     await expect(editor.locator(RUN_SELECTOR)).not.toBeVisible();
 
     // Take screen fullpage, for sure original node should be invisible
-    await checkEditorView(page.locator('body'), 'initial view is correct');
+    await checkScreenshot(page.locator('body'), 'initial view is correct');
   });
 
   test('simple usage', async ({ page }) => {
@@ -76,7 +76,7 @@ test.describe('basics', () => {
     );
 
     // Take screen fullpage, for sure original node should be invisible
-    await checkEditorView(page.locator('body'), 'initial view is correct');
+    await checkScreenshot(page.locator('body'), 'initial view is correct');
 
     // run with default source
     await checkPrintlnCase(page, editor, 'Hello, world!');
