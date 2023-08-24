@@ -18,7 +18,7 @@ import {
   runButton,
 } from './utlis/interactions';
 
-import { checkEditorScreenshot } from './utlis/expects';
+import { checkEditorView } from './utlis/expects';
 import { prepareNetwork, printlnCode, RouteFulfill, toPostData } from './utlis';
 import { mockRunRequest, waitRunRequest } from './utlis/mocks/compiler';
 
@@ -36,39 +36,54 @@ test.describe('basics', () => {
 
     const editor = page.locator(WIDGET_SELECTOR);
 
+    await expect(page.locator('code')).not.toBeVisible(); // original node hided
     await expect(editor).toHaveCount(1); // playground loaded
     await expect(editor.locator(OPEN_EDITOR_SELECTOR)).not.toBeVisible(); // open on play-link
     await expect(editor.locator(TARGET_SELECTOR)).not.toBeVisible(); // default target JVN
     await expect(editor.locator(VERSION_SELECTOR)).not.toBeVisible(); // latest version marker
     await expect(editor.locator(RUN_SELECTOR)).not.toBeVisible();
 
-    await checkEditorScreenshot(editor, 'highlight view');
+    // Take screen fullpage, for sure original node should be invisible
+    await checkEditorView(page.locator('body'), 'initial view is correct');
   });
 
   test('simple usage', async ({ page }) => {
     await gotoHtmlWidget(
       page,
       { selector: 'code' },
-      `<code>${printlnCode('Hello, world!')}</code>`,
+      `<p>before</p>
+        <code>${printlnCode('Hello, world!')}</code>
+      <p>after</p>`,
     );
 
     const editor = page.locator(WIDGET_SELECTOR);
-
     await expect(editor).toHaveCount(1); // playground loaded
+    await expect(page.locator('code')).not.toBeVisible(); // original node hided
+
+    // editor on correct DOM position
+    await expect(editor.locator('xpath=preceding-sibling::p[1]')).toHaveText(
+      'before',
+    );
+    await expect(editor.locator('xpath=following-sibling::p[1]')).toHaveText(
+      'after',
+    );
+
+    await expect(editor.locator(RUN_SELECTOR)).toHaveCount(1); // run button exists
     await expect(editor.locator(OPEN_EDITOR_SELECTOR)).toHaveCount(1); // open on play-link exists
-    await expect(editor.locator(TARGET_SELECTOR)).toHaveText('Target: JVM'); // default target JVN
+    await expect(editor.locator(TARGET_SELECTOR)).toHaveText('Target: JVM'); // default target JVM
     await expect(editor.locator(VERSION_SELECTOR)).toHaveText(
       'Running on v.1.8.21', // latest version marker
     );
-    await expect(editor.locator(RUN_SELECTOR)).toHaveCount(1); // run button exists
-    await checkEditorScreenshot(editor, 'initial view is correct');
+
+    // Take screen fullpage, for sure original node should be invisible
+    await checkEditorView(page.locator('body'), 'initial view is correct');
 
     // run with default source
     await checkPrintlnCase(page, editor, 'Hello, world!');
 
     // click close button
     await closeButton(editor);
-    await checkEditorScreenshot(editor, 'console closed');
+    await checkEditorView(editor, 'console closed');
 
     // Edit and run
     await replaceStringInEditor(page, editor, 'Hello, world!', 'edited');
@@ -132,5 +147,5 @@ export async function checkRunCase(
   resolveRun(serverOutput);
 
   await expect(editor.locator(RESULT_SELECTOR)).toBeVisible();
-  await checkEditorScreenshot(editor, 'run code - done!');
+  await checkEditorView(editor, 'run code - done!');
 }

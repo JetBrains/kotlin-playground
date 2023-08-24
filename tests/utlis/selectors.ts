@@ -1,4 +1,4 @@
-export const WIDGET_SELECTOR = '.executable-fragment-wrapper';
+export const WIDGET_SELECTOR = 'div:has(> .executable-fragment-wrapper)';
 export const RUN_SELECTOR = '.run-button';
 export const CLOSE_SELECTOR = '.console-close';
 export const OUTPUT_SELECTOR = '.output-wrapper';

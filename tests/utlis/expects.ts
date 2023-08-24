@@ -1,6 +1,6 @@
 import { expect, Locator } from '@playwright/test';
 
-export async function checkEditorScreenshot(node: Locator, message: string) {
+export async function checkEditorView(node: Locator, message: string) {
   const cursor = node.locator('.CodeMirror-cursors');
 
   // Cursor blinks all the time, it's failed test from time to time
