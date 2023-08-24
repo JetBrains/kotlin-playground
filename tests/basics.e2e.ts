@@ -18,7 +18,7 @@ import {
   runButton,
 } from './utlis/interactions';
 
-import { expectScreenshot } from './utlis/expects';
+import { checkEditorScreenshot } from './utlis/expects';
 import { prepareNetwork, printlnCode, RouteFulfill, toPostData } from './utlis';
 import { mockRunRequest, waitRunRequest } from './utlis/mocks/compiler';
 
@@ -42,7 +42,7 @@ test.describe('basics', () => {
     await expect(editor.locator(VERSION_SELECTOR)).not.toBeVisible(); // latest version marker
     await expect(editor.locator(RUN_SELECTOR)).not.toBeVisible();
 
-    await expectScreenshot(page, 'highlight view');
+    await checkEditorScreenshot(editor, 'highlight view');
   });
 
   test('simple usage', async ({ page }) => {
@@ -61,14 +61,14 @@ test.describe('basics', () => {
       'Running on v.1.8.21', // latest version marker
     );
     await expect(editor.locator(RUN_SELECTOR)).toHaveCount(1); // run button exists
-    await expectScreenshot(page, 'initial view is correct');
+    await checkEditorScreenshot(editor, 'initial view is correct');
 
     // run with default source
     await checkPrintlnCase(page, editor, 'Hello, world!');
 
     // click close button
     await closeButton(editor);
-    await expectScreenshot(page, 'console closed');
+    await checkEditorScreenshot(editor, 'console closed');
 
     // Edit and run
     await replaceStringInEditor(page, editor, 'Hello, world!', 'edited');
@@ -113,21 +113,24 @@ function checkPrintlnCase(page: Page, editor: Locator, text: string) {
 
 export async function checkRunCase(
   page: Page,
-  node: Locator,
+  editor: Locator,
   postData: string,
   serverOutput: RouteFulfill,
 ) {
   const resolveRun = await mockRunRequest(page);
 
-  const [request] = await Promise.all([waitRunRequest(page), runButton(node)]);
+  const [request] = await Promise.all([
+    waitRunRequest(page),
+    runButton(editor),
+  ]);
 
   expect(postData).toEqual(request.postData());
 
-  await expect(node.locator(LOADER_SELECTOR)).toBeVisible();
-  // await expectScreenshot(page, 'run code - loading!');
+  await expect(editor.locator(LOADER_SELECTOR)).toBeVisible();
+  // await expectScreenshot(editor, 'run code - loading!');
 
   resolveRun(serverOutput);
 
-  await expect(node.locator(RESULT_SELECTOR)).toBeVisible();
-  await expectScreenshot(page, 'run code - done!');
+  await expect(editor.locator(RESULT_SELECTOR)).toBeVisible();
+  await checkEditorScreenshot(editor, 'run code - done!');
 }
