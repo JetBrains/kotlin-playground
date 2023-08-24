@@ -2,6 +2,7 @@ import { expect, Page, test } from '@playwright/test';
 import { gotoHtmlWidget } from './utlis/server/playground';
 import { prepareNetwork, printlnCode, toHtmlAttributes } from './utlis';
 import { OPEN_EDITOR_SELECTOR, WIDGET_SELECTOR } from './utlis/selectors';
+import { checkEditorView } from './utlis/screenshots';
 
 test.describe('open in playground', () => {
   test.beforeEach(async ({ page, baseURL }) => {
@@ -117,4 +118,7 @@ async function checkCrosslinkStatus(
   await expect(editor.locator(OPEN_EDITOR_SELECTOR)).toHaveCount(
     exists ? 1 : 0,
   );
+
+  if (options['data-crosslink'] === 'disabled')
+    await checkEditorView(editor, 'hided crosslink');
 }
