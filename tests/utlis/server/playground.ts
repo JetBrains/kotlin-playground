@@ -23,7 +23,7 @@ export async function gotoHtmlWidget(
   html?: string,
 ): Promise<Page> {
   let content: string = html;
-  let options: ScriptOptions;
+  let options: ScriptOptions = null;
 
   if (typeof config === 'string') {
     content = config;
@@ -36,10 +36,10 @@ export async function gotoHtmlWidget(
 
   await page.setContent(`
     <form method="POST" action="/playground.html">
-        <input name="script" value="${encodeURIComponent(
-          getOptions(options || {}),
-        )}">
-        <input name="body" value="${encodeURIComponent(content || '')}">
+      <textarea name="script">${encodeURIComponent(
+        getOptions(options || {}),
+      )}</textarea>
+      <textarea name="body">${encodeURIComponent(content || '')}</textarea>
     </form>
   `);
 
