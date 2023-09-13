@@ -72,6 +72,7 @@
     "copy-examples": "node utils/copy-examples",
     "release:ci": "rm -rf dist && npm run build:all && $NPM_TOKEN=%env.NPM_TOKEN% npm publish",
     "start": "webpack-dev-server --port 9002",
-    "lint": "eslint . --ext .ts"
+    "lint": "eslint . --ext .ts",
+    "prettier": "prettier --write ."
   }
 }
