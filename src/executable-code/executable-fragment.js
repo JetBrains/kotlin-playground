@@ -425,6 +425,9 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
     }
     diagnostics.forEach(diagnostic => {
       const interval = diagnostic.interval;
+      if (interval == undefined) {
+        return;
+      }
       interval.start = this.recalculatePosition(interval.start);
       interval.end = this.recalculatePosition(interval.end);
 
