@@ -162,7 +162,7 @@ export default class WebDemoApi {
    */
   static getHighlight(code, compilerVersion, platform, hiddenDependencies) {
     return executeCode(API_URLS.HIGHLIGHT(compilerVersion), code, compilerVersion, platform, "", hiddenDependencies)
-      .then(data => data[DEFAULT_FILE_NAME])
+      .then(data => data[DEFAULT_FILE_NAME] || [])
   }
 }
 
