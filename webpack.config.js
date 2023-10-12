@@ -10,23 +10,14 @@ module.exports = (params = {}) => {
   const libraryName = 'KotlinPlayground';
   const webDemoUrl = params.webDemoUrl || 'https://api.kotlinlang.org/';
   const examplesPath = isServer ? '' : 'examples/';
+  const pathDist = path.resolve(__dirname, 'dist');
 
-  const config = {
+  const common = {
     mode: env,
-    entry: {
-      [mainEntryName]: ['./src/index'],
-      REMOVE_ME: [
-        `!!file-loader?name=${examplesPath}examples.css!github-markdown-css/github-markdown.css`,
-        `!!file-loader?name=${examplesPath}examples-highlight.css!highlight.js/styles/github.css`,
-      ],
-    },
 
     output: {
-      path: path.resolve(__dirname, 'dist'),
-      filename: '[name].js',
-      library: libraryName,
-      libraryTarget: 'umd',
-      libraryExport: 'default',
+      path: pathDist,
+      filename: '[name].js'
     },
 
     devtool: 'source-map',
@@ -68,28 +59,68 @@ module.exports = (params = {}) => {
     },
 
     plugins: [
+      new webpack.optimize.ModuleConcatenationPlugin(),
+      new webpack.DefinePlugin({
+        'process.env': {
+          NODE_ENV: JSON.stringify(env),
+        },
+      }),
+    ],
+  };
+
+  const clientConfig = {
+    ...common,
+
+    entry: {
+      [mainEntryName]: ['./src/index'],
+      REMOVE_ME: [
+        `!!file-loader?name=${examplesPath}examples.css!github-markdown-css/github-markdown.css`,
+        `!!file-loader?name=${examplesPath}examples-highlight.css!highlight.js/styles/github.css`,
+      ],
+    },
+
+    output: {
+      ...common.output,
+      library: libraryName,
+      libraryTarget: 'umd',
+      libraryExport: 'default',
+    },
+
+    plugins: [
+      ...common.plugins,
+
       new HtmlPlugin({
         template: 'examples.md',
         filename: isServer ? 'index.html' : 'examples/index.html',
         inject: false,
       }),
 
-      new webpack.optimize.ModuleConcatenationPlugin(),
-
       new webpack.DefinePlugin({
         __WEBDEMO_URL__: JSON.stringify(webDemoUrl),
         __IS_PRODUCTION__: isProduction,
         __LIBRARY_NAME__: JSON.stringify(libraryName),
-        'process.env': {
-          NODE_ENV: JSON.stringify(env),
-        },
       }),
     ],
-
     devServer: {
       static: path.resolve(__dirname, 'src'),
     },
-  };
+  }
 
-  return config;
+  const serverConfig = {
+    ...common,
+    target: 'node',
+    entry: {
+      crosslink: './src/lib/crosslink',
+    },
+    output: {
+      ...common.output,
+      globalObject: 'this',
+      library: {
+        name: 'crosslink',
+        type: 'umd',
+      },
+    },
+  }
+
+  return [clientConfig, serverConfig];
 };

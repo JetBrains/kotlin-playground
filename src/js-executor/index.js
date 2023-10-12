@@ -1,8 +1,8 @@
 import './index.scss'
 import {API_URLS} from "../config";
-import TargetPlatform from "../target-platform";
 import {showJsException} from "../view/output-view";
 import {processingHtmlBrackets} from "../utils";
+import { TargetPlatforms } from "../utils/platforms";
 
 const INIT_SCRIPT = "if(kotlin.BufferedOutput!==undefined){kotlin.out = new kotlin.BufferedOutput()}" +
   "else{kotlin.kotlin.io.output = new kotlin.kotlin.io.BufferedOutput()}";
@@ -26,11 +26,11 @@ export default class JsExecutor {
   }
 
   async executeJsCode(jsCode, wasm, jsLibs, platform, outputHeight, theme, onError) {
-    if (platform === TargetPlatform.CANVAS) {
+    if (platform === TargetPlatforms.CANVAS) {
       this.iframe.style.display = "block";
       if (outputHeight) this.iframe.style.height = `${outputHeight}px`;
     }
-    if (platform === TargetPlatform.WASM) {
+    if (platform === TargetPlatforms.WASM) {
       return await this.executeWasm(jsCode, wasm, theme, onError)
     }
     return await this.execute(jsCode, jsLibs, theme, onError, platform);
@@ -39,7 +39,7 @@ export default class JsExecutor {
   async execute(jsCode, jsLibs, theme, onError, platform) {
     const loadedScripts = (this.iframe.contentDocument || this.iframe.document).getElementsByTagName('script').length;
     let offset;
-    if (platform === TargetPlatform.JS_IR) {
+    if (platform === TargetPlatforms.JS_IR) {
       // 1 scripts by default: INIT_SCRIPT_IR
       offset = 1;
     } else {
@@ -106,15 +106,15 @@ export default class JsExecutor {
     node.appendChild(this.iframe);
     let iframeDoc = this.iframe.contentDocument || this.iframe.document;
     iframeDoc.open();
-    if (targetPlatform === TargetPlatform.JS || targetPlatform === TargetPlatform.CANVAS) {
+    if (targetPlatform === TargetPlatforms.JS || targetPlatform === TargetPlatforms.CANVAS) {
       const kotlinScript = API_URLS.KOTLIN_JS + `${normalizeJsVersion(this.kotlinVersion)}/kotlin.js`;
       iframeDoc.write("<script src='" + kotlinScript + "'></script>");
     }
-    if (targetPlatform !== TargetPlatform.WASM) {
+    if (targetPlatform !== TargetPlatforms.WASM) {
       for (let lib of jsLibs) {
         iframeDoc.write("<script src='" + lib + "'></script>");
       }
-      if (targetPlatform === TargetPlatform.JS_IR) {
+      if (targetPlatform === TargetPlatforms.JS_IR) {
         iframeDoc.write(`<script>${INIT_SCRIPT_IR}</script>`);
       } else {
         iframeDoc.write(`<script>${INIT_SCRIPT}</script>`);

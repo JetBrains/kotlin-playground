@@ -1,5 +1,5 @@
 import {getConfigFromElement, getCurrentScript} from './utils';
-import TargetPlatform from "./target-platform";
+import {TargetPlatforms} from "./utils/platforms";
 
 const currentScript = getCurrentScript();
 
@@ -16,22 +16,22 @@ export const API_URLS = {
     let url;
 
     switch (platform) {
-      case TargetPlatform.JAVA:
+      case TargetPlatforms.JAVA:
         url = `${this.server}/api/${version}/compiler/run`;
         break;
-      case TargetPlatform.CANVAS:
+      case TargetPlatforms.CANVAS:
         url = `${this.server}/api/${version}/compiler/translate`;
         break;
-      case TargetPlatform.JS:
+      case TargetPlatforms.JS:
         url = `${this.server}/api/${version}/compiler/translate`;
         break;
-      case TargetPlatform.JS_IR:
+      case TargetPlatforms.JS_IR:
         url = `${this.server}/api/${version}/compiler/translate?ir=true`;
         break;
-      case TargetPlatform.WASM:
+      case TargetPlatforms.WASM:
         url = `${this.server}/api/${version}/compiler/translate?ir=true&compiler=wasm`;
         break;
-      case TargetPlatform.JUNIT:
+      case TargetPlatforms.JUNIT:
         url = `${this.server}/api/${version}/compiler/test`;
         break;
       default:
