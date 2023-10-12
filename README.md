@@ -251,4 +251,6 @@ Use the following attributes on elements that are converted to editors to adjust
 1. Fork & clone [our repository](https://github.com/JetBrains/kotlin-playground).
 2. Install required dependencies `yarn install`.
 3. `yarn start` to start local development server at http://localhost:9000.
-4. `yarn run build` to create production bundles.
+4. `yarn test` to run tests.
+   `TEST_HEADLESS_MODE=true` to run tests in headless mode.
+5. `yarn run build` to create production bundles.
