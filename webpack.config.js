@@ -68,7 +68,7 @@ module.exports = (params = {}) => {
     ],
   };
 
-  const clientConfig = {
+  const bundle = {
     ...common,
 
     entry: {
@@ -106,7 +106,7 @@ module.exports = (params = {}) => {
     },
   }
 
-  const serverConfig = {
+  const crosslink = {
     ...common,
     target: 'node',
     entry: {
@@ -122,5 +122,5 @@ module.exports = (params = {}) => {
     },
   }
 
-  return [clientConfig, serverConfig];
+  return [bundle, crosslink];
 };
