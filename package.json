@@ -44,7 +44,7 @@
     "html-webpack-plugin": "^5.5.3",
     "is-empty-object": "^1.1.1",
     "lz-string": "^1.4.4",
-    "markdown-it": "^8.4.2",
+    "markdown-it": "^12.3.2",
     "markdown-it-highlightjs": "^3.0.0",
     "mime": "^3.0.0",
     "monkberry": "4.0.8",
