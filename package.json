@@ -11,7 +11,8 @@
   "repository": "JetBrains/kotlin-playground",
   "main": "dist/playground.min.js",
   "files": [
-    "dist"
+    "dist",
+    "!dist/REMOVE_ME.js*"
   ],
   "devDependencies": {
     "@babel/cli": "^7.21.5",
