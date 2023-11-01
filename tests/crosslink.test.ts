@@ -60,11 +60,12 @@ ${'      '}
     });
 
     //language=text
-    const codeWithMark = `fun containsEven(collection: Collection<Int>): Boolean = collection.any {[mark]TODO()[/mark]}`;
+    const codeWithMark =
+      'fun containsEven(collection: Collection<Int>): Boolean = collection.any {[mark]TODO()[/mark]}';
 
     checkLink(generateCrosslink(codeWithMark), {
       //language=kotlin
-      code: `fun containsEven(collection: Collection<Int>): Boolean = collection.any {TODO()}`,
+      code: 'fun containsEven(collection: Collection<Int>): Boolean = collection.any {TODO()}',
     });
   });
 

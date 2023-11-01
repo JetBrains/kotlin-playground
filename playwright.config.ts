@@ -3,7 +3,7 @@ import { config as dotenv } from 'dotenv';
 import { defineConfig, devices } from '@playwright/test';
 import { isKeyOfObject } from './src/utils/types';
 
-dotenv({ path: `.env.local`, override: true });
+dotenv({ path: '.env.local', override: true });
 
 const PROJECTS_LIST = {
   DEV: ['Desktop Chrome'],

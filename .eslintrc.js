@@ -19,4 +19,10 @@ module.exports = {
     sourceType: 'module',
   },
   plugins: ['@typescript-eslint', 'eslint-plugin-import'],
+  rules: {
+    quotes: ['error', 'single', {
+      'avoidEscape': true,
+      'allowTemplateLiterals': false
+    }]
+  }
 };
