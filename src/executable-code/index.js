@@ -1,29 +1,40 @@
 import 'codemirror';
 import 'codemirror/lib/codemirror';
-import 'codemirror/addon/hint/show-hint'
-import 'codemirror/addon/hint/anyword-hint'
-import 'codemirror/addon/scroll/simplescrollbars'
-import 'codemirror/mode/smalltalk/smalltalk'
+import 'codemirror/addon/hint/show-hint';
+import 'codemirror/addon/hint/anyword-hint';
+import 'codemirror/addon/scroll/simplescrollbars';
+import 'codemirror/mode/smalltalk/smalltalk';
 import 'codemirror/addon/runmode/colorize';
 import 'codemirror/mode/clike/clike';
 import 'codemirror/mode/groovy/groovy';
 import 'codemirror/mode/xml/xml';
-import 'codemirror/addon/edit/matchbrackets'
-import 'codemirror/addon/edit/closebrackets'
-import 'codemirror/addon/comment/comment'
-import 'codemirror/addon/comment/continuecomment'
+import 'codemirror/addon/edit/matchbrackets';
+import 'codemirror/addon/edit/closebrackets';
+import 'codemirror/addon/comment/comment';
+import 'codemirror/addon/comment/continuecomment';
 import 'codemirror/mode/javascript/javascript';
 import 'codemirror/mode/shell/shell';
 import 'codemirror/mode/swift/swift';
 import merge from 'deepmerge';
 import Set from 'es6-set/polyfill';
-import defaultConfig, {API_URLS} from '../config';
-import {arrayFrom, getConfigFromElement, insertAfter, READ_ONLY_TAG, replaceWhiteSpaces, THEMES} from '../utils';
-import WebDemoApi from "../webdemo-api";
+import defaultConfig, { API_URLS } from '../config';
+import {
+  arrayFrom,
+  getConfigFromElement,
+  insertAfter,
+  READ_ONLY_TAG,
+  replaceWhiteSpaces,
+  THEMES,
+} from '../utils';
+import WebDemoApi from '../webdemo-api';
 import ExecutableFragment from './executable-fragment';
 import { generateCrosslink } from '../lib/crosslink';
 import '../styles.scss';
-import {getTargetById, isJsRelated, TargetPlatforms} from "../utils/platforms";
+import {
+  getTargetById,
+  isJsRelated,
+  TargetPlatforms,
+} from '../utils/platforms';
 
 const INITED_ATTRIBUTE_NAME = 'data-kotlin-playground-initialized';
 const DEFAULT_INDENT = 4;
@@ -51,19 +62,19 @@ const ATTRIBUTES = {
   AUTO_INDENT: 'auto-indent',
   TRACK_RUN_ID: 'data-track-run-id',
   CROSSLINK: 'data-crosslink',
-  SCROLLBAR_STYLE: 'data-scrollbar-style'
+  SCROLLBAR_STYLE: 'data-scrollbar-style',
 };
 
 const MODES = {
-  JAVA: "text/x-java",
-  KOTLIN: "text/x-kotlin",
-  JS: "text/javascript",
-  GROOVY: "text/x-groovy",
-  XML: "text/html",
-  C: "text/x-c",
-  OBJ_C: "text/x-objectivec",
-  SWIFT: "text/x-swift",
-  SHELL: "text/x-sh"
+  JAVA: 'text/x-java',
+  KOTLIN: 'text/x-kotlin',
+  JS: 'text/javascript',
+  GROOVY: 'text/x-groovy',
+  XML: 'text/html',
+  C: 'text/x-c',
+  OBJ_C: 'text/x-objectivec',
+  SWIFT: 'text/x-swift',
+  SHELL: 'text/x-sh',
 };
 
 export default class ExecutableCode {
@@ -73,31 +84,53 @@ export default class ExecutableCode {
    * @param {Object} eventFunctions
    */
   constructor(target, config = {}, eventFunctions) {
-    const targetNode = typeof target === 'string' ? document.querySelector(target) : target;
-    let highlightOnly = config.highlightOnly ? true
+    const targetNode =
+      typeof target === 'string' ? document.querySelector(target) : target;
+    let highlightOnly = config.highlightOnly
+      ? true
       : targetNode.getAttribute(ATTRIBUTES.HIGHLIGHT_ONLY) === READ_ONLY_TAG
-        ? targetNode.getAttribute(ATTRIBUTES.HIGHLIGHT_ONLY)
-        : targetNode.hasAttribute(ATTRIBUTES.HIGHLIGHT_ONLY);
+      ? targetNode.getAttribute(ATTRIBUTES.HIGHLIGHT_ONLY)
+      : targetNode.hasAttribute(ATTRIBUTES.HIGHLIGHT_ONLY);
     const noneMarkers = targetNode.hasAttribute(ATTRIBUTES.NONE_MARKERS);
-    const indent = targetNode.hasAttribute(ATTRIBUTES.INDENT) ? parseInt(targetNode.getAttribute(ATTRIBUTES.INDENT)) : DEFAULT_INDENT;
-    const from = targetNode.hasAttribute(ATTRIBUTES.FROM) ? parseInt(targetNode.getAttribute(ATTRIBUTES.FROM)) : null;
-    const to = targetNode.hasAttribute(ATTRIBUTES.TO) ? parseInt(targetNode.getAttribute(ATTRIBUTES.TO)) : null;
+    const indent = targetNode.hasAttribute(ATTRIBUTES.INDENT)
+      ? parseInt(targetNode.getAttribute(ATTRIBUTES.INDENT))
+      : DEFAULT_INDENT;
+    const from = targetNode.hasAttribute(ATTRIBUTES.FROM)
+      ? parseInt(targetNode.getAttribute(ATTRIBUTES.FROM))
+      : null;
+    const to = targetNode.hasAttribute(ATTRIBUTES.TO)
+      ? parseInt(targetNode.getAttribute(ATTRIBUTES.TO))
+      : null;
     const editorTheme = this.getTheme(targetNode);
-    const args = targetNode.hasAttribute(ATTRIBUTES.ARGUMENTS) ? targetNode.getAttribute(ATTRIBUTES.ARGUMENTS) : "";
+    const args = targetNode.hasAttribute(ATTRIBUTES.ARGUMENTS)
+      ? targetNode.getAttribute(ATTRIBUTES.ARGUMENTS)
+      : '';
     const hiddenDependencies = this.getHiddenDependencies(targetNode);
-    const outputHeight = targetNode.getAttribute(ATTRIBUTES.OUTPUT_HEIGHT) || null;
-    const targetPlatform = getTargetById(targetNode.getAttribute(ATTRIBUTES.PLATFORM));
+    const outputHeight =
+      targetNode.getAttribute(ATTRIBUTES.OUTPUT_HEIGHT) || null;
+    const targetPlatform = getTargetById(
+      targetNode.getAttribute(ATTRIBUTES.PLATFORM),
+    );
     const targetNodeStyle = targetNode.getAttribute(ATTRIBUTES.STYLE);
     const jsLibs = this.getJsLibraries(targetNode, targetPlatform);
-    const isFoldedButton = targetNode.getAttribute(ATTRIBUTES.FOLDED_BUTTON) !== "false";
-    const lines = targetNode.getAttribute(ATTRIBUTES.LINES) === "true";
-    const onFlyHighLight = targetNode.getAttribute(ATTRIBUTES.ON_FLY_HIGHLIGHT) === "true";
-    const autoComplete = targetNode.getAttribute(ATTRIBUTES.COMPLETE) === "true";
-    const matchBrackets = targetNode.getAttribute(ATTRIBUTES.MATCH_BRACKETS) === "true";
-    const autoIndent = targetNode.getAttribute(ATTRIBUTES.AUTO_INDENT) === "true";
+    const isFoldedButton =
+      targetNode.getAttribute(ATTRIBUTES.FOLDED_BUTTON) !== 'false';
+    const lines = targetNode.getAttribute(ATTRIBUTES.LINES) === 'true';
+    const onFlyHighLight =
+      targetNode.getAttribute(ATTRIBUTES.ON_FLY_HIGHLIGHT) === 'true';
+    const autoComplete =
+      targetNode.getAttribute(ATTRIBUTES.COMPLETE) === 'true';
+    const matchBrackets =
+      targetNode.getAttribute(ATTRIBUTES.MATCH_BRACKETS) === 'true';
+    const autoIndent =
+      targetNode.getAttribute(ATTRIBUTES.AUTO_INDENT) === 'true';
     const dataTrackRunId = targetNode.getAttribute(ATTRIBUTES.TRACK_RUN_ID);
-    const dataShorterHeight = targetNode.getAttribute(ATTRIBUTES.SHORTER_HEIGHT);
-    const dataScrollbarStyle = targetNode.getAttribute(ATTRIBUTES.SCROLLBAR_STYLE);
+    const dataShorterHeight = targetNode.getAttribute(
+      ATTRIBUTES.SHORTER_HEIGHT,
+    );
+    const dataScrollbarStyle = targetNode.getAttribute(
+      ATTRIBUTES.SCROLLBAR_STYLE,
+    );
     const mode = this.getMode(targetNode);
     const code = replaceWhiteSpaces(targetNode.textContent);
     const cfg = merge(defaultConfig, config);
@@ -111,23 +144,21 @@ export default class ExecutableCode {
 
     const crosslinkValue = targetNode.getAttribute(ATTRIBUTES.CROSSLINK);
 
-    const isCrosslinkDisabled = (
-      crosslinkValue !== 'enabled' && (
-        crosslinkValue === 'disabled' || // disabled by developer
+    const isCrosslinkDisabled =
+      crosslinkValue !== 'enabled' &&
+      (crosslinkValue === 'disabled' || // disabled by developer
         highlightOnly || // highlighted only not worked in...
-        ( // Unsupported external deps
-          (jsLibs && jsLibs.length > 0) ||
-          (hiddenDependencies && hiddenDependencies.length > 0)
-        )
-      )
-    );
+        // Unsupported external deps
+        (jsLibs && jsLibs.length > 0) ||
+        (hiddenDependencies && hiddenDependencies.length > 0));
 
-    if (!isCrosslinkDisabled) crosslink = generateCrosslink(code, {
-      code: code,
-      targetPlatform: targetPlatform.id,
-      // hiddenDependencies, // multi-file support needs
-      compilerVersion: cfg.compilerVersion,
-    });
+    if (!isCrosslinkDisabled)
+      crosslink = generateCrosslink(code, {
+        code: code,
+        targetPlatform: targetPlatform.id,
+        // hiddenDependencies, // multi-file support needs
+        compilerVersion: cfg.compilerVersion,
+      });
 
     let shorterHeight = parseInt(dataShorterHeight, 10) || 0;
 
@@ -136,33 +167,38 @@ export default class ExecutableCode {
     const mountNode = document.createElement('div');
     insertAfter(mountNode, targetNode);
 
-    const view = ExecutableFragment.render(mountNode, {eventFunctions});
-    view.update(Object.assign({
-      code: code,
-      lines: lines,
-      theme: editorTheme,
-      indent: indent,
-      args: args,
-      mode: mode,
-      crosslink,
-      matchBrackets: matchBrackets,
-      from: from,
-      to: to,
-      autoComplete: autoComplete,
-      hiddenDependencies: hiddenDependencies,
-      compilerVersion: cfg.compilerVersion,
-      noneMarkers: noneMarkers,
-      onFlyHighLight: onFlyHighLight,
-      autoIndent: autoIndent,
-      highlightOnly: highlightOnly,
-      targetPlatform: targetPlatform,
-      jsLibs: jsLibs,
-      isFoldedButton: isFoldedButton,
-      dataTrackRunId,
-      shorterHeight,
-      outputHeight,
-      scrollbarStyle: dataScrollbarStyle
-    }, eventFunctions));
+    const view = ExecutableFragment.render(mountNode, { eventFunctions });
+    view.update(
+      Object.assign(
+        {
+          code: code,
+          lines: lines,
+          theme: editorTheme,
+          indent: indent,
+          args: args,
+          mode: mode,
+          crosslink,
+          matchBrackets: matchBrackets,
+          from: from,
+          to: to,
+          autoComplete: autoComplete,
+          hiddenDependencies: hiddenDependencies,
+          compilerVersion: cfg.compilerVersion,
+          noneMarkers: noneMarkers,
+          onFlyHighLight: onFlyHighLight,
+          autoIndent: autoIndent,
+          highlightOnly: highlightOnly,
+          targetPlatform: targetPlatform,
+          jsLibs: jsLibs,
+          isFoldedButton: isFoldedButton,
+          dataTrackRunId,
+          shorterHeight,
+          outputHeight,
+          scrollbarStyle: dataScrollbarStyle,
+        },
+        eventFunctions,
+      ),
+    );
 
     this.config = cfg;
     this.node = mountNode;
@@ -171,7 +207,8 @@ export default class ExecutableCode {
     this.view = view;
 
     targetNode.KotlinPlayground = this;
-    if (eventFunctions && eventFunctions.callback) eventFunctions.callback(targetNode, mountNode);
+    if (eventFunctions && eventFunctions.callback)
+      eventFunctions.callback(targetNode, mountNode);
   }
 
   /**
@@ -181,11 +218,12 @@ export default class ExecutableCode {
    * @returns {Array} - list of node's text content
    */
   getHiddenDependencies(targetNode) {
-    return arrayFrom(targetNode.getElementsByClassName(ATTRIBUTES.HIDDEN_DEPENDENCY))
-      .reduce((acc, node) => {
-        node.parentNode.removeChild(node);
-        return [...acc, replaceWhiteSpaces(node.textContent)];
-      }, [])
+    return arrayFrom(
+      targetNode.getElementsByClassName(ATTRIBUTES.HIDDEN_DEPENDENCY),
+    ).reduce((acc, node) => {
+      node.parentNode.removeChild(node);
+      return [...acc, replaceWhiteSpaces(node.textContent)];
+    }, []);
   }
 
   /**
@@ -198,17 +236,17 @@ export default class ExecutableCode {
   getJsLibraries(targetNode, platform) {
     if (isJsRelated(platform)) {
       if (platform === TargetPlatforms.WASM) {
-        return new Set()
+        return new Set();
       }
       const jsLibs = targetNode.getAttribute(ATTRIBUTES.JS_LIBS);
       let additionalLibs = new Set(API_URLS.JQUERY.split());
       if (jsLibs) {
-        let checkUrl = new RegExp("https?://.+$");
+        let checkUrl = new RegExp('https?://.+$');
         jsLibs
-          .replace(" ", "")
-          .split(",")
-          .filter(lib => checkUrl.test(lib))
-          .forEach(lib => additionalLibs.add(lib));
+          .replace(' ', '')
+          .split(',')
+          .filter((lib) => checkUrl.test(lib))
+          .forEach((lib) => additionalLibs.add(lib));
       }
       return additionalLibs;
     }
@@ -218,7 +256,9 @@ export default class ExecutableCode {
     const theme = targetNode.getAttribute(ATTRIBUTES.THEME);
 
     if (theme && theme !== THEMES.DARCULA && theme !== THEMES.IDEA) {
-      console.warn(`Custom theme '${theme}' requires custom css by developer, you might use default values for reduce size – ${THEMES.DARCULA} or ${THEMES.IDEA}.`);
+      console.warn(
+        `Custom theme '${theme}' requires custom css by developer, you might use default values for reduce size – ${THEMES.DARCULA} or ${THEMES.IDEA}.`,
+      );
     }
 
     return theme || THEMES.DEFAULT;
@@ -227,21 +267,21 @@ export default class ExecutableCode {
   getMode(targetNode) {
     const mode = targetNode.getAttribute(ATTRIBUTES.MODE);
     switch (mode) {
-      case "java":
+      case 'java':
         return MODES.JAVA;
-      case "c":
+      case 'c':
         return MODES.C;
-      case "js":
+      case 'js':
         return MODES.JS;
-      case "groovy":
+      case 'groovy':
         return MODES.GROOVY;
-      case "xml":
+      case 'xml':
         return MODES.XML;
-      case "shell":
+      case 'shell':
         return MODES.SHELL;
-      case "obj-c":
+      case 'obj-c':
         return MODES.OBJ_C;
-      case "swift":
+      case 'swift':
         return MODES.SWIFT;
       default:
         return MODES.KOTLIN;
@@ -283,7 +323,9 @@ export default class ExecutableCode {
     } else if (target instanceof Node) {
       targetNodes = [target];
     } else if (target instanceof NodeList === false) {
-      throw new Error(`'target' type should be string|Node|NodeList, ${typeof target} given`);
+      throw new Error(
+        `'target' type should be string|Node|NodeList, ${typeof target} given`,
+      );
     }
 
     // Return empty array if there is no nodes attach to
@@ -309,13 +351,16 @@ export default class ExecutableCode {
         }
 
         if (versions) {
-          versions.sort(function({ version: version1 }, { version: version2 }) {
+          versions.sort(function (
+            { version: version1 },
+            { version: version2 },
+          ) {
             if (version1 < version2) return -1;
             if (version1 > version2) return 1;
             return 0;
           });
 
-          let listOfVersions = versions.map(version => version.version);
+          let listOfVersions = versions.map((version) => version.version);
 
           if (listOfVersions.includes(config.version)) {
             compilerVersion = config.version;
@@ -331,14 +376,17 @@ export default class ExecutableCode {
           }
 
           if (minCompilerVersion) {
-            compilerVersion = minCompilerVersion > latestStableVersion
-              ? versions[versions.length - 1].version
-              : latestStableVersion;
+            compilerVersion =
+              minCompilerVersion > latestStableVersion
+                ? versions[versions.length - 1].version
+                : latestStableVersion;
           }
-          instances.push(new ExecutableCode(node, {compilerVersion}, options));
+          instances.push(
+            new ExecutableCode(node, { compilerVersion }, options),
+          );
         } else {
-          console.error('Cann\'t get kotlin version from server');
-          instances.push(new ExecutableCode(node, {highlightOnly: true}));
+          console.error("Cann't get kotlin version from server");
+          instances.push(new ExecutableCode(node, { highlightOnly: true }));
         }
       });
 

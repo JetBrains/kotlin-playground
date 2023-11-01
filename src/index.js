@@ -1,15 +1,14 @@
-import {API_URLS, RUNTIME_CONFIG} from './config';
+import { API_URLS, RUNTIME_CONFIG } from './config';
 import ExecutableCode from './executable-code';
-import {waitForNode} from './utils';
+import { waitForNode } from './utils';
 import {
   default as discoursePreviewPanelHandler,
-  Selectors as DiscourseSelectors
+  Selectors as DiscourseSelectors,
 } from './discourse-preview-panel-handler';
 // support IE11
-import {polyfill} from "es6-promise";
+import { polyfill } from 'es6-promise';
 
 polyfill();
-
 
 /**
  * @typedef {Object} options
@@ -47,13 +46,15 @@ create.discourse = function (selector, options) {
 };
 
 // Auto initialization via data-selector <script> attribute
-const {selector, discourseSelector, ...options} = RUNTIME_CONFIG;
+const { selector, discourseSelector, ...options } = RUNTIME_CONFIG;
 
 if (selector || discourseSelector) {
   document.addEventListener('DOMContentLoaded', () => {
     if (discourseSelector) {
       create.discourse(discourseSelector, options);
-      waitForNode(DiscourseSelectors.PREVIEW_PANEL, () => discoursePreviewPanelHandler());
+      waitForNode(DiscourseSelectors.PREVIEW_PANEL, () =>
+        discoursePreviewPanelHandler(),
+      );
     } else {
       create(selector, options);
     }

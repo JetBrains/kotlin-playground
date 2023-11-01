@@ -1,3 +1,4 @@
+/* eslint-env node */
 const path = require('path');
 const { cp, sed } = require('shelljs');
 
@@ -9,5 +10,5 @@ sed(
   '-i',
   '../playground.js',
   'https://unpkg.com/kotlin-playground@1',
-  `${projectDir}/examples/index.html`
+  `${projectDir}/examples/index.html`,
 );

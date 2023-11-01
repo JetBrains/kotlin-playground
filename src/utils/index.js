@@ -6,16 +6,16 @@ import defaultConfig from '../config';
  * @type {{DARCULA: string, DEFAULT: string}}
  */
 export const THEMES = {
-  DARCULA: "darcula",
-  IDEA: "idea",
-  DEFAULT: "default"
+  DARCULA: 'darcula',
+  IDEA: 'idea',
+  DEFAULT: 'default',
 };
 
 export const SAMPLE_START = '//sampleStart';
 export const SAMPLE_END = '//sampleEnd';
 
-export const MARK_PLACEHOLDER_OPEN = "[mark]";
-export const MARK_PLACEHOLDER_CLOSE = "[/mark]";
+export const MARK_PLACEHOLDER_OPEN = '[mark]';
+export const MARK_PLACEHOLDER_CLOSE = '[/mark]';
 
 /**
  * CodeMirror readonly tag
@@ -66,18 +66,15 @@ export function getConfigFromElement(element, mergeWithDefaults = false) {
     return {};
   }
 
-  const attrs = arrayFrom(element.attributes)
-    .reduce((acc, {name, value}) => {
-      if (name.indexOf('data-') === -1) return acc;
+  const attrs = arrayFrom(element.attributes).reduce((acc, { name, value }) => {
+    if (name.indexOf('data-') === -1) return acc;
 
-      const className = dashToCamel(name.replace('data-', ''));
-      acc[className] = value;
-      return acc;
-    }, {});
+    const className = dashToCamel(name.replace('data-', ''));
+    acc[className] = value;
+    return acc;
+  }, {});
 
-  return mergeWithDefaults
-    ? merge.all([defaultConfig, attrs || {}])
-    : attrs;
+  return mergeWithDefaults ? merge.all([defaultConfig, attrs || {}]) : attrs;
 }
 
 /**
@@ -103,14 +100,17 @@ export function insertAfter(newNode, referenceNode) {
  */
 export function processingHtmlBrackets(string) {
   const tagsToReplace = {
-    "&lt;": "<",
-    "&gt;": ">"
+    '&lt;': '<',
+    '&gt;': '>',
   };
   let unEscapedString = string;
   Object.keys(tagsToReplace).forEach(function (key) {
-    unEscapedString = unEscapedString.replace(new RegExp(tagsToReplace[key], 'g'), key)
+    unEscapedString = unEscapedString.replace(
+      new RegExp(tagsToReplace[key], 'g'),
+      key,
+    );
   });
-  return unEscapedString
+  return unEscapedString;
 }
 
 /**
@@ -120,14 +120,17 @@ export function processingHtmlBrackets(string) {
  */
 export function convertToHtmlTag(string) {
   const tagsToReplace = {
-    "&lt;": "&amp;lt;",
-    "&gt;": "&amp;gt;",
+    '&lt;': '&amp;lt;',
+    '&gt;': '&amp;gt;',
   };
   let unEscapedString = string;
   Object.keys(tagsToReplace).forEach(function (key) {
-    unEscapedString = unEscapedString.replace(new RegExp(tagsToReplace[key], 'g'), key)
+    unEscapedString = unEscapedString.replace(
+      new RegExp(tagsToReplace[key], 'g'),
+      key,
+    );
   });
-  return unEscapedString
+  return unEscapedString;
 }
 
 /**

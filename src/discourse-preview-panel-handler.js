@@ -12,9 +12,10 @@ export const Selectors = {
 };
 
 const DEBOUNCE_TIME = 300;
+const LIBRARY_NAME = process.env.__LIBRARY_NAME__;
 
 export default function () {
-  const kotlinRunCodeGlobalObject = window[__LIBRARY_NAME__];
+  const kotlinRunCodeGlobalObject = window[LIBRARY_NAME];
   const textarea = document.querySelector(Selectors.PREVIEW_TEXTAREA);
   const previewPanel = document.querySelector(Selectors.PREVIEW_PANEL);
 
@@ -22,15 +23,20 @@ export default function () {
     return;
   }
 
-  textarea.addEventListener('keydown', debounce(() => {
-    const previewCodeBlocks = previewPanel.querySelectorAll(Selectors.KOTLIN_CODE_BLOCK);
+  textarea.addEventListener(
+    'keydown',
+    debounce(() => {
+      const previewCodeBlocks = previewPanel.querySelectorAll(
+        Selectors.KOTLIN_CODE_BLOCK,
+      );
 
-    arrayFrom(previewCodeBlocks).forEach(node => {
-      const previousKotlinRunCodeInstance = node[__LIBRARY_NAME__];
-      if (previousKotlinRunCodeInstance) {
-        previousKotlinRunCodeInstance.destroy();
-      }
-      kotlinRunCodeGlobalObject(node);
-    });
-  }, DEBOUNCE_TIME));
+      arrayFrom(previewCodeBlocks).forEach((node) => {
+        const previousKotlinRunCodeInstance = node[LIBRARY_NAME];
+        if (previousKotlinRunCodeInstance) {
+          previousKotlinRunCodeInstance.destroy();
+        }
+        kotlinRunCodeGlobalObject(node);
+      });
+    }, DEBOUNCE_TIME),
+  );
 }

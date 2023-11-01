@@ -3,7 +3,7 @@ import Exception from './exception.monk';
 export default class extends Exception {
   constructor() {
     super();
-    this.state = {onExceptionClick: null};
+    this.state = { onExceptionClick: null };
   }
 
   update(state) {

@@ -1,3 +1,4 @@
+/* eslint-env node */
 const http = require('http');
 const fs = require('fs').promises;
 const { join } = require('path');

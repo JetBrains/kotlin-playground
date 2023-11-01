@@ -1,14 +1,14 @@
-import {fetch} from 'whatwg-fetch';
-import {API_URLS} from "./config";
+import { fetch } from 'whatwg-fetch';
+import { API_URLS } from './config';
 import flatten from 'flatten';
-import {TargetPlatforms} from './utils/platforms';
+import { TargetPlatforms } from './utils/platforms';
 import {
   findSecurityException,
   getExceptionCauses,
   processErrors,
   processJUnitResults,
-  processJVMOutput
-} from "./view/output-view";
+  processJVMOutput,
+} from './view/output-view';
 
 /**
  * @typedef {Object} KotlinVersion
@@ -23,7 +23,7 @@ import {
 const CACHE = {
   compilerVersions: null,
 };
-const DEFAULT_FILE_NAME = "File.kt";
+const DEFAULT_FILE_NAME = 'File.kt';
 
 export default class WebDemoApi {
   /**
@@ -32,7 +32,7 @@ export default class WebDemoApi {
   static getCompilerVersions() {
     if (!CACHE.compilerVersions) {
       CACHE.compilerVersions = fetch(API_URLS.VERSIONS)
-        .then(response => response.json())
+        .then((response) => response.json())
         .catch(() => (CACHE.compilerVersions = null));
     }
 
@@ -49,43 +49,66 @@ export default class WebDemoApi {
    * @param hiddenDependencies   - read only additional files
    * @returns {*|PromiseLike<T>|Promise<T>}
    */
-  static translateKotlinToJs(code, compilerVersion, platform, args, hiddenDependencies) {
-    const MINIMAL_MINOR_VERSION_IR = 5
-    const MINIMAL_MINOR_VERSION_WASM = 9
-    const minor = parseInt(compilerVersion.split(".")[1]);
+  static translateKotlinToJs(
+    code,
+    compilerVersion,
+    platform,
+    args,
+    hiddenDependencies,
+  ) {
+    const MINIMAL_MINOR_VERSION_IR = 5;
+    const MINIMAL_MINOR_VERSION_WASM = 9;
+    const minor = parseInt(compilerVersion.split('.')[1]);
 
-    if (platform === TargetPlatforms.JS_IR && minor < MINIMAL_MINOR_VERSION_IR) {
+    if (
+      platform === TargetPlatforms.JS_IR &&
+      minor < MINIMAL_MINOR_VERSION_IR
+    ) {
       return Promise.resolve({
-        output: "",
-        errors: [{
-          severity: "ERROR",
-          message: `JS IR compiler backend accessible only since 1.${MINIMAL_MINOR_VERSION_IR}.0 version`
-        }],
-        jsCode: ""
-      })
+        output: '',
+        errors: [
+          {
+            severity: 'ERROR',
+            message: `JS IR compiler backend accessible only since 1.${MINIMAL_MINOR_VERSION_IR}.0 version`,
+          },
+        ],
+        jsCode: '',
+      });
     }
 
-    if (platform === TargetPlatforms.WASM && minor < MINIMAL_MINOR_VERSION_WASM) {
+    if (
+      platform === TargetPlatforms.WASM &&
+      minor < MINIMAL_MINOR_VERSION_WASM
+    ) {
       return Promise.resolve({
-        output: "",
-        errors: [{
-          severity: "ERROR",
-          message: `Wasm compiler backend accessible only since 1.${MINIMAL_MINOR_VERSION_WASM}.0 version`
-        }],
-        jsCode: ""
-      })
+        output: '',
+        errors: [
+          {
+            severity: 'ERROR',
+            message: `Wasm compiler backend accessible only since 1.${MINIMAL_MINOR_VERSION_WASM}.0 version`,
+          },
+        ],
+        jsCode: '',
+      });
     }
 
-    return executeCode(API_URLS.COMPILE(platform, compilerVersion), code, compilerVersion, platform, args, hiddenDependencies).then(function (data) {
-      let output = "";
+    return executeCode(
+      API_URLS.COMPILE(platform, compilerVersion),
+      code,
+      compilerVersion,
+      platform,
+      args,
+      hiddenDependencies,
+    ).then(function (data) {
+      let output = '';
       let errorsAndWarnings = flatten(Object.values(data.errors));
       return {
         output: output,
         errors: errorsAndWarnings,
         jsCode: data.jsCode,
-        wasm: data.wasm
-      }
-    })
+        wasm: data.wasm,
+      };
+    });
   }
 
   /**
@@ -101,11 +124,29 @@ export default class WebDemoApi {
    * @param hiddenDependencies   - read only additional files
    * @returns {*|PromiseLike<T>|Promise<T>}
    */
-  static executeKotlinCode(code, compilerVersion, platform, args, theme, hiddenDependencies, onTestPassed, onTestFailed) {
-    return executeCode(API_URLS.COMPILE(platform, compilerVersion), code, compilerVersion, platform, args, hiddenDependencies).then(function (data) {
-      let output = "";
+  static executeKotlinCode(
+    code,
+    compilerVersion,
+    platform,
+    args,
+    theme,
+    hiddenDependencies,
+    onTestPassed,
+    onTestFailed,
+  ) {
+    return executeCode(
+      API_URLS.COMPILE(platform, compilerVersion),
+      code,
+      compilerVersion,
+      platform,
+      args,
+      hiddenDependencies,
+    ).then(function (data) {
+      let output = '';
       let errorsAndWarnings = flatten(Object.values(data.errors));
-      let errors = errorsAndWarnings.filter(error => error.severity === "ERROR");
+      let errors = errorsAndWarnings.filter(
+        (error) => error.severity === 'ERROR',
+      );
       if (errors.length > 0) {
         output = processErrors(errors, theme);
       } else {
@@ -114,7 +155,13 @@ export default class WebDemoApi {
             if (data.text) output = processJVMOutput(data.text, theme);
             break;
           case TargetPlatforms.JUNIT:
-            data.testResults ? output = processJUnitResults(data.testResults, onTestPassed, onTestFailed) : output = processJVMOutput(data.text || '', theme);
+            data.testResults
+              ? (output = processJUnitResults(
+                  data.testResults,
+                  onTestPassed,
+                  onTestFailed,
+                ))
+              : (output = processJVMOutput(data.text || '', theme));
             break;
         }
       }
@@ -127,9 +174,9 @@ export default class WebDemoApi {
       return {
         errors: errorsAndWarnings,
         output: output,
-        exception: exceptions
-      }
-    })
+        exception: exceptions,
+      };
+    });
   }
 
   /**
@@ -142,13 +189,27 @@ export default class WebDemoApi {
    * @param platform - kotlin platform {@see TargetPlatform}
    * @param callback
    */
-  static getAutoCompletion(code, cursor, compilerVersion, platform, hiddenDependencies, callback) {
-    const {line, ch, ...options} = cursor;
+  static getAutoCompletion(
+    code,
+    cursor,
+    compilerVersion,
+    platform,
+    hiddenDependencies,
+    callback,
+  ) {
+    const { line, ch, ...options } = cursor;
     const url = API_URLS.COMPLETE(compilerVersion) + `?line=${line}&ch=${ch}`;
-    executeCode(url, code, compilerVersion, platform, "", hiddenDependencies, options)
-      .then(data => {
-        callback(data);
-      })
+    executeCode(
+      url,
+      code,
+      compilerVersion,
+      platform,
+      '',
+      hiddenDependencies,
+      options,
+    ).then((data) => {
+      callback(data);
+    });
   }
 
   /**
@@ -161,14 +222,31 @@ export default class WebDemoApi {
    * @return {*|PromiseLike<T>|Promise<T>}
    */
   static getHighlight(code, compilerVersion, platform, hiddenDependencies) {
-    return executeCode(API_URLS.HIGHLIGHT(compilerVersion), code, compilerVersion, platform, "", hiddenDependencies)
-      .then(data => data[DEFAULT_FILE_NAME] || [])
+    return executeCode(
+      API_URLS.HIGHLIGHT(compilerVersion),
+      code,
+      compilerVersion,
+      platform,
+      '',
+      hiddenDependencies,
+    ).then((data) => data[DEFAULT_FILE_NAME] || []);
   }
 }
 
-function executeCode(url, code, compilerVersion, targetPlatform, args, hiddenDependencies, options) {
-  const files = [buildFileObject(code, DEFAULT_FILE_NAME)]
-    .concat(hiddenDependencies.map((file, index) => buildFileObject(file, `hiddenDependency${index}.kt`)));
+function executeCode(
+  url,
+  code,
+  compilerVersion,
+  targetPlatform,
+  args,
+  hiddenDependencies,
+  options,
+) {
+  const files = [buildFileObject(code, DEFAULT_FILE_NAME)].concat(
+    hiddenDependencies.map((file, index) =>
+      buildFileObject(file, `hiddenDependency${index}.kt`),
+    ),
+  );
 
   const body = {
     args,
@@ -182,8 +260,8 @@ function executeCode(url, code, compilerVersion, targetPlatform, args, hiddenDep
     body: JSON.stringify(body),
     headers: {
       'Content-Type': 'application/json; charset=utf-8',
-    }
-  }).then(response => response.json())
+    },
+  }).then((response) => response.json());
 }
 
 /**
@@ -195,8 +273,8 @@ function executeCode(url, code, compilerVersion, targetPlatform, args, hiddenDep
  */
 function buildFileObject(code, fileName) {
   return {
-    "name": fileName,
-    "text": code,
-    "publicId": ""
-  }
+    name: fileName,
+    text: code,
+    publicId: '',
+  };
 }

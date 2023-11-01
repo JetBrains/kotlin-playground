@@ -1,9 +1,9 @@
-import {getConfigFromElement, getCurrentScript} from './utils';
-import {TargetPlatforms} from "./utils/platforms";
+import { getConfigFromElement, getCurrentScript } from './utils';
+import { TargetPlatforms } from './utils/platforms';
 
 const currentScript = getCurrentScript();
 
-export const RUNTIME_CONFIG = {...getConfigFromElement(currentScript)};
+export const RUNTIME_CONFIG = { ...getConfigFromElement(currentScript) };
 
 /**
  * API Paths
@@ -11,7 +11,7 @@ export const RUNTIME_CONFIG = {...getConfigFromElement(currentScript)};
  * @type {{COMPILE: string, COMPLETE: string, VERSIONS: string, JQUERY: string, KOTLIN_JS: string}}
  */
 export const API_URLS = {
-  server: RUNTIME_CONFIG.server || __WEBDEMO_URL__,
+  server: RUNTIME_CONFIG.server || process.env.__WEBDEMO_URL__,
   COMPILE(platform, version) {
     let url;
 
@@ -35,7 +35,7 @@ export const API_URLS = {
         url = `${this.server}/api/${version}/compiler/test`;
         break;
       default:
-        console.warn(`Unknown ${platform.id} , used by default JVM`)
+        console.warn(`Unknown ${platform.id} , used by default JVM`);
         url = `${this.server}/api/${version}/compiler/run`;
         break;
     }
@@ -53,11 +53,11 @@ export const API_URLS = {
     return `${this.server}/versions`;
   },
   get JQUERY() {
-    return `https://cdn.jsdelivr.net/npm/jquery@1/dist/jquery.min.js`;
+    return 'https://cdn.jsdelivr.net/npm/jquery@1/dist/jquery.min.js';
   },
   get KOTLIN_JS() {
-    return `https://cdn.jsdelivr.net/npm/kotlin@`;
-  }
+    return 'https://cdn.jsdelivr.net/npm/kotlin@';
+  },
 };
 
 /**
@@ -70,5 +70,5 @@ export default {
    * Will be calculated according to user defined `data-min-compiler-version`
    * attribute and WebDemo API response
    */
-  compilerVersion: undefined
-}
+  compilerVersion: undefined,
+};
