@@ -1,6 +1,8 @@
-# Ignore everything recursively
-*
-# But not the .ts files
-!*.ts
-# Check subdirectories too
-!*/
+/out
+/build
+/.idea
+/node_modules
+/dist
+/test-results/
+/playwright-report/
+/playwright/
