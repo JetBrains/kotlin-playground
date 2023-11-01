@@ -1,6 +1,6 @@
-import {expect, test} from '@playwright/test';
-import {promises as fs} from 'fs';
-import {decompressFromBase64} from 'lz-string';
+import { expect, test } from '@playwright/test';
+import { promises as fs } from 'fs';
+import { decompressFromBase64 } from 'lz-string';
 
 const prefix = 'https://play.kotlinlang.org/editor/v1/' as const;
 
@@ -56,15 +56,15 @@ ${'      '}
       println(name)
       println(value)
 ${'      '}
-    }`
+    }`,
     });
 
     //language=text
     const codeWithMark = `fun containsEven(collection: Collection<Int>): Boolean = collection.any {[mark]TODO()[/mark]}`;
 
-    checkLink(generateCrosslink(codeWithMark),  {
+    checkLink(generateCrosslink(codeWithMark), {
       //language=kotlin
-      code: `fun containsEven(collection: Collection<Int>): Boolean = collection.any {TODO()}`
+      code: `fun containsEven(collection: Collection<Int>): Boolean = collection.any {TODO()}`,
     });
   });
 
