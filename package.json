@@ -51,6 +51,7 @@
     "monkberry-directives": "4.0.8",
     "monkberry-events": "4.0.8",
     "monkberry-loader": "4.0.9",
+    "postcss": "^8.4.31",
     "postcss-loader": "^7.3.3",
     "prettier": "^3.0.2",
     "query-string": "^6.5.0",
