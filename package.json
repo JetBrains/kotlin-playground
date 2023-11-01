@@ -43,7 +43,9 @@
     "flatten": "^1.0.2",
     "github-markdown-css": "^3.0.1",
     "html-webpack-plugin": "^5.5.3",
+    "husky": "^8.0.3",
     "is-empty-object": "^1.1.1",
+    "lint-staged": "^15.0.2",
     "lz-string": "^1.4.4",
     "markdown-it": "^12.3.2",
     "markdown-it-highlightjs": "^3.0.0",
@@ -79,9 +81,9 @@
     "start": "webpack-dev-server --port 9002",
     "lint": "eslint . --ext .ts",
     "fix": "eslint --fix --ext .ts .",
-    "prettier": "npm run fix",
     "test": "npm run build:all && npm run test:run",
     "test:run": "playwright test",
-    "test:server": "node tests/utlis/server/index.js"
+    "test:server": "node tests/utlis/server/index.js",
+    "prepare": "husky install"
   }
 }
