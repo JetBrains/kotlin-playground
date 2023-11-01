@@ -1,5 +1,5 @@
 import merge from 'deepmerge';
-import defaultConfig from './config';
+import defaultConfig from '../config';
 
 /**
  * Codemirror themes.
@@ -89,13 +89,6 @@ export function getCurrentScript() {
 }
 
 /**
- * Use instead of @escape-string-regexp
- */
-export function escapeRegExp(str) {
-  return str.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
-}
-
-/**
  * @param {Element} newNode
  * @param {Element} referenceNode
  */
@@ -112,25 +105,6 @@ export function processingHtmlBrackets(string) {
   const tagsToReplace = {
     "&lt;": "<",
     "&gt;": ">"
-  };
-  let unEscapedString = string;
-  Object.keys(tagsToReplace).forEach(function (key) {
-    unEscapedString = unEscapedString.replace(new RegExp(tagsToReplace[key], 'g'), key)
-  });
-  return unEscapedString
-}
-
-/**
- * Unescape special characters from string
- * @param string
- * @returns {string}
- */
-export function unEscapeString(string) {
-  const tagsToReplace = {
-    "<": "&amp;lt;",
-    ">": "&amp;gt;",
-    "&": "&amp;",
-    " ": "%20"
   };
   let unEscapedString = string;
   Object.keys(tagsToReplace).forEach(function (key) {

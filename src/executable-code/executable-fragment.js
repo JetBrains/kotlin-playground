@@ -6,17 +6,19 @@ import directives from 'monkberry-directives';
 import 'monkberry-events';
 import ExecutableCodeTemplate from './executable-fragment.monk';
 import WebDemoApi from '../webdemo-api';
-import TargetPlatform from "../target-platform";
+import {TargetPlatforms, isJsRelated, isJavaRelated} from "../utils/platforms";
 import JsExecutor from "../js-executor"
+
 import {
-  countLines,
-  escapeRegExp, MARK_PLACEHOLDER_CLOSE,
+  escapeRegExp,
+  MARK_PLACEHOLDER_CLOSE,
   MARK_PLACEHOLDER_OPEN,
   SAMPLE_END,
   SAMPLE_START,
-  THEMES,
   unEscapeString
-} from "../utils";
+} from "../utils/escape";
+
+import { countLines, THEMES } from "../utils";
 import debounce from 'debounce';
 import CompletionView from "../view/completion-view";
 import {processErrors} from "../view/output-view";
@@ -94,7 +96,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
     let sample;
     let hasMarkers = false;
     let platform = state.targetPlatform;
-    if (state.compilerVersion && TargetPlatform.isJsRelated(platform)) {
+    if (state.compilerVersion && isJsRelated(platform)) {
       this.jsExecutor = new JsExecutor(state.compilerVersion);
     }
 
@@ -257,7 +259,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
   onConsoleCloseButtonEnter() {
     const {jsLibs, onCloseConsole, targetPlatform } = this.state;
     // creates a new iframe and removes the old one, thereby stops execution of any running script
-    if (TargetPlatform.isJsRelated(targetPlatform))
+    if (isJsRelated(targetPlatform))
       this.jsExecutor.reloadIframeScripts(jsLibs, this.getNodeForMountIframe(), targetPlatform);
     this.update({output: "", openConsole: false, exception: null});
     if (onCloseConsole) onCloseConsole();
@@ -291,7 +293,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
     });
     if (onOpenConsole) onOpenConsole(); //open when waitingForOutput=true
     if (onRun) onRun();
-    if (TargetPlatform.isJavaRelated(targetPlatform)) {
+    if (isJavaRelated(targetPlatform)) {
       WebDemoApi.executeKotlinCode(
         this.getCode(),
         compilerVersion,
@@ -349,7 +351,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
                 state.output = "";
                 if (onCloseConsole) onCloseConsole();
               }
-              if (targetPlatform === TargetPlatform.CANVAS) {
+              if (targetPlatform === TargetPlatforms.CANVAS) {
                 if (onOpenConsole) onOpenConsole();
                 state.openConsole = true;
               }

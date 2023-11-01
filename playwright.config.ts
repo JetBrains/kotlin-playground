@@ -1,6 +1,7 @@
 import { env } from 'process';
 import { config as dotenv } from 'dotenv';
 import { defineConfig, devices } from '@playwright/test';
+import { isKeyOfObject } from './src/utils/types';
 
 dotenv({ path: `.env.local`, override: true });
 
@@ -24,7 +25,7 @@ const isDevMode = Boolean(mode === 'DEV');
 
 export default defineConfig({
   testDir: './tests',
-  testMatch: /.*\.e2e\.tsx?$/,
+  testMatch: /.*\.(e2e|test)\.tsx?$/,
   snapshotPathTemplate: `{testDir}/{testFileDir}/__screenshots__/${mode.toLowerCase()}/{projectName}/{testFilePath}-{arg}{ext}`,
 
   timeout: 30000,
@@ -58,10 +59,3 @@ export default defineConfig({
     use: { ...devices[project] },
   })),
 });
-
-export function isKeyOfObject<T extends object>(
-  key: string | number | symbol,
-  obj: T,
-): key is keyof T {
-  return key in obj;
-}

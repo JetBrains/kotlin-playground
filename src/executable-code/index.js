@@ -18,20 +18,12 @@ import 'codemirror/mode/swift/swift';
 import merge from 'deepmerge';
 import Set from 'es6-set/polyfill';
 import defaultConfig, {API_URLS} from '../config';
-import {
-  arrayFrom,
-  escapeRegExp,
-  getConfigFromElement,
-  insertAfter, MARK_PLACEHOLDER_CLOSE, MARK_PLACEHOLDER_OPEN,
-  READ_ONLY_TAG,
-  replaceWhiteSpaces, SAMPLE_END, SAMPLE_START,
-  THEMES
-} from '../utils';
+import {arrayFrom, getConfigFromElement, insertAfter, READ_ONLY_TAG, replaceWhiteSpaces, THEMES} from '../utils';
 import WebDemoApi from "../webdemo-api";
-import TargetPlatform from '../target-platform'
 import ExecutableFragment from './executable-fragment';
 import { generateCrosslink } from '../lib/crosslink';
 import '../styles.scss';
+import {getTargetById, isJsRelated, TargetPlatforms} from "../utils/platforms";
 
 const INITED_ATTRIBUTE_NAME = 'data-kotlin-playground-initialized';
 const DEFAULT_INDENT = 4;
@@ -94,7 +86,7 @@ export default class ExecutableCode {
     const args = targetNode.hasAttribute(ATTRIBUTES.ARGUMENTS) ? targetNode.getAttribute(ATTRIBUTES.ARGUMENTS) : "";
     const hiddenDependencies = this.getHiddenDependencies(targetNode);
     const outputHeight = targetNode.getAttribute(ATTRIBUTES.OUTPUT_HEIGHT) || null;
-    const targetPlatform = TargetPlatform.getById(targetNode.getAttribute(ATTRIBUTES.PLATFORM));
+    const targetPlatform = getTargetById(targetNode.getAttribute(ATTRIBUTES.PLATFORM));
     const targetNodeStyle = targetNode.getAttribute(ATTRIBUTES.STYLE);
     const jsLibs = this.getJsLibraries(targetNode, targetPlatform);
     const isFoldedButton = targetNode.getAttribute(ATTRIBUTES.FOLDED_BUTTON) !== "false";
@@ -130,13 +122,8 @@ export default class ExecutableCode {
       )
     );
 
-    if (!isCrosslinkDisabled) crosslink = generateCrosslink({
-      code: code
-        .replace(new RegExp(escapeRegExp(MARK_PLACEHOLDER_OPEN), 'g'), "")
-        .replace(new RegExp(escapeRegExp(MARK_PLACEHOLDER_CLOSE), 'g'), "")
-        .replace(new RegExp(escapeRegExp(SAMPLE_START), 'g'), "")
-        .replace(new RegExp(escapeRegExp(SAMPLE_END), 'g'), ""),
-
+    if (!isCrosslinkDisabled) crosslink = generateCrosslink(code, {
+      code: code,
       targetPlatform: targetPlatform.id,
       // hiddenDependencies, // multi-file support needs
       compilerVersion: cfg.compilerVersion,
@@ -209,8 +196,8 @@ export default class ExecutableCode {
    * @returns {Set} - set of additional libraries
    */
   getJsLibraries(targetNode, platform) {
-    if (TargetPlatform.isJsRelated(platform)) {
-      if (platform === TargetPlatform.WASM) {
+    if (isJsRelated(platform)) {
+      if (platform === TargetPlatforms.WASM) {
         return new Set()
       }
       const jsLibs = targetNode.getAttribute(ATTRIBUTES.JS_LIBS);

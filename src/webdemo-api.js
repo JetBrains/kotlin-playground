@@ -1,7 +1,7 @@
 import {fetch} from 'whatwg-fetch';
-import TargetPlatform from "./target-platform";
 import {API_URLS} from "./config";
-import flatten from 'flatten'
+import flatten from 'flatten';
+import {TargetPlatforms} from './utils/platforms';
 import {
   findSecurityException,
   getExceptionCauses,
@@ -54,7 +54,7 @@ export default class WebDemoApi {
     const MINIMAL_MINOR_VERSION_WASM = 9
     const minor = parseInt(compilerVersion.split(".")[1]);
 
-    if (platform === TargetPlatform.JS_IR && minor < MINIMAL_MINOR_VERSION_IR) {
+    if (platform === TargetPlatforms.JS_IR && minor < MINIMAL_MINOR_VERSION_IR) {
       return Promise.resolve({
         output: "",
         errors: [{
@@ -65,7 +65,7 @@ export default class WebDemoApi {
       })
     }
 
-    if (platform === TargetPlatform.WASM && minor < MINIMAL_MINOR_VERSION_WASM) {
+    if (platform === TargetPlatforms.WASM && minor < MINIMAL_MINOR_VERSION_WASM) {
       return Promise.resolve({
         output: "",
         errors: [{
@@ -110,10 +110,10 @@ export default class WebDemoApi {
         output = processErrors(errors, theme);
       } else {
         switch (platform) {
-          case TargetPlatform.JAVA:
+          case TargetPlatforms.JAVA:
             if (data.text) output = processJVMOutput(data.text, theme);
             break;
-          case TargetPlatform.JUNIT:
+          case TargetPlatforms.JUNIT:
             data.testResults ? output = processJUnitResults(data.testResults, onTestPassed, onTestFailed) : output = processJVMOutput(data.text || '', theme);
             break;
         }
