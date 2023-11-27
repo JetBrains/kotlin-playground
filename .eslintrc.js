@@ -6,7 +6,7 @@ module.exports = {
   extends: [
     'eslint:recommended',
     'plugin:@typescript-eslint/recommended',
-    'prettier',
+    'plugin:prettier/recommended',
   ],
   parser: '@typescript-eslint/parser',
   parserOptions: {
@@ -19,5 +19,10 @@ module.exports = {
     sourceType: 'module',
   },
   plugins: ['@typescript-eslint', 'eslint-plugin-import'],
-  rules: {},
+  rules: {
+    quotes: ['error', 'single', {
+      'avoidEscape': true,
+      'allowTemplateLiterals': false
+    }]
+  }
 };
