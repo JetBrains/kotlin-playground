@@ -1,7 +1,6 @@
 import { compressToBase64 } from 'lz-string';
 
-import { isKeyOfObject } from '../utils/types';
-import { TargetPlatforms, TargetPlatformsKeys } from '../utils/platforms';
+import { getTargetById, TargetPlatformsKeys } from '../utils/platforms';
 
 import {
   escapeRegExp,
@@ -34,11 +33,8 @@ export function generateCrosslink(code: string, options?: LinkOptions) {
 
   if (options && options.targetPlatform) {
     const target =
-      options.targetPlatform && options.targetPlatform.toUpperCase();
-
-    if (!isKeyOfObject(target, TargetPlatforms))
-      throw new Error('Invalid target platform');
-
+      options.targetPlatform && getTargetById(options.targetPlatform);
+    if (!target) throw new Error('Invalid target platform');
     opts.targetPlatform = options.targetPlatform;
   }
 

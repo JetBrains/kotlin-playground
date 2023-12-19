@@ -86,7 +86,7 @@ export default class ExecutableCode {
     const args = targetNode.hasAttribute(ATTRIBUTES.ARGUMENTS) ? targetNode.getAttribute(ATTRIBUTES.ARGUMENTS) : "";
     const hiddenDependencies = this.getHiddenDependencies(targetNode);
     const outputHeight = targetNode.getAttribute(ATTRIBUTES.OUTPUT_HEIGHT) || null;
-    const targetPlatform = getTargetById(targetNode.getAttribute(ATTRIBUTES.PLATFORM));
+    const targetPlatform = getTargetById(targetNode.getAttribute(ATTRIBUTES.PLATFORM)) || TargetPlatforms.JAVA;
     const targetNodeStyle = targetNode.getAttribute(ATTRIBUTES.STYLE);
     const jsLibs = this.getJsLibraries(targetNode, targetPlatform);
     const isFoldedButton = targetNode.getAttribute(ATTRIBUTES.FOLDED_BUTTON) !== "false";
