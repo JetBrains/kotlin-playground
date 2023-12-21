@@ -50,27 +50,26 @@ export default class WebDemoApi {
    * @returns {*|PromiseLike<T>|Promise<T>}
    */
   static translateKotlinToJs(code, compilerVersion, platform, args, hiddenDependencies) {
-    const MINIMAL_MINOR_VERSION_IR = 5
-    const MINIMAL_MINOR_VERSION_WASM = 9
-    const minor = parseInt(compilerVersion.split(".")[1]);
+    const MINIMAL_VERSION_IR = '1.5.0';
+    const MINIMAL_VERSION_WASM = '1.9.0';
 
-    if (platform === TargetPlatforms.JS_IR && minor < MINIMAL_MINOR_VERSION_IR) {
+    if (platform === TargetPlatforms.JS_IR && compilerVersion < MINIMAL_VERSION_IR) {
       return Promise.resolve({
         output: "",
         errors: [{
           severity: "ERROR",
-          message: `JS IR compiler backend accessible only since 1.${MINIMAL_MINOR_VERSION_IR}.0 version`
+          message: `JS IR compiler backend accessible only since ${MINIMAL_VERSION_IR} version`
         }],
         jsCode: ""
       })
     }
 
-    if (platform === TargetPlatforms.WASM && minor < MINIMAL_MINOR_VERSION_WASM) {
+    if (platform === TargetPlatforms.WASM && compilerVersion < MINIMAL_VERSION_WASM) {
       return Promise.resolve({
         output: "",
         errors: [{
           severity: "ERROR",
-          message: `Wasm compiler backend accessible only since 1.${MINIMAL_MINOR_VERSION_WASM}.0 version`
+          message: `Wasm compiler backend accessible only since ${MINIMAL_VERSION_WASM} version`
         }],
         jsCode: ""
       })

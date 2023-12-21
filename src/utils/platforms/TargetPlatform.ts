@@ -1,6 +1,6 @@
 export default class TargetPlatform {
-  private id: string;
-  private printableName: string;
+  id: string;
+  printableName: string;
 
   constructor(id: string, printableName: string) {
     this.id = id;

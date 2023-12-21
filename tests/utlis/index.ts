@@ -19,9 +19,12 @@ export async function refuseExternalUrls(
 export async function prepareNetwork(
   page: Page | BrowserContext,
   baseURL: string,
+  options?: {
+    versions: Parameters<typeof mockVersions>[1];
+  },
 ) {
   const unRefuse = await refuseExternalUrls(page, baseURL);
-  const unVersions = await mockVersions(page);
+  const unVersions = await mockVersions(page, options?.versions);
 
   return async () => {
     await unVersions();

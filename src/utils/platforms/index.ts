@@ -1,13 +1,11 @@
-import { isKeyOfObject } from '../types';
-
 import TargetPlatform from './TargetPlatform';
 import { TargetPlatforms } from './TargetPlatforms';
+import { isKeyOfObject } from '../types';
 
 export function getTargetById(id?: string | null) {
-  const key = id && id.toUpperCase();
-  return key && isKeyOfObject(key, TargetPlatforms)
-    ? TargetPlatforms[key]
-    : TargetPlatforms.JAVA;
+  const key = id && id.toUpperCase().replace(/-/g, '_');
+
+  return isKeyOfObject(key, TargetPlatforms) ? TargetPlatforms[key] : null;
 }
 
 export function isJavaRelated(platform: TargetPlatform) {

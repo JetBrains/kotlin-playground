@@ -18,9 +18,9 @@ test.describe('crosslink: library', () => {
     checkLink(generateCrosslink('simple'), { code: 'simple' });
 
     // Pass platforms with codeWithSample
-    checkLink(generateCrosslink('platform', { targetPlatform: 'JAVA' }), {
+    checkLink(generateCrosslink('platform', { targetPlatform: 'js-ir' }), {
       code: 'platform',
-      targetPlatform: 'JAVA',
+      targetPlatform: 'js-ir',
     });
 
     // Invalid target

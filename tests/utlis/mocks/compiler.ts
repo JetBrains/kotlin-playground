@@ -30,7 +30,9 @@ function isRunRequest(url: URL | string) {
 
   return (
     uri.host === API_HOST &&
-    uri.pathname.match(/^\/?\/api\/\d+\.\d+\.\d+\/compiler\/run$/) !== null
+    (uri.pathname.match(/^\/?\/api\/\d+\.\d+\.\d+\/compiler\/run$/) !== null ||
+      uri.pathname.match(/^\/?\/api\/\d+\.\d+\.\d+\/compiler\/translate$/) !==
+        null)
   );
 }
 
