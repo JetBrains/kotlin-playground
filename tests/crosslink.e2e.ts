@@ -52,21 +52,15 @@ test.describe('open in playground', () => {
       printlnCode('Hello, World'),
     ));
 
-  test('no link for js-libs', ({ page }) => {
-    test.fixme(
-      true,
-      "Test doesn't work, BUG in code! jsLibs.length -> jsLibs.size",
-    );
-
-    return checkCrosslink(
+  test('no link for js-libs', ({ page }) =>
+    checkCrosslink(
       page,
       {
         'data-target-platform': 'js',
         'data-js-libs': 'https://somescript.js',
       },
       printlnCode('Hello, World!'),
-    );
-  });
+    ));
 
   test('no link for hidden deps', ({ page }) =>
     checkCrosslink(

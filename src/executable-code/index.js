@@ -116,7 +116,7 @@ export default class ExecutableCode {
         crosslinkValue === 'disabled' || // disabled by developer
         highlightOnly || // highlighted only not worked in...
         ( // Unsupported external deps
-          (jsLibs && jsLibs.length > 0) ||
+          (jsLibs && !!jsLibs.size) ||
           (hiddenDependencies && hiddenDependencies.length > 0)
         )
       )
