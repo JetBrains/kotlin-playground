@@ -2,7 +2,7 @@ import './index.scss'
 import {API_URLS} from "../config";
 import {showJsException} from "../view/output-view";
 import {processingHtmlBrackets} from "../utils";
-import { TargetPlatforms } from "../utils/platforms";
+import {isWasmRelated, TargetPlatforms} from "../utils/platforms";
 
 const INIT_SCRIPT = "if(kotlin.BufferedOutput!==undefined){kotlin.out = new kotlin.BufferedOutput()}" +
   "else{kotlin.kotlin.io.output = new kotlin.kotlin.io.BufferedOutput()}";
@@ -33,6 +33,11 @@ export default class JsExecutor {
     if (platform === TargetPlatforms.WASM) {
       return await this.executeWasm(jsCode, wasm, theme, onError)
     }
+    if (platform === TargetPlatforms.COMPOSE_WASM) {
+      this.iframe.style.display = "block";
+      if (outputHeight) this.iframe.style.height = `${outputHeight}px`;
+      return await this.executeWasm(jsCode, wasm, theme, onError)
+    }
     return await this.execute(jsCode, jsLibs, theme, onError, platform);
   }
 
@@ -60,8 +65,19 @@ export default class JsExecutor {
     return await this.execute(jsCode, jsLibs, theme, onError, platform);
   }
 
-  async executeWasm(jsCode, wasmCode, theme, onError) {
+  async executeWasm(
+    jsCode,
+    wasmCode,
+    theme,
+    onError
+  ) {
     try {
+      const skikoCode = (await (await fetch("./skiko.mjs")).text())
+        .replace(
+          "new URL(\"skiko.wasm\",import.meta.url).href",
+          `"./skiko.wasm"`
+        );
+      const skikoImport = 'data:text/javascript;base64,' + btoa(skikoCode);
       const newCode = `
           class BufferedOutput {
             constructor() {
@@ -69,6 +85,8 @@ export default class JsExecutor {
             }
           }
           export const bufferedOutput = new BufferedOutput()
+
+          const skikoMjs = "${skikoImport}";
           ` +
         jsCode
           .replace(
@@ -81,7 +99,11 @@ export default class JsExecutor {
             "js_code['kotlin.io.printlnImpl'] = (message) => {bufferedOutput.buffer += message;bufferedOutput.buffer += \"\\n\"}\n" +
             "const importObject = {"
           )
-      const exports = await import(/* webpackIgnore: true */ 'data:text/javascript;base64,' + btoa(newCode));
+          .replaceAll(
+            "await import('./skiko.mjs')",
+            "await import(skikoMjs)"
+          );
+      const exports = await this.iframe.contentWindow.eval(`import(/* webpackIgnore: true */ '${'data:text/javascript;base64,' + btoa(newCode)}');`)
       await exports.instantiate()
       const output = exports.bufferedOutput.buffer
       exports.bufferedOutput.buffer = ""
@@ -110,7 +132,7 @@ export default class JsExecutor {
       const kotlinScript = API_URLS.KOTLIN_JS + `${normalizeJsVersion(this.kotlinVersion)}/kotlin.js`;
       iframeDoc.write("<script src='" + kotlinScript + "'></script>");
     }
-    if (targetPlatform !== TargetPlatforms.WASM) {
+    if (!isWasmRelated(targetPlatform)) {
       for (let lib of jsLibs) {
         iframeDoc.write("<script src='" + lib + "'></script>");
       }
@@ -119,6 +141,10 @@ export default class JsExecutor {
       } else {
         iframeDoc.write(`<script>${INIT_SCRIPT}</script>`);
       }
+    }
+    if (targetPlatform === TargetPlatforms.COMPOSE_WASM) {
+      this.iframe.height = "1000"
+      iframeDoc.write(`<canvas height="1000" id="ComposeTarget"></canvas>`);
     }
     iframeDoc.write('<body style="margin: 0; overflow: hidden;"></body>');
     iframeDoc.close();
