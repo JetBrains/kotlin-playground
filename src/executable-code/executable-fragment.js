@@ -6,7 +6,7 @@ import directives from 'monkberry-directives';
 import 'monkberry-events';
 import ExecutableCodeTemplate from './executable-fragment.monk';
 import WebDemoApi from '../webdemo-api';
-import {TargetPlatforms, isJsRelated, isJavaRelated} from "../utils/platforms";
+import {TargetPlatforms, isJsRelated, isJavaRelated, isWasmRelated} from "../utils/platforms";
 import JsExecutor from "../js-executor"
 
 import {
@@ -22,6 +22,8 @@ import { countLines, THEMES } from "../utils";
 import debounce from 'debounce';
 import CompletionView from "../view/completion-view";
 import {processErrors} from "../view/output-view";
+import {fetch} from "whatwg-fetch";
+import {API_URLS} from "../config";
 
 const IMPORT_NAME = 'import';
 const KEY_CODES = {
@@ -96,7 +98,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
     let sample;
     let hasMarkers = false;
     let platform = state.targetPlatform;
-    if (state.compilerVersion && isJsRelated(platform)) {
+    if (state.compilerVersion && isJsRelated(platform) || isWasmRelated(platform)) {
       this.jsExecutor = new JsExecutor(state.compilerVersion);
     }
 
@@ -259,7 +261,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
   onConsoleCloseButtonEnter() {
     const {jsLibs, onCloseConsole, targetPlatform } = this.state;
     // creates a new iframe and removes the old one, thereby stops execution of any running script
-    if (isJsRelated(targetPlatform))
+    if (isJsRelated(targetPlatform) || isWasmRelated(targetPlatform))
       this.jsExecutor.reloadIframeScripts(jsLibs, this.getNodeForMountIframe(), targetPlatform);
     this.update({output: "", openConsole: false, exception: null});
     if (onCloseConsole) onCloseConsole();
@@ -327,8 +329,39 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
       )
     } else {
       this.jsExecutor.reloadIframeScripts(jsLibs, this.getNodeForMountIframe(), targetPlatform);
-      WebDemoApi.translateKotlinToJs(this.getCode(), compilerVersion, targetPlatform, args, hiddenDependencies).then(
-        state => {
+      const additionalRequests = [];
+      if (targetPlatform === TargetPlatforms.COMPOSE_WASM) {
+        if (!this.jsExecutor.skikoImports) {
+          const skikoImport = fetch(API_URLS.SKIKO_MJS(compilerVersion), {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'text/javascript',
+            }
+          })
+            .then(script => script.text())
+            .then(script => script.replace(
+              "new URL(\"skiko.wasm\",import.meta.url).href",
+              `'${API_URLS.SKIKO_WASM(compilerVersion)}'`
+            ))
+            .then(async skikoCode => {
+                const module = await import("../js-executor/execute-es-module")
+                return await module.executeJs(this.jsExecutor.iframe.contentWindow, skikoCode)
+              }
+            )
+            .then(skikoImports => {
+              this.jsExecutor.skikoImports = skikoImports;
+              this.jsExecutor.iframe.contentWindow.skikoImports = skikoImports;
+            });
+
+          additionalRequests.push(skikoImport);
+        }
+      }
+
+      Promise.all([
+        WebDemoApi.translateKotlinToJs(this.getCode(), compilerVersion, targetPlatform, args, hiddenDependencies),
+        ...additionalRequests
+      ]).then(
+        ([state]) => {
           state.waitingForOutput = false;
           const jsCode = state.jsCode;
           const wasm = state.wasm;
