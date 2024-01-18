@@ -31,6 +31,9 @@ export const API_URLS = {
       case TargetPlatforms.WASM:
         url = `${this.server}/api/${version}/compiler/translate?ir=true&compiler=wasm`;
         break;
+      case TargetPlatforms.COMPOSE_WASM:
+        url = `${this.server}/api/${version}/compiler/translate?compiler=compose-wasm`;
+        break;
       case TargetPlatforms.JUNIT:
         url = `${this.server}/api/${version}/compiler/test`;
         break;
@@ -54,6 +57,12 @@ export const API_URLS = {
   },
   get VERSIONS() {
     return `${this.server}/versions`;
+  },
+  SKIKO_MJS(version) {
+    return `${this.server}/api/${version}/resource/skiko.mjs`;
+  },
+  SKIKO_WASM(version) {
+    return `${this.server}/api/${version}/resource/skiko.wasm`;
   },
   get JQUERY() {
     return `https://cdn.jsdelivr.net/npm/jquery@1/dist/jquery.min.js`;

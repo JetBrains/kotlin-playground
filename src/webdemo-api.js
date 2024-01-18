@@ -1,7 +1,7 @@
 import {fetch} from 'whatwg-fetch';
 import {API_URLS} from "./config";
 import flatten from 'flatten';
-import {TargetPlatforms} from './utils/platforms';
+import {isWasmRelated, TargetPlatforms} from './utils/platforms';
 import {
   findSecurityException,
   getExceptionCauses,
@@ -65,7 +65,7 @@ export default class WebDemoApi {
       })
     }
 
-    if (platform === TargetPlatforms.WASM && compilerVersion < MINIMAL_VERSION_WASM) {
+    if (isWasmRelated(platform) && compilerVersion < MINIMAL_VERSION_WASM) {
       return Promise.resolve({
         output: "",
         errors: [{
