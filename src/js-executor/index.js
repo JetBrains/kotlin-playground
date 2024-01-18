@@ -2,7 +2,7 @@ import './index.scss'
 import {API_URLS} from "../config";
 import {showJsException} from "../view/output-view";
 import {processingHtmlBrackets} from "../utils";
-import { TargetPlatforms } from "../utils/platforms";
+import {isWasmRelated, TargetPlatforms} from "../utils/platforms";
 
 const INIT_SCRIPT = "if(kotlin.BufferedOutput!==undefined){kotlin.out = new kotlin.BufferedOutput()}" +
   "else{kotlin.kotlin.io.output = new kotlin.kotlin.io.BufferedOutput()}";
@@ -23,6 +23,7 @@ const normalizeJsVersion = version => {
 export default class JsExecutor {
   constructor(kotlinVersion) {
     this.kotlinVersion = kotlinVersion;
+    this.skikoImports = undefined;
   }
 
   async executeJsCode(jsCode, wasm, jsLibs, platform, outputHeight, theme, onError) {
@@ -30,8 +31,28 @@ export default class JsExecutor {
       this.iframe.style.display = "block";
       if (outputHeight) this.iframe.style.height = `${outputHeight}px`;
     }
-    if (platform === TargetPlatforms.WASM) {
-      return await this.executeWasm(jsCode, wasm, theme, onError)
+    if (isWasmRelated(platform)) {
+      const executeEsModule = (await import("./execute-es-module"))
+      if (platform === TargetPlatforms.WASM) {
+        return await this.executeWasm(
+          jsCode,
+          wasm,
+          executeEsModule.executeWasmCode,
+          theme,
+          onError
+        )
+      }
+      if (platform === TargetPlatforms.COMPOSE_WASM) {
+        this.iframe.style.display = "block";
+        if (outputHeight) this.iframe.style.height = `${outputHeight}px`;
+        return await this.executeWasm(
+          jsCode,
+          wasm,
+          executeEsModule.executeWasmCodeWithSkiko,
+          theme,
+          onError,
+        )
+      }
     }
     return await this.execute(jsCode, jsLibs, theme, onError, platform);
   }
@@ -60,28 +81,15 @@ export default class JsExecutor {
     return await this.execute(jsCode, jsLibs, theme, onError, platform);
   }
 
-  async executeWasm(jsCode, wasmCode, theme, onError) {
+  async executeWasm(
+    jsCode,
+    wasmCode,
+    executor,
+    theme,
+    onError,
+  ) {
     try {
-      const newCode = `
-          class BufferedOutput {
-            constructor() {
-              this.buffer = ""
-            }
-          }
-          export const bufferedOutput = new BufferedOutput()
-          ` +
-        jsCode
-          .replace(
-            "instantiateStreaming(fetch(wasmFilePath)",
-            "instantiate(Uint8Array.from(atob(" + "'" + wasmCode + "'" + "), c => c.charCodeAt(0))"
-          )
-          .replace(
-            "const importObject = {",
-            "js_code['kotlin.io.printImpl'] = (message) => bufferedOutput.buffer += message\n" +
-            "js_code['kotlin.io.printlnImpl'] = (message) => {bufferedOutput.buffer += message;bufferedOutput.buffer += \"\\n\"}\n" +
-            "const importObject = {"
-          )
-      const exports = await import(/* webpackIgnore: true */ 'data:text/javascript;base64,' + btoa(newCode));
+      const exports = await executor(this.iframe.contentWindow, jsCode, wasmCode);
       await exports.instantiate()
       const output = exports.bufferedOutput.buffer
       exports.bufferedOutput.buffer = ""
@@ -110,7 +118,7 @@ export default class JsExecutor {
       const kotlinScript = API_URLS.KOTLIN_JS + `${normalizeJsVersion(this.kotlinVersion)}/kotlin.js`;
       iframeDoc.write("<script src='" + kotlinScript + "'></script>");
     }
-    if (targetPlatform !== TargetPlatforms.WASM) {
+    if (!isWasmRelated(targetPlatform)) {
       for (let lib of jsLibs) {
         iframeDoc.write("<script src='" + lib + "'></script>");
       }
@@ -119,6 +127,13 @@ export default class JsExecutor {
       } else {
         iframeDoc.write(`<script>${INIT_SCRIPT}</script>`);
       }
+    }
+    if (targetPlatform === TargetPlatforms.COMPOSE_WASM) {
+      if (this.skikoImports) {
+        this.iframe.contentWindow.skikoImports = this.skikoImports
+      }
+      this.iframe.height = "1000"
+      iframeDoc.write(`<canvas height="1000" id="ComposeTarget"></canvas>`);
     }
     iframeDoc.write('<body style="margin: 0; overflow: hidden;"></body>');
     iframeDoc.close();

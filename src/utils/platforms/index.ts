@@ -18,8 +18,14 @@ export function isJsRelated(platform: TargetPlatform) {
   return (
     platform === TargetPlatforms.JS ||
     platform === TargetPlatforms.JS_IR ||
-    platform === TargetPlatforms.CANVAS ||
-    platform === TargetPlatforms.WASM
+    platform === TargetPlatforms.CANVAS
+  );
+}
+
+export function isWasmRelated(platform: TargetPlatform) {
+  return (
+    platform === TargetPlatforms.WASM ||
+    platform === TargetPlatforms.COMPOSE_WASM
   );
 }
 
