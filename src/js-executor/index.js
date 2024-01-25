@@ -72,38 +72,8 @@ export default class JsExecutor {
     onError
   ) {
     try {
-      const skikoCode = (await (await fetch("./skiko.mjs")).text())
-        .replace(
-          "new URL(\"skiko.wasm\",import.meta.url).href",
-          `"./skiko.wasm"`
-        );
-      const skikoImport = 'data:text/javascript;base64,' + btoa(skikoCode);
-      const newCode = `
-          class BufferedOutput {
-            constructor() {
-              this.buffer = ""
-            }
-          }
-          export const bufferedOutput = new BufferedOutput()
-
-          const skikoMjs = "${skikoImport}";
-          ` +
-        jsCode
-          .replace(
-            "instantiateStreaming(fetch(wasmFilePath)",
-            "instantiate(Uint8Array.from(atob(" + "'" + wasmCode + "'" + "), c => c.charCodeAt(0))"
-          )
-          .replace(
-            "const importObject = {",
-            "js_code['kotlin.io.printImpl'] = (message) => bufferedOutput.buffer += message\n" +
-            "js_code['kotlin.io.printlnImpl'] = (message) => {bufferedOutput.buffer += message;bufferedOutput.buffer += \"\\n\"}\n" +
-            "const importObject = {"
-          )
-          .replaceAll(
-            "await import('./skiko.mjs')",
-            "await import(skikoMjs)"
-          );
-      const exports = await this.iframe.contentWindow.eval(`import(/* webpackIgnore: true */ '${'data:text/javascript;base64,' + btoa(newCode)}');`)
+      const execute = (await import("./execute-es-module")).executeWasmCode;
+      const exports = await execute(this.iframe.contentWindow, jsCode, wasmCode);
       await exports.instantiate()
       const output = exports.bufferedOutput.buffer
       exports.bufferedOutput.buffer = ""
