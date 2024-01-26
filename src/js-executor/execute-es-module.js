@@ -7,6 +7,7 @@ export async function executeWasmCode(container, jsCode, wasmCode) {
       `'${skikoWasm}'`
     );
   const skikoImport = 'data:text/javascript;base64,' + btoa(skikoCode);
+  container.wasmCode = Uint8Array.from(atob(wasmCode), c => c.charCodeAt(0));
   const newCode = `
           class BufferedOutput {
             constructor() {
@@ -20,7 +21,7 @@ export async function executeWasmCode(container, jsCode, wasmCode) {
     jsCode
       .replace(
         "instantiateStreaming(fetch(wasmFilePath)",
-        "instantiate(Uint8Array.from(atob(" + "'" + wasmCode + "'" + "), c => c.charCodeAt(0))"
+        "instantiate(window.wasmCode"
       )
       .replace(
         "const importObject = {",
