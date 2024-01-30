@@ -23,5 +23,8 @@
   {
     "version": "1.8.21",
     "latestStable": true
+  },
+  {
+    "version": "2.0.0-alpha.3"
   }
 ]
