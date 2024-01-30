@@ -20,8 +20,8 @@ export async function executeWasmCode(container, jsCode, wasmCode) {
           ` +
     jsCode
       .replace(
-        "instantiateStreaming(fetch(wasmFilePath)",
-        "instantiate(window.wasmCode"
+        "instantiateStreaming(fetch(wasmFilePath), importObject)).instance;",
+        "instantiate(window.wasmCode, importObject)).instance;\nwindow.wasmCode = undefined;"
       )
       .replace(
         "const importObject = {",

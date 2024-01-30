@@ -160,15 +160,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import org.jetbrains.compose.resources.ExperimentalResourceApi
-import org.jetbrains.compose.resources.painterResource
 
+//sampleStart
 @OptIn(ExperimentalComposeUiApi::class)
 fun main() {
   CanvasBasedWindow(canvasElementId = "ComposeTarget") { App() }
 }
 
-@OptIn(ExperimentalResourceApi::class)
 @Composable
 fun App() {
   MaterialTheme {
@@ -209,6 +207,7 @@ class Greeting {
 interface Platform {
   val name: String
 }
+//sampleEnd
 
 ```
 
