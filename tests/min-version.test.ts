@@ -15,7 +15,9 @@ test.describe('Minimum compiler version', () => {
     await prepareNetwork(page, baseURL); // offline mode
   });
 
-  test('with future release', async ({ page }) => {
+  test('should select the future release version by default', async ({
+    page,
+  }) => {
     await gotoHtmlWidget(
       page,
       { selector: 'code' },
