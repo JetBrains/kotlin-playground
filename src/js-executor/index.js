@@ -30,13 +30,28 @@ export default class JsExecutor {
       this.iframe.style.display = "block";
       if (outputHeight) this.iframe.style.height = `${outputHeight}px`;
     }
-    if (platform === TargetPlatforms.WASM) {
-      return await this.executeWasm(jsCode, wasm, theme, onError)
-    }
-    if (platform === TargetPlatforms.COMPOSE_WASM) {
-      this.iframe.style.display = "block";
-      if (outputHeight) this.iframe.style.height = `${outputHeight}px`;
-      return await this.executeWasm(jsCode, wasm, theme, onError)
+    if (isWasmRelated(platform)) {
+      const executeEsModule = (await import("./execute-es-module"))
+      if (platform === TargetPlatforms.WASM) {
+        return await this.executeWasm(
+          jsCode,
+          wasm,
+          executeEsModule.executeWasmCode,
+          theme,
+          onError
+        )
+      }
+      if (platform === TargetPlatforms.COMPOSE_WASM) {
+        this.iframe.style.display = "block";
+        if (outputHeight) this.iframe.style.height = `${outputHeight}px`;
+        return await this.executeWasm(
+          jsCode,
+          wasm,
+          executeEsModule.executeWasmCodeWithSkiko,
+          theme,
+          onError
+        )
+      }
     }
     return await this.execute(jsCode, jsLibs, theme, onError, platform);
   }
@@ -68,12 +83,12 @@ export default class JsExecutor {
   async executeWasm(
     jsCode,
     wasmCode,
+    executor,
     theme,
     onError
   ) {
     try {
-      const execute = (await import("./execute-es-module")).executeWasmCode;
-      const exports = await execute(this.iframe.contentWindow, jsCode, wasmCode);
+      const exports = await executor(this.iframe.contentWindow, jsCode, wasmCode);
       await exports.instantiate()
       const output = exports.bufferedOutput.buffer
       exports.bufferedOutput.buffer = ""

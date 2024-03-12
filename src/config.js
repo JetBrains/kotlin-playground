@@ -32,7 +32,7 @@ export const API_URLS = {
         url = `${this.server}/api/${version}/compiler/translate?ir=true&compiler=wasm`;
         break;
       case TargetPlatforms.COMPOSE_WASM:
-        url = `${this.server}/api/${version}/compiler/translate?ir=true&compiler=wasm&compilerPlugins=true`;
+        url = `${this.server}/api/${version}/compiler/translate?compiler=compose-wasm`;
         break;
       case TargetPlatforms.JUNIT:
         url = `${this.server}/api/${version}/compiler/test`;

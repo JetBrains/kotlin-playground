@@ -164,7 +164,7 @@ import androidx.compose.ui.Modifier
 //sampleStart
 @OptIn(ExperimentalComposeUiApi::class)
 fun main() {
-  CanvasBasedWindow(canvasElementId = "ComposeTarget") { App() }
+  CanvasBasedWindow { App() }
 }
 
 @Composable
