@@ -6,7 +6,7 @@ import directives from 'monkberry-directives';
 import 'monkberry-events';
 import ExecutableCodeTemplate from './executable-fragment.monk';
 import WebDemoApi from '../webdemo-api';
-import {TargetPlatforms, isJsRelated, isJavaRelated} from "../utils/platforms";
+import {TargetPlatforms, isJsRelated, isJavaRelated, isWasmRelated} from "../utils/platforms";
 import JsExecutor from "../js-executor"
 
 import {
@@ -96,7 +96,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
     let sample;
     let hasMarkers = false;
     let platform = state.targetPlatform;
-    if (state.compilerVersion && isJsRelated(platform)) {
+    if (state.compilerVersion && isJsRelated(platform) || isWasmRelated(platform)) {
       this.jsExecutor = new JsExecutor(state.compilerVersion);
     }
 
@@ -259,7 +259,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
   onConsoleCloseButtonEnter() {
     const {jsLibs, onCloseConsole, targetPlatform } = this.state;
     // creates a new iframe and removes the old one, thereby stops execution of any running script
-    if (isJsRelated(targetPlatform))
+    if (isJsRelated(targetPlatform) || isWasmRelated(targetPlatform))
       this.jsExecutor.reloadIframeScripts(jsLibs, this.getNodeForMountIframe(), targetPlatform);
     this.update({output: "", openConsole: false, exception: null});
     if (onCloseConsole) onCloseConsole();

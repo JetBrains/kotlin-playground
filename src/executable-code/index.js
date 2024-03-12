@@ -23,7 +23,7 @@ import WebDemoApi from "../webdemo-api";
 import ExecutableFragment from './executable-fragment';
 import { generateCrosslink } from '../lib/crosslink';
 import '../styles.scss';
-import {getTargetById, isJsRelated, TargetPlatforms} from "../utils/platforms";
+import {getTargetById, isJsRelated, isWasmRelated, TargetPlatforms} from "../utils/platforms";
 
 const INITED_ATTRIBUTE_NAME = 'data-kotlin-playground-initialized';
 const DEFAULT_INDENT = 4;
@@ -196,10 +196,10 @@ export default class ExecutableCode {
    * @returns {Set} - set of additional libraries
    */
   getJsLibraries(targetNode, platform) {
+    if (isWasmRelated(platform)) {
+      return new Set()
+    }
     if (isJsRelated(platform)) {
-      if (platform === TargetPlatforms.WASM) {
-        return new Set()
-      }
       const jsLibs = targetNode.getAttribute(ATTRIBUTES.JS_LIBS);
       let additionalLibs = new Set(API_URLS.JQUERY.split());
       if (jsLibs) {

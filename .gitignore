@@ -17,3 +17,4 @@ package-lock.json
 /playwright-report/
 /playwright/.cache/
 .env.local
+skiko

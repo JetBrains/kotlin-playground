@@ -102,7 +102,10 @@ module.exports = (params = {}) => {
       }),
     ],
     devServer: {
-      static: path.resolve(__dirname, 'src'),
+      static: [
+        path.resolve(__dirname, 'src'),
+        path.resolve(__dirname, 'dist')
+      ]
     },
   }
 
