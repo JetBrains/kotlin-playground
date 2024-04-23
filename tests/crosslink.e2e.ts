@@ -35,9 +35,9 @@ test.describe('open in playground', () => {
     expect(newPage.url()).toEqual(url); // new page with correct url
 
     // wait until final page with editor
-    await newPage.waitForNavigation({
-      url: (url) => url.toString().startsWith('https://play.kotlinlang.org/#'),
-    });
+    await newPage.waitForURL((url) =>
+      url.toString().startsWith('https://play.kotlinlang.org/#'),
+    );
 
     // check it exists on page
     await expect(newPage.locator('body')).toContainText(code);
