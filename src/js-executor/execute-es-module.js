@@ -6,7 +6,7 @@ export async function executeWasmCode(container, jsCode, wasmCode) {
 export async function executeWasmCodeWithSkiko(container, jsCode, wasmCode) {
   const newCode = prepareJsCode(jsCode)
     .replaceAll(
-      "imports['./skiko.mjs'] ?? await import('./skiko.mjs')",
+      "imports['./skiko.mjs']",
       "window.skikoImports"
     );
   return execute(container, newCode, wasmCode);
