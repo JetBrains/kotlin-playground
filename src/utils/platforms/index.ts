@@ -19,7 +19,8 @@ export function isJsRelated(platform: TargetPlatform) {
     platform === TargetPlatforms.JS ||
     platform === TargetPlatforms.JS_IR ||
     platform === TargetPlatforms.CANVAS ||
-    platform === TargetPlatforms.WASM
+    platform === TargetPlatforms.WASM ||
+    platform === TargetPlatforms.SWIFT_EXPORT
   );
 }
 

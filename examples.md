@@ -137,6 +137,27 @@ fun main(args: Array<String>) {
 </div>
 
 
+You can try Kotlin export to Swift.
+
+```html
+<div class="kotlin-code" data-target-platform="swift-export"></div>
+```
+<div class="kotlin-code" data-target-platform="swift-export">
+
+```kotlin
+fun mul(a: Int, b: Int): Int {
+    return a * b
+}
+
+fun main(args: Array<String>) {
+    print(mul(-2, 4))
+    println(" + 7 =")
+    print(mul(-2, 4) + 7)
+}
+```
+
+</div>
+
 Use `data-target-platform` attribute with value `junit` for creating examples with tests:
 
 <div class="kotlin-code" data-target-platform="junit">
