@@ -26,6 +26,9 @@ export default class JsExecutor {
   }
 
   async executeJsCode(jsCode, wasm, jsLibs, platform, outputHeight, theme, onError) {
+    if (platform === TargetPlatforms.SWIFT_EXPORT) {
+      return `<span class="standard-output ${theme}">${jsCode}</span>`;
+    }
     if (platform === TargetPlatforms.CANVAS) {
       this.iframe.style.display = "block";
       if (outputHeight) this.iframe.style.height = `${outputHeight}px`;
@@ -110,7 +113,7 @@ export default class JsExecutor {
       const kotlinScript = API_URLS.KOTLIN_JS + `${normalizeJsVersion(this.kotlinVersion)}/kotlin.js`;
       iframeDoc.write("<script src='" + kotlinScript + "'></script>");
     }
-    if (targetPlatform !== TargetPlatforms.WASM) {
+    if (targetPlatform !== TargetPlatforms.WASM && targetPlatform !== TargetPlatforms.SWIFT_EXPORT) {
       for (let lib of jsLibs) {
         iframeDoc.write("<script src='" + lib + "'></script>");
       }

@@ -197,7 +197,7 @@ export default class ExecutableCode {
    */
   getJsLibraries(targetNode, platform) {
     if (isJsRelated(platform)) {
-      if (platform === TargetPlatforms.WASM) {
+      if (platform === TargetPlatforms.WASM || platform === TargetPlatforms.SWIFT_EXPORT) {
         return new Set()
       }
       const jsLibs = targetNode.getAttribute(ATTRIBUTES.JS_LIBS);
