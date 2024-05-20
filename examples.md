@@ -140,9 +140,9 @@ fun main(args: Array<String>) {
 You can try Kotlin export to Swift.
 
 ```html
-<div class="kotlin-code" data-target-platform="swift-export"></div>
+<div class="kotlin-code" data-target-platform="swift-export" data-version="2.0.0-RC3"></div>
 ```
-<div class="kotlin-code" data-target-platform="swift-export">
+<div class="kotlin-code" data-target-platform="swift-export" data-version="2.0.0-RC3">
 
 ```kotlin
 fun mul(a: Int, b: Int): Int {

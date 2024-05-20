@@ -35,7 +35,7 @@ export const API_URLS = {
         url = `${this.server}/api/${version}/compiler/test`;
         break;
       case TargetPlatforms.SWIFT_EXPORT:
-        url = `${this.server}/api/${version}/compiler/translate?compiler=swift-export`;
+        url = `${this.server}/api/${version}/${TargetPlatforms.SWIFT_EXPORT.id}/compiler/translate?compiler=swift-export`;
         break;
       default:
         console.warn(`Unknown ${platform.id} , used by default JVM`)
