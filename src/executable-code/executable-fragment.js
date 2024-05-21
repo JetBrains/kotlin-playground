@@ -9,10 +9,10 @@ import WebDemoApi from '../webdemo-api';
 import { executeJs } from '../js-executor/execute-es-module';
 
 import {
-  TargetPlatforms,
-  isJsRelated,
   isJavaRelated,
+  isJsRelated,
   isWasmRelated,
+  TargetPlatforms,
 } from '../utils/platforms';
 import JsExecutor from '../js-executor';
 
@@ -485,7 +485,9 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
                   targetPlatform === TargetPlatforms.COMPOSE_WASM
                 ) {
                   state.openConsole = true;
-                } else if (output) {
+                }
+
+                if (output) {
                   state.openConsole = true;
                   state.output = output;
                 } else {
