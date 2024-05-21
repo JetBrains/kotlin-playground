@@ -478,17 +478,28 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
                 onError,
               )
               .then((output) => {
-                if (output) {
+                const originState = state.openConsole;
+
+                if (
+                  targetPlatform === TargetPlatforms.CANVAS ||
+                  targetPlatform === TargetPlatforms.COMPOSE_WASM
+                ) {
+                  state.openConsole = true;
+                } else if (output) {
                   state.openConsole = true;
                   state.output = output;
                 } else {
                   state.output = '';
                   if (onCloseConsole) onCloseConsole();
                 }
-                if (targetPlatform === TargetPlatforms.CANVAS) {
-                  if (onOpenConsole) onOpenConsole();
-                  state.openConsole = true;
-                }
+
+                if (
+                  onOpenConsole &&
+                  originState !== state.openConsole &&
+                  state.openConsole === true
+                )
+                  onOpenConsole();
+
                 state.exception = null;
                 this.update(state);
               });
