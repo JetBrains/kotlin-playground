@@ -3,6 +3,7 @@ import { API_URLS } from '../config';
 import { showJsException } from '../view/output-view';
 import { processingHtmlBrackets } from '../utils';
 import { isWasmRelated, TargetPlatforms } from '../utils/platforms';
+import { executeWasmCode, executeWasmCodeWithSkiko } from './execute-es-module';
 
 const INIT_SCRIPT =
   'if(kotlin.BufferedOutput!==undefined){kotlin.out = new kotlin.BufferedOutput()}' +
@@ -44,12 +45,11 @@ export default class JsExecutor {
       if (outputHeight) this.iframe.style.height = `${outputHeight}px`;
     }
     if (isWasmRelated(platform)) {
-      const executeEsModule = await import('./execute-es-module');
       if (platform === TargetPlatforms.WASM) {
         return await this.executeWasm(
           jsCode,
           wasm,
-          executeEsModule.executeWasmCode,
+          executeWasmCode,
           theme,
           onError,
         );
@@ -60,7 +60,7 @@ export default class JsExecutor {
         return await this.executeWasm(
           jsCode,
           wasm,
-          executeEsModule.executeWasmCodeWithSkiko,
+          executeWasmCodeWithSkiko,
           theme,
           onError,
         );
