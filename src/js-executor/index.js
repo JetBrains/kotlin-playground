@@ -54,16 +54,29 @@ export default class JsExecutor {
           onError,
         );
       }
+
       if (platform === TargetPlatforms.COMPOSE_WASM) {
-        this.iframe.style.display = 'block';
-        if (outputHeight) this.iframe.style.height = `${outputHeight}px`;
-        return await this.executeWasm(
+        let exception = false;
+
+        const processError = () => {
+          exception = true;
+          return onError && onError.apply(this, arguments);
+        };
+
+        const result = await this.executeWasm(
           jsCode,
           wasm,
           executeWasmCodeWithSkiko,
           theme,
-          onError,
+          processError,
         );
+
+        if (!exception) {
+          this.iframe.style.display = 'block';
+          if (outputHeight) this.iframe.style.height = `${outputHeight}px`;
+        }
+
+        return result;
       }
     }
     return await this.execute(jsCode, jsLibs, theme, onError, platform);
