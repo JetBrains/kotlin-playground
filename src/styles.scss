@@ -24,6 +24,8 @@ $wt-color-athens: #eaeaec;
 $wt-color-azure: #167dff;
 
 .executable-fragment-wrapper {
+  --playground-code-output-padding: 10px;
+
   margin-bottom: 35px;
   position: relative;
 
@@ -274,7 +276,7 @@ $wt-color-azure: #167dff;
   flex-grow: 1;
   font-family: $font-family-mono;
   overflow: auto;
-  padding-left: 10px;
+  padding-left: var(--playground-code-output-padding, 10px);
   padding-top: 15px;
 }
 
@@ -559,4 +561,9 @@ div[label]:hover:after {
   margin-left: 1rem;
   color: black;
   border: 1px solid $wt-color-code;
+}
+
+.code-output .CodeMirror {
+  margin-left: calc(-1 * var(--playground-code-output-padding));
+  padding-left: var(--playground-code-output-padding);
 }

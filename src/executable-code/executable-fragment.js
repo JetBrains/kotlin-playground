@@ -515,7 +515,8 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
                       (elt) => code.parentNode.replaceChild(elt, code),
                       {
                         mode: 'swift',
-                        readOnly: 'nocursorgit st',
+                        readOnly: 'nocursor',
+                        scrollbarStyle: 'native',
                         theme: this.state.theme,
                         value: code.innerText,
                       },

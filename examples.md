@@ -235,6 +235,22 @@ fun main(args: Array<String>) {
 
 </div>
 
+<div class="kotlin-code" data-target-platform="swift-export" data-version="2.0.0-RC3" theme="kotlin-docs">
+
+```kotlin
+fun mul(a: Int, b: Int): Int {
+    return a * b
+}
+
+fun main(args: Array<String>) {
+    print(mul(-2, 4))
+    println(" + 7 =")
+    print(mul(-2, 4) + 7)
+}
+```
+
+</div>
+
 Use `data-target-platform` attribute with value `junit` for creating examples with tests:
 
 <div class="kotlin-code" data-target-platform="junit">
