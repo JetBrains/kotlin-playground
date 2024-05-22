@@ -504,7 +504,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
 
                 state.exception = null;
                 this.update(state);
-
+                /*
                 if (targetPlatform === TargetPlatforms.SWIFT_EXPORT) {
                   const code = this.nodes[0]
                     .querySelector(SELECTORS.JS_CODE_OUTPUT_EXECUTOR)
@@ -523,6 +523,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
                     );
                   }
                 }
+                */
               });
           }
         },
