@@ -504,6 +504,24 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
 
                 state.exception = null;
                 this.update(state);
+
+                if (targetPlatform === TargetPlatforms.SWIFT_EXPORT) {
+                  const code = this.nodes[0]
+                    .querySelector(SELECTORS.JS_CODE_OUTPUT_EXECUTOR)
+                    .querySelector('.result-code');
+
+                  if (code) {
+                    CodeMirror(
+                      (elt) => code.parentNode.replaceChild(elt, code),
+                      {
+                        mode: 'swift',
+                        readOnly: 'nocursorgit st',
+                        theme: this.state.theme,
+                        value: code.innerText,
+                      },
+                    );
+                  }
+                }
               });
           }
         },

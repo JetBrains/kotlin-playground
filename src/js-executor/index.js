@@ -38,7 +38,7 @@ export default class JsExecutor {
     onError,
   ) {
     if (platform === TargetPlatforms.SWIFT_EXPORT) {
-      return `<span class="standard-output ${theme}">${jsCode}</span>`;
+      return `<span class="standard-output ${theme}"><div class="result-code">${jsCode}</span>`;
     }
     if (platform === TargetPlatforms.CANVAS) {
       this.iframe.style.display = 'block';
