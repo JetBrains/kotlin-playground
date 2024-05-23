@@ -3,7 +3,8 @@ import { API_URLS } from '../config';
 import { showJsException } from '../view/output-view';
 import { processingHtmlBrackets } from '../utils';
 import { isWasmRelated, TargetPlatforms } from '../utils/platforms';
-import { executeWasmCode, executeWasmCodeWithSkiko } from './execute-es-module';
+import { executeJs, executeWasmCode, executeWasmCodeWithSkiko } from './execute-es-module';
+import { fetch } from "whatwg-fetch";
 
 const INIT_SCRIPT =
   'if(kotlin.BufferedOutput!==undefined){kotlin.out = new kotlin.BufferedOutput()}' +
@@ -25,7 +26,7 @@ const normalizeJsVersion = (version) => {
 export default class JsExecutor {
   constructor(kotlinVersion) {
     this.kotlinVersion = kotlinVersion;
-    this.skikoImports = undefined;
+    this.skikoImport = undefined;
   }
 
   async executeJsCode(
@@ -138,7 +139,7 @@ export default class JsExecutor {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
-  reloadIframeScripts(jsLibs, node, targetPlatform) {
+  reloadIframeScripts(jsLibs, node, targetPlatform, compilerVersion) {
     if (this.iframe !== undefined) {
       node.removeChild(this.iframe);
     }
@@ -170,10 +171,29 @@ export default class JsExecutor {
       }
     }
     if (targetPlatform === TargetPlatforms.COMPOSE_WASM) {
-      if (this.skikoImports) {
-        this.iframe.contentWindow.skikoImports = this.skikoImports;
-      }
-      this.iframe.height = '1000';
+      this.skikoImport = fetch(API_URLS.SKIKO_MJS(compilerVersion), {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'text/javascript',
+        }
+      })
+        .then(script => script.text())
+        .then(script => script.replace(
+          "new URL(\"skiko.wasm\",import.meta.url).href",
+          `'${API_URLS.SKIKO_WASM(compilerVersion)}'`
+        ))
+        .then(async skikoCode => {
+            return await executeJs(
+              this.iframe.contentWindow,
+              skikoCode,
+            );
+          }
+        )
+        .then(skikoImports => {
+          this.iframe.contentWindow.skikoImports = skikoImports;
+        });
+
+      this.iframe.height = "1000"
       iframeDoc.write(`<canvas height="1000" id="ComposeTarget"></canvas>`);
     }
     iframeDoc.write('<body style="margin: 0; overflow: hidden;"></body>');
