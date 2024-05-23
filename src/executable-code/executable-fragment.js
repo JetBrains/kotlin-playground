@@ -259,10 +259,10 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
   }
 
   onConsoleCloseButtonEnter() {
-    const {jsLibs, onCloseConsole, targetPlatform } = this.state;
+    const {jsLibs, onCloseConsole, targetPlatform, compilerVersion } = this.state;
     // creates a new iframe and removes the old one, thereby stops execution of any running script
     if (isJsRelated(targetPlatform) || isWasmRelated(targetPlatform))
-      this.jsExecutor.reloadIframeScripts(jsLibs, this.getNodeForMountIframe(), targetPlatform);
+      this.jsExecutor.reloadIframeScripts(jsLibs, this.getNodeForMountIframe(), targetPlatform, compilerVersion);
     this.update({output: "", openConsole: false, exception: null});
     if (onCloseConsole) onCloseConsole();
   }
@@ -328,32 +328,11 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
         }
       )
     } else {
-      this.jsExecutor.reloadIframeScripts(jsLibs, this.getNodeForMountIframe(), targetPlatform);
+      this.jsExecutor.reloadIframeScripts(jsLibs, this.getNodeForMountIframe(), targetPlatform, compilerVersion);
       const additionalRequests = [];
       if (targetPlatform === TargetPlatforms.COMPOSE_WASM) {
-        if (!this.jsExecutor.skikoImports) {
-          const skikoImport = fetch(API_URLS.SKIKO_MJS(compilerVersion), {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'text/javascript',
-            }
-          })
-            .then(script => script.text())
-            .then(script => script.replace(
-              "new URL(\"skiko.wasm\",import.meta.url).href",
-              `'${API_URLS.SKIKO_WASM(compilerVersion)}'`
-            ))
-            .then(async skikoCode => {
-                const module = await import("../js-executor/execute-es-module")
-                return await module.executeJs(this.jsExecutor.iframe.contentWindow, skikoCode)
-              }
-            )
-            .then(skikoImports => {
-              this.jsExecutor.skikoImports = skikoImports;
-              this.jsExecutor.iframe.contentWindow.skikoImports = skikoImports;
-            });
-
-          additionalRequests.push(skikoImport);
+        if (!this.jsExecutor.skikoImport) {
+          additionalRequests.push(this.jsExecutor.skikoImport);
         }
       }
 

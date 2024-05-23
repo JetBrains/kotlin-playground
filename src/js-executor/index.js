@@ -3,6 +3,7 @@ import {API_URLS} from "../config";
 import {showJsException} from "../view/output-view";
 import {processingHtmlBrackets} from "../utils";
 import {isWasmRelated, TargetPlatforms} from "../utils/platforms";
+import {fetch} from "whatwg-fetch";
 
 const INIT_SCRIPT = "if(kotlin.BufferedOutput!==undefined){kotlin.out = new kotlin.BufferedOutput()}" +
   "else{kotlin.kotlin.io.output = new kotlin.kotlin.io.BufferedOutput()}";
@@ -23,7 +24,7 @@ const normalizeJsVersion = version => {
 export default class JsExecutor {
   constructor(kotlinVersion) {
     this.kotlinVersion = kotlinVersion;
-    this.skikoImports = undefined;
+    this.skikoImport = undefined;
   }
 
   async executeJsCode(jsCode, wasm, jsLibs, platform, outputHeight, theme, onError) {
@@ -105,7 +106,7 @@ export default class JsExecutor {
     return new Promise(resolve => setTimeout(resolve, ms))
   }
 
-  reloadIframeScripts(jsLibs, node, targetPlatform) {
+  reloadIframeScripts(jsLibs, node, targetPlatform, compilerVersion) {
     if (this.iframe !== undefined) {
       node.removeChild(this.iframe)
     }
@@ -129,9 +130,26 @@ export default class JsExecutor {
       }
     }
     if (targetPlatform === TargetPlatforms.COMPOSE_WASM) {
-      if (this.skikoImports) {
-        this.iframe.contentWindow.skikoImports = this.skikoImports
-      }
+      this.skikoImport = fetch(API_URLS.SKIKO_MJS(compilerVersion), {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'text/javascript',
+        }
+      })
+        .then(script => script.text())
+        .then(script => script.replace(
+          "new URL(\"skiko.wasm\",import.meta.url).href",
+          `'${API_URLS.SKIKO_WASM(compilerVersion)}'`
+        ))
+        .then(async skikoCode => {
+            const module = await import("../js-executor/execute-es-module")
+            return await module.executeJs(this.iframe.contentWindow, skikoCode)
+          }
+        )
+        .then(skikoImports => {
+          this.iframe.contentWindow.skikoImports = skikoImports;
+        });
+
       this.iframe.height = "1000"
       iframeDoc.write(`<canvas height="1000" id="ComposeTarget"></canvas>`);
     }
