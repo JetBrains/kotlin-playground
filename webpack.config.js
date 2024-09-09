@@ -17,7 +17,7 @@ module.exports = (params = {}) => {
 
     output: {
       path: pathDist,
-      filename: '[name].js'
+      filename: '[name].js',
     },
 
     devtool: 'source-map',
@@ -84,6 +84,7 @@ module.exports = (params = {}) => {
       library: libraryName,
       libraryTarget: 'umd',
       libraryExport: 'default',
+      publicPath: 'auto',
     },
 
     plugins: [
@@ -104,7 +105,7 @@ module.exports = (params = {}) => {
     devServer: {
       static: path.resolve(__dirname, 'src'),
     },
-  }
+  };
 
   const crosslink = {
     ...common,
@@ -120,7 +121,7 @@ module.exports = (params = {}) => {
         type: 'umd',
       },
     },
-  }
+  };
 
   return [bundle, crosslink];
 };
