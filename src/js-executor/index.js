@@ -64,6 +64,10 @@ export default class JsExecutor {
           return onError && onError.apply(this, arguments);
         };
 
+        // It is necessary to work in Firefox
+        // for some reason resize function in Compose does not work in Firefox in invisible block
+        this.iframe.style.display = 'block';
+
         const result = await this.executeWasm(
           jsCode,
           wasm,
@@ -72,7 +76,9 @@ export default class JsExecutor {
           processError,
         );
 
-        if (!exception) {
+        if (exception) {
+          this.iframe.style.display = 'none';
+        } else {
           this.iframe.style.display = 'block';
           if (outputHeight) this.iframe.style.height = `${outputHeight}px`;
         }
