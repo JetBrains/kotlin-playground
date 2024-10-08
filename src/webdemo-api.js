@@ -52,6 +52,7 @@ export default class WebDemoApi {
   static translateKotlinToJs(code, compilerVersion, platform, args, hiddenDependencies) {
     const MINIMAL_VERSION_IR = '1.5.0';
     const MINIMAL_VERSION_WASM = '1.9.0';
+    const MINIMAL_VERSION_SWIFT_EXPORT = '2.0.0';
 
     if (platform === TargetPlatforms.JS_IR && compilerVersion < MINIMAL_VERSION_IR) {
       return Promise.resolve({
@@ -70,6 +71,17 @@ export default class WebDemoApi {
         errors: [{
           severity: "ERROR",
           message: `Wasm compiler backend accessible only since ${MINIMAL_VERSION_WASM} version`
+        }],
+        jsCode: ""
+      })
+    }
+
+    if (platform === TargetPlatforms.SWIFT_EXPORT && compilerVersion < MINIMAL_VERSION_SWIFT_EXPORT) {
+      return Promise.resolve({
+        output: "",
+        errors: [{
+          severity: "ERROR",
+          message: `Swift export accessible only since ${MINIMAL_VERSION_SWIFT_EXPORT} version`
         }],
         jsCode: ""
       })

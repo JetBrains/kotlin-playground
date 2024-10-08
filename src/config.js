@@ -34,6 +34,9 @@ export const API_URLS = {
       case TargetPlatforms.JUNIT:
         url = `${this.server}/api/${version}/compiler/test`;
         break;
+      case TargetPlatforms.SWIFT_EXPORT:
+        url = `${this.server}/api/${version}/${TargetPlatforms.SWIFT_EXPORT.id}/compiler/translate?compiler=swift-export`;
+        break;
       default:
         console.warn(`Unknown ${platform.id} , used by default JVM`)
         url = `${this.server}/api/${version}/compiler/run`;
