@@ -36,6 +36,10 @@ function prepareJsCode(jsCode) {
         "instantiate(window.wasmCode, importObject)).instance;\nwindow.wasmCode = undefined;"
       )
       .replace(
+        "instantiateStreaming(fetch(new URL('./moduleId.wasm',import.meta.url).href), importObject)).instance;",
+        "instantiate(window.wasmCode, importObject)).instance;\nwindow.wasmCode = undefined;"
+      )
+      .replace(
         "const importObject = {",
         "js_code['kotlin.io.printImpl'] = (message) => bufferedOutput.buffer += message\n" +
         "js_code['kotlin.io.printlnImpl'] = (message) => {bufferedOutput.buffer += message;bufferedOutput.buffer += \"\\n\"}\n" +
