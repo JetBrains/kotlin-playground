@@ -36,7 +36,7 @@ function prepareJsCode(jsCode) {
         "instantiate(window.wasmCode, importObject)).instance;\nwindow.wasmCode = undefined;"
       )
       .replace(
-        "instantiateStreaming(fetch(new URL('./moduleId.wasm',import.meta.url).href), importObject)).instance;",
+        "instantiateStreaming(fetch(new URL('./playground.wasm',import.meta.url).href), importObject)).instance;",
         "instantiate(window.wasmCode, importObject)).instance;\nwindow.wasmCode = undefined;"
       )
       .replace(
