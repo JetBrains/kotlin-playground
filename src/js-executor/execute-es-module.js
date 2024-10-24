@@ -6,7 +6,7 @@ export async function executeWasmCode(container, jsCode, wasmCode) {
 export async function executeWasmCodeWithSkiko(container, jsCode, wasmCode) {
   const newCode = prepareJsCode(jsCode)
     .replaceAll(
-      "imports['./skiko.mjs'] ?? await import('./skiko.mjs')",
+      "imports['./skiko.mjs']",
       "window.skikoImports"
     );
   return execute(container, newCode, wasmCode);
@@ -33,6 +33,10 @@ function prepareJsCode(jsCode) {
     jsCode
       .replace(
         "instantiateStreaming(fetch(wasmFilePath), importObject)).instance;",
+        "instantiate(window.wasmCode, importObject)).instance;\nwindow.wasmCode = undefined;"
+      )
+      .replace(
+        "instantiateStreaming(fetch(new URL('./playground.wasm',import.meta.url).href), importObject)).instance;",
         "instantiate(window.wasmCode, importObject)).instance;\nwindow.wasmCode = undefined;"
       )
       .replace(
