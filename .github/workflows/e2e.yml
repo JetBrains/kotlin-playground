@@ -26,16 +26,16 @@ jobs:
 
     steps:
       # prepare core binaries
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Install Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: lts/*
+          node-version: 20
           cache: 'yarn'
 
       - name: Install dependencies
-        run: yarn
+        run: yarn install --frozen-lockfile # optional, --immutable
 
       # run lint
       - name: Run tests
@@ -49,7 +49,7 @@ jobs:
           echo version=$(npm info @playwright/test version) >> $GITHUB_OUTPUT
 
       - name: Cache Playwright binaries
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         id: playwright-cache
         with:
           path: |
@@ -75,12 +75,13 @@ jobs:
       - name: Run tests
         run: TEST_PROJECT_LIST="${{matrix.TEST_PROJECT_LIST}}" yarn test
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: playwright-report
+          name: "playwright-report-${{ matrix.os }}"
           path: |
             test-results/
             playwright-report/
             tests/**/__screenshots__/github_*
           retention-days: 5
+          compression-level: 9
