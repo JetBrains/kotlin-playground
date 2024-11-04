@@ -16,7 +16,7 @@ const JS_1_9 = Object.freeze({
   jsCode: makeJSPrintCode('Hello, world!'),
   errors: { 'File.kt': [] },
   exception: null,
-  text: '<outStream>Hello, world!\n</outStream>',
+  text: '',
 });
 
 const OUTPUTS = Object.freeze({
@@ -49,6 +49,6 @@ async function run(page: Page, platform: keyof typeof OUTPUTS) {
   );
   const editor = page.locator(WIDGET_SELECTOR);
   const postData = `{"args":"","files":[{"name":"File.kt","text":"${toPostData(source)}","publicId":""}],"confType":"${platform}"}`;
-  await checkRunCase(page, editor, postData, OUTPUTS[platform]);
+  await checkRunCase(page, editor, postData, { json: OUTPUTS[platform] });
   await expect(editor.locator(RESULT_SELECTOR)).toHaveText(text);
 }
