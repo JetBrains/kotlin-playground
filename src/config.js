@@ -62,11 +62,11 @@ export const API_URLS = {
   get VERSIONS() {
     return `${this.server}/versions`;
   },
-  SKIKO_MJS() {
-    return `${this.composeServer}/api/resource/skiko.mjs`;
+  SKIKO_MJS(version) {
+    return `${this.composeServer}/api/resource/skiko-${version}.mjs`;
   },
-  SKIKO_WASM() {
-    return `${this.composeServer}/api/resource/skiko.wasm`;
+  SKIKO_WASM(version) {
+    return `${this.composeServer}/api/resource/skiko-${version}.wasm`;
   },
   get JQUERY() {
     return `https://cdn.jsdelivr.net/npm/jquery@1/dist/jquery.min.js`;
