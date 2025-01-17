@@ -3,17 +3,16 @@ export async function executeWasmCode(container, jsCode, wasmCode) {
   return execute(container, newCode, wasmCode);
 }
 
-export async function executeWasmCodeWithSkiko(container, jsCode, wasmCode) {
-  const newCode = prepareJsCode(jsCode)
-    .replaceAll(
-      "imports['./skiko.mjs']",
-      "window.skikoImports"
-    );
-  return execute(container, newCode, wasmCode);
+export async function executeWasmCodeWithSkiko(container, jsCode) {
+  return executeJs(container, prepareJsCode(jsCode));
+}
+
+export async function executeWasmCodeWithStdlib(container, jsCode, wasmCode) {
+  return execute(container, prepareJsCode(jsCode), wasmCode);
 }
 
 function execute(container, jsCode, wasmCode) {
-  container.wasmCode = Uint8Array.from(atob(wasmCode), c => c.charCodeAt(0));
+  container.wasmCode = Uint8Array.fromBase64(wasmCode);
   return executeJs(container, jsCode);
 }
 

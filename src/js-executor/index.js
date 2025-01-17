@@ -1,10 +1,10 @@
 import './index.scss';
-import { API_URLS } from '../config';
-import { showJsException } from '../view/output-view';
-import { processingHtmlBrackets } from '../utils';
-import { isWasmRelated, TargetPlatforms } from '../utils/platforms';
-import { executeJs, executeWasmCode, executeWasmCodeWithSkiko } from './execute-es-module';
-import { fetch } from "whatwg-fetch";
+import {API_URLS} from '../config';
+import {showJsException} from '../view/output-view';
+import {processingHtmlBrackets} from '../utils';
+import {isWasmRelated, TargetPlatforms} from '../utils/platforms';
+import {executeJs, executeWasmCode, executeWasmCodeWithSkiko, executeWasmCodeWithStdlib} from './execute-es-module';
+import {fetch} from "whatwg-fetch";
 
 const INIT_SCRIPT =
   'if(kotlin.BufferedOutput!==undefined){kotlin.out = new kotlin.BufferedOutput()}' +
@@ -26,7 +26,7 @@ const normalizeJsVersion = (version) => {
 export default class JsExecutor {
   constructor(kotlinVersion) {
     this.kotlinVersion = kotlinVersion;
-    this.skikoImport = undefined;
+    this.stdlibExports = undefined;
   }
 
   async executeJsCode(
@@ -37,6 +37,7 @@ export default class JsExecutor {
     outputHeight,
     theme,
     onError,
+    additionalRequestsResults,
   ) {
     if (platform === TargetPlatforms.SWIFT_EXPORT) {
       return `<span class="standard-output ${theme}"><div class="result-code">${jsCode}</span>`;
@@ -68,12 +69,15 @@ export default class JsExecutor {
         // for some reason resize function in Compose does not work in Firefox in invisible block
         this.iframe.style.display = 'block';
 
+        const additionalRequestsResult = additionalRequestsResults[0];
         const result = await this.executeWasm(
           jsCode,
           wasm,
-          executeWasmCodeWithSkiko,
+          executeWasmCodeWithStdlib,
           theme,
           processError,
+          additionalRequestsResult.stdlib,
+          additionalRequestsResult.output,
         );
 
         if (exception) {
@@ -106,8 +110,8 @@ export default class JsExecutor {
         const output = this.iframe.contentWindow.eval(jsCode);
         return output
           ? `<span class="standard-output ${theme}">${processingHtmlBrackets(
-              output,
-            )}</span>`
+            output,
+          )}</span>`
           : '';
       } catch (e) {
         if (onError) onError();
@@ -119,20 +123,21 @@ export default class JsExecutor {
     return await this.execute(jsCode, jsLibs, theme, onError, platform);
   }
 
-  async executeWasm(jsCode, wasmCode, executor, theme, onError) {
+  async executeWasm(jsCode, wasmCode, executor, theme, onError, imports, output) {
     try {
       const exports = await executor(
         this.iframe.contentWindow,
         jsCode,
         wasmCode,
       );
-      await exports.instantiate();
-      const output = exports.bufferedOutput.buffer;
-      exports.bufferedOutput.buffer = '';
-      return output
+      await exports.instantiate(imports);
+      const bufferedOutput = output ?? exports.bufferedOutput;
+      const outputString = bufferedOutput.buffer;
+      bufferedOutput.buffer = '';
+      return outputString
         ? `<span class="standard-output ${theme}">${processingHtmlBrackets(
-            output,
-          )}</span>`
+          outputString,
+        )}</span>`
         : '';
     } catch (e) {
       if (onError) onError();
@@ -177,32 +182,90 @@ export default class JsExecutor {
       }
     }
     if (targetPlatform === TargetPlatforms.COMPOSE_WASM) {
-      this.skikoImport = fetch(API_URLS.SKIKO_MJS(compilerVersion), {
+
+      const skikoExports = fetch(API_URLS.SKIKO_MJS(compilerVersion), {
         method: 'GET',
         headers: {
           'Content-Type': 'text/javascript',
         }
-      })
-        .then(script => script.text())
+      }).then(script => script.text())
         .then(script => script.replace(
           "new URL(\"skiko.wasm\",import.meta.url).href",
           `'${API_URLS.SKIKO_WASM(compilerVersion)}'`
         ))
-        .then(async skikoCode => {
-            return await executeJs(
-              this.iframe.contentWindow,
-              skikoCode,
-            );
+        .then(async skikoCode =>
+          executeJs(
+            this.iframe.contentWindow,
+            skikoCode,
+          ))
+        .then(skikoExports => fixedSkikoExports(skikoExports))
+
+      const stdlibExports = fetch(API_URLS.STDLIB_MJS(compilerVersion), {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'text/javascript',
+        }
+      }).then(script => script.text())
+        .then(script => script.replace(
+          "new URL('./stdlib.wasm',import.meta.url).href",
+          `'${API_URLS.STDLIB_WASM(compilerVersion)}'`
+        ))
+        .then(stdlibCode =>
+          executeWasmCodeWithSkiko(
+            this.iframe.contentWindow,
+            stdlibCode,
+          )
+        )
+
+      this.stdlibExports = Promise.all([skikoExports, stdlibExports])
+        .then(async ([skikoExportsResult, stdlibExportsResult]) => {
+            return [
+              await stdlibExportsResult.stdlib({
+                "./skiko.mjs": skikoExportsResult
+              }),
+              stdlibExportsResult
+            ]
           }
         )
-        .then(skikoImports => {
-          this.iframe.contentWindow.skikoImports = skikoImports;
-        });
+        .then(([stdlibResult, outputResult]) => {
+            return {
+              "stdlib": stdlibResult.exports,
+              "output": outputResult.bufferedOutput
+            }
+          }
+        )
 
       this.iframe.height = "1000"
       iframeDoc.write(`<canvas height="1000" id="ComposeTarget"></canvas>`);
     }
     iframeDoc.write('<body style="margin: 0; overflow: hidden;"></body>');
     iframeDoc.close();
+  }
+}
+
+function fixedSkikoExports(skikoExports) {
+  return {
+    ...skikoExports,
+    org_jetbrains_skia_Bitmap__1nGetPixmap: function () {
+      console.log("org_jetbrains_skia_TextBlobBuilderRunHandler__1nGetFinalizer")
+    },
+    org_jetbrains_skia_Bitmap__1nIsVolatile: function () {
+      console.log("org_jetbrains_skia_TextBlobBuilderRunHandler__1nGetFinalizer")
+    },
+    org_jetbrains_skia_Bitmap__1nSetVolatile: function () {
+      console.log("org_jetbrains_skia_TextBlobBuilderRunHandler__1nGetFinalizer")
+    },
+    org_jetbrains_skia_TextBlobBuilderRunHandler__1nGetFinalizer: function () {
+      console.log("org_jetbrains_skia_TextBlobBuilderRunHandler__1nGetFinalizer")
+    },
+    org_jetbrains_skia_TextBlobBuilderRunHandler__1nMake: function () {
+      console.log("org_jetbrains_skia_TextBlobBuilderRunHandler__1nGetFinalizer")
+    },
+    org_jetbrains_skia_TextBlobBuilderRunHandler__1nMakeBlob: function () {
+      console.log("org_jetbrains_skia_TextBlobBuilderRunHandler__1nGetFinalizer")
+    },
+    org_jetbrains_skia_svg_SVGCanvasKt__1nMake: function () {
+      console.log("org_jetbrains_skia_TextBlobBuilderRunHandler__1nGetFinalizer")
+    }
   }
 }

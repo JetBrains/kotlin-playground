@@ -13,7 +13,7 @@ export const RUNTIME_CONFIG = { ...getConfigFromElement(currentScript) };
 export const API_URLS = {
   server: (RUNTIME_CONFIG.server || __WEBDEMO_URL__).replace(/\/$/, ''),
   composeServer: (
-    'https://compose.sandbox.intellij.net' || __WEBDEMO_URL__
+    __WEBDEMO_URL__
   ).replace(/\/$/, ''),
 
   COMPILE(platform, version) {
@@ -63,10 +63,16 @@ export const API_URLS = {
     return `${this.server}/versions`;
   },
   SKIKO_MJS(version) {
-    return `${this.composeServer}/api/resource/skiko-${version}.mjs`;
+    return `${this.composeServer}/api/resource/skiko.mjs`;
   },
   SKIKO_WASM(version) {
-    return `${this.composeServer}/api/resource/skiko-${version}.wasm`;
+    return `${this.composeServer}/api/resource/skiko.wasm`;
+  },
+  STDLIB_MJS(version) {
+    return `${this.composeServer}/api/resource/stdlib.mjs`;
+  },
+  STDLIB_WASM(version) {
+    return `${this.composeServer}/api/resource/stdlib.wasm`;
   },
   get JQUERY() {
     return `https://cdn.jsdelivr.net/npm/jquery@1/dist/jquery.min.js`;
