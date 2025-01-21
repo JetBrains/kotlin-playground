@@ -197,7 +197,7 @@ export default class JsExecutor {
               "new URL(\"skiko.wasm\",import.meta.url).href",
               `'${API_URLS.SKIKO_WASM(version)}'`
             ))
-            .then(async skikoCode =>
+            .then(skikoCode =>
               executeJs(
                 this.iframe.contentWindow,
                 skikoCode,
@@ -214,13 +214,16 @@ export default class JsExecutor {
               'Content-Type': 'text/javascript',
             }
           }).then(script => script.text())
-            .then(script => script.replace(
-              "new URL('./stdlib.wasm',import.meta.url).href",
-              `'${API_URLS.STDLIB_WASM(hash)}'`
-            ).replace(
-              "(extends) => { return { extends }; }",
-              "(extends_) => { return { extends_ }; }"
-            ))
+            .then(script =>
+              // necessary to load stdlib.wasm before its initialization to parallelize
+              // language=JavaScript
+              (`const stdlibWasm = fetch('${API_URLS.STDLIB_WASM(hash)}');\n` + script).replace(
+                "new URL('./stdlib.wasm',import.meta.url).href",
+                "stdlibWasm"
+              ).replace(
+                "(extends) => { return { extends }; }",
+                "(extends_) => { return { extends_ }; }"
+              ))
             .then(stdlibCode =>
               executeWasmCodeWithSkiko(
                 this.iframe.contentWindow,
