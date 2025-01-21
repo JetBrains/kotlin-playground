@@ -218,7 +218,7 @@ export default class JsExecutor {
               // necessary to load stdlib.wasm before its initialization to parallelize
               // language=JavaScript
               (`const stdlibWasm = fetch('${API_URLS.STDLIB_WASM(hash)}');\n` + script).replace(
-                "new URL('./stdlib.wasm',import.meta.url).href",
+                "fetch(new URL('./stdlib.wasm',import.meta.url).href)",
                 "stdlibWasm"
               ).replace(
                 "(extends) => { return { extends }; }",
