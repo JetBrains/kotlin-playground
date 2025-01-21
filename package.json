@@ -80,7 +80,7 @@
     "copy-examples": "node utils/copy-examples",
     "release:ci": "rm -rf dist && npm run build:all && $NPM_TOKEN=%env.NPM_TOKEN% npm publish",
     "start": "webpack-dev-server --port 9002",
-    "start-with-local-compiler": "webpack-dev-server --port 9002 --env webDemoUrl='//localhost:8080'",
+    "start-with-local-compiler": "webpack-dev-server --port 9002 --env webDemoUrl='//localhost:8080' webDemoResourcesUrl='//localhost:8081'",
     "lint": "eslint . --ext .ts",
     "fix": "eslint --fix --ext .ts .",
     "test": "npm run build:all && npm run test:run",

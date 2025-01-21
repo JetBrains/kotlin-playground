@@ -183,38 +183,50 @@ export default class JsExecutor {
     }
     if (targetPlatform === TargetPlatforms.COMPOSE_WASM) {
 
-      const skikoExports = fetch(API_URLS.SKIKO_MJS(compilerVersion), {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'text/javascript',
-        }
-      }).then(script => script.text())
-        .then(script => script.replace(
-          "new URL(\"skiko.wasm\",import.meta.url).href",
-          `'${API_URLS.SKIKO_WASM(compilerVersion)}'`
-        ))
-        .then(async skikoCode =>
-          executeJs(
-            this.iframe.contentWindow,
-            skikoCode,
-          ))
-        .then(skikoExports => fixedSkikoExports(skikoExports))
+      const skikoExports = fetch(API_URLS.SKIKO_VERSION(), {
+        method: 'GET'
+      }).then(response => response.text())
+        .then(version =>
+          fetch(API_URLS.SKIKO_MJS(version), {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'text/javascript',
+            }
+          }).then(script => script.text())
+            .then(script => script.replace(
+              "new URL(\"skiko.wasm\",import.meta.url).href",
+              `'${API_URLS.SKIKO_WASM(version)}'`
+            ))
+            .then(async skikoCode =>
+              executeJs(
+                this.iframe.contentWindow,
+                skikoCode,
+              ))
+            .then(skikoExports => fixedSkikoExports(skikoExports)))
 
-      const stdlibExports = fetch(API_URLS.STDLIB_MJS(compilerVersion), {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'text/javascript',
-        }
-      }).then(script => script.text())
-        .then(script => script.replace(
-          "new URL('./stdlib.wasm',import.meta.url).href",
-          `'${API_URLS.STDLIB_WASM(compilerVersion)}'`
-        ))
-        .then(stdlibCode =>
-          executeWasmCodeWithSkiko(
-            this.iframe.contentWindow,
-            stdlibCode,
-          )
+      const stdlibExports = fetch(API_URLS.STDLIB_HASH(), {
+        method: 'GET'
+      }).then(response => response.text())
+        .then(hash =>
+          fetch(API_URLS.STDLIB_MJS(hash), {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'text/javascript',
+            }
+          }).then(script => script.text())
+            .then(script => script.replace(
+              "new URL('./stdlib.wasm',import.meta.url).href",
+              `'${API_URLS.STDLIB_WASM(hash)}'`
+            ).replace(
+              "(extends) => { return { extends }; }",
+              "(extends_) => { return { extends_ }; }"
+            ))
+            .then(stdlibCode =>
+              executeWasmCodeWithSkiko(
+                this.iframe.contentWindow,
+                stdlibCode,
+              )
+            )
         )
 
       this.stdlibExports = Promise.all([skikoExports, stdlibExports])
