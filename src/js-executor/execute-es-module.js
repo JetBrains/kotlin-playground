@@ -12,7 +12,7 @@ export async function executeWasmCodeWithStdlib(container, jsCode, wasmCode) {
 }
 
 function execute(container, jsCode, wasmCode) {
-  container.wasmCode = Uint8Array.fromBase64(wasmCode);
+  container.wasmCode = Uint8Array.from(atob(wasmCode), c => c.charCodeAt(0));
   return executeJs(container, jsCode);
 }
 
