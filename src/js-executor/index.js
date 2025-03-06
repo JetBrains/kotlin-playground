@@ -130,7 +130,7 @@ export default class JsExecutor {
         jsCode,
         wasmCode,
       );
-      await exports.instantiate(imports);
+      await exports.instantiate({"playground.master": imports});
       const bufferedOutput = output ?? exports.bufferedOutput;
       const outputString = bufferedOutput.buffer;
       bufferedOutput.buffer = '';
@@ -218,7 +218,7 @@ export default class JsExecutor {
               // necessary to load stdlib.wasm before its initialization to parallelize
               // language=JavaScript
               (`const stdlibWasm = fetch('${API_URLS.STDLIB_WASM(hash)}');\n` + script).replace(
-                "fetch(new URL('./stdlib.wasm',import.meta.url).href)",
+                "fetch(new URL('./stdlib_master.wasm',import.meta.url).href)",
                 "stdlibWasm"
               ).replace(
                 "(extends) => { return { extends }; }",
@@ -235,7 +235,7 @@ export default class JsExecutor {
       this.stdlibExports = Promise.all([skikoExports, stdlibExports])
         .then(async ([skikoExportsResult, stdlibExportsResult]) => {
             return [
-              await stdlibExportsResult.stdlib({
+              await stdlibExportsResult.instantiate({
                 "./skiko.mjs": skikoExportsResult
               }),
               stdlibExportsResult
