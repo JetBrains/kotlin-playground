@@ -12,12 +12,10 @@ export const RUNTIME_CONFIG = { ...getConfigFromElement(currentScript) };
  */
 export const API_URLS = {
   server: (RUNTIME_CONFIG.server || __WEBDEMO_URL__).replace(/\/$/, ''),
-  composeServer: (
-    __WEBDEMO_URL__ || 'https://compose.sandbox.intellij.net'
-  ).replace(/\/$/, ''),
-  composeResources: (
-    __WEBDEMO_RESOURCES_URL__ || 'https://compose.sandbox.intellij.net'
-  ).replace(/\/$/, ''),
+  composeServer: 'https://compose-stage.sandbox.intellij.net'.replace(
+    /\/$/,
+    '',
+  ),
 
   COMPILE(platform, version) {
     let url;
@@ -69,16 +67,16 @@ export const API_URLS = {
     return `${this.composeServer}/api/resource/compose-wasm-versions`;
   },
   SKIKO_MJS(version) {
-    return `${this.composeResources}/api/resource/skiko-${version}.mjs`;
+    return `${this.composeServer}/api/resource/skiko-${version}.mjs`;
   },
   SKIKO_WASM(version) {
-    return `${this.composeResources}/api/resource/skiko-${version}.wasm`;
+    return `${this.composeServer}/api/resource/skiko-${version}.wasm`;
   },
   STDLIB_MJS(hash) {
-    return `${this.composeResources}/api/resource/stdlib-${hash}.mjs`;
+    return `${this.composeServer}/api/resource/stdlib-${hash}.mjs`;
   },
   STDLIB_WASM(hash) {
-    return `${this.composeResources}/api/resource/stdlib-${hash}.wasm`;
+    return `${this.composeServer}/api/resource/stdlib-${hash}.wasm`;
   },
   get JQUERY() {
     return `https://cdn.jsdelivr.net/npm/jquery@1/dist/jquery.min.js`;

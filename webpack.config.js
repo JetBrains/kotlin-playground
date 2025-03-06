@@ -9,7 +9,8 @@ module.exports = (params = {}) => {
   const isServer = process.argv[1].includes('webpack-dev-server');
   const libraryName = 'KotlinPlayground';
   const webDemoUrl = params.webDemoUrl || 'https://api.kotlinlang.org/';
-  const webDemoResourcesUrl = params.webDemoResourcesUrl || 'https://api.kotlinlang.org/';
+  const webDemoResourcesUrl =
+    params.webDemoResourcesUrl || 'https://api.kotlinlang.org/';
   const examplesPath = isServer ? '' : 'examples/';
   const pathDist = path.resolve(__dirname, 'dist');
 
@@ -106,6 +107,13 @@ module.exports = (params = {}) => {
     ],
     devServer: {
       static: path.resolve(__dirname, 'src'),
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods':
+          'GET, POST, PUT, DELETE, PATCH, OPTIONS',
+        'Access-Control-Allow-Headers':
+          'X-Requested-With, content-type, Authorization',
+      },
     },
   };
 
