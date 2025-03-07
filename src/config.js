@@ -65,17 +65,14 @@ export const API_URLS = {
   get VERSIONS() {
     return `${this.server}/versions`;
   },
-  SKIKO_VERSION() {
-    return `${this.composeServer}/api/resource/skiko`;
+  RESOURCE_VERSIONS() {
+    return `${this.composeServer}/api/resource/compose-wasm-versions`;
   },
   SKIKO_MJS(version) {
     return `${this.composeResources}/api/resource/skiko-${version}.mjs`;
   },
   SKIKO_WASM(version) {
     return `${this.composeResources}/api/resource/skiko-${version}.wasm`;
-  },
-  STDLIB_HASH() {
-    return `${this.composeServer}/api/resource/stdlib`;
   },
   STDLIB_MJS(hash) {
     return `${this.composeResources}/api/resource/stdlib-${hash}.mjs`;

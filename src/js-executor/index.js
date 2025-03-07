@@ -183,11 +183,13 @@ export default class JsExecutor {
     }
     if (targetPlatform === TargetPlatforms.COMPOSE_WASM) {
 
-      const skikoExports = fetch(API_URLS.SKIKO_VERSION(), {
+      const skikoStdlib = fetch(API_URLS.RESOURCE_VERSIONS(),{
         method: 'GET'
-      }).then(response => response.text())
-        .then(version =>
-          fetch(API_URLS.SKIKO_MJS(version), {
+      }).then(response => response.json())
+        .then(versions => {
+          const skikoVersion = versions["skiko"];
+
+          const skikoExports = fetch(API_URLS.SKIKO_MJS(skikoVersion), {
             method: 'GET',
             headers: {
               'Content-Type': 'text/javascript',
@@ -195,20 +197,18 @@ export default class JsExecutor {
           }).then(script => script.text())
             .then(script => script.replace(
               "new URL(\"skiko.wasm\",import.meta.url).href",
-              `'${API_URLS.SKIKO_WASM(version)}'`
+              `'${API_URLS.SKIKO_WASM(skikoVersion)}'`
             ))
             .then(skikoCode =>
               executeJs(
                 this.iframe.contentWindow,
                 skikoCode,
               ))
-            .then(skikoExports => fixedSkikoExports(skikoExports)))
+            .then(skikoExports => fixedSkikoExports(skikoExports))
 
-      const stdlibExports = fetch(API_URLS.STDLIB_HASH(), {
-        method: 'GET'
-      }).then(response => response.text())
-        .then(hash =>
-          fetch(API_URLS.STDLIB_MJS(hash), {
+          const stdlibVersion = versions["stdlib"];
+
+          const stdlibExports = fetch(API_URLS.STDLIB_MJS(stdlibVersion), {
             method: 'GET',
             headers: {
               'Content-Type': 'text/javascript',
@@ -217,7 +217,7 @@ export default class JsExecutor {
             .then(script =>
               // necessary to load stdlib.wasm before its initialization to parallelize
               // language=JavaScript
-              (`const stdlibWasm = fetch('${API_URLS.STDLIB_WASM(hash)}');\n` + script).replace(
+              (`const stdlibWasm = fetch('${API_URLS.STDLIB_WASM(stdlibVersion)}');\n` + script).replace(
                 "fetch(new URL('./stdlib_master.wasm',import.meta.url).href)",
                 "stdlibWasm"
               ).replace(
@@ -230,9 +230,11 @@ export default class JsExecutor {
                 stdlibCode,
               )
             )
-        )
 
-      this.stdlibExports = Promise.all([skikoExports, stdlibExports])
+          return Promise.all([skikoExports, stdlibExports])
+        })
+
+      this.stdlibExports = skikoStdlib
         .then(async ([skikoExportsResult, stdlibExportsResult]) => {
             return [
               await stdlibExportsResult.instantiate({
