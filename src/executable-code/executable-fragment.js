@@ -413,8 +413,8 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
       );
       const additionalRequests = [];
       if (targetPlatform === TargetPlatforms.COMPOSE_WASM) {
-        if (!this.jsExecutor.skikoImport) {
-          additionalRequests.push(this.jsExecutor.skikoImport);
+        if (this.jsExecutor.stdlibExports) {
+          additionalRequests.push(this.jsExecutor.stdlibExports);
         }
       }
 
@@ -428,7 +428,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
         ),
         ...additionalRequests,
       ]).then(
-        ([state]) => {
+        ([state, ...additionalRequestsResults]) => {
           state.waitingForOutput = false;
           const jsCode = state.jsCode;
           const wasm = state.wasm;
@@ -453,6 +453,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
                 outputHeight,
                 theme,
                 onError,
+                additionalRequestsResults,
               )
               .then((output) => {
                 const originState = state.openConsole;
