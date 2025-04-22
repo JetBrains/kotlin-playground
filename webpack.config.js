@@ -9,6 +9,8 @@ module.exports = (params = {}) => {
   const isServer = process.argv[1].includes('webpack-dev-server');
   const libraryName = 'KotlinPlayground';
   const webDemoUrl = params.webDemoUrl || 'https://api.kotlinlang.org/';
+  const webDemoResourcesUrl =
+    params.webDemoResourcesUrl || 'https://api.kotlinlang.org/';
   const examplesPath = isServer ? '' : 'examples/';
   const pathDist = path.resolve(__dirname, 'dist');
 
@@ -17,7 +19,7 @@ module.exports = (params = {}) => {
 
     output: {
       path: pathDist,
-      filename: '[name].js'
+      filename: '[name].js',
     },
 
     devtool: 'source-map',
@@ -84,6 +86,7 @@ module.exports = (params = {}) => {
       library: libraryName,
       libraryTarget: 'umd',
       libraryExport: 'default',
+      publicPath: 'auto',
     },
 
     plugins: [
@@ -97,14 +100,22 @@ module.exports = (params = {}) => {
 
       new webpack.DefinePlugin({
         __WEBDEMO_URL__: JSON.stringify(webDemoUrl),
+        __WEBDEMO_RESOURCES_URL__: JSON.stringify(webDemoResourcesUrl),
         __IS_PRODUCTION__: isProduction,
         __LIBRARY_NAME__: JSON.stringify(libraryName),
       }),
     ],
     devServer: {
       static: path.resolve(__dirname, 'src'),
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods':
+          'GET, POST, PUT, DELETE, PATCH, OPTIONS',
+        'Access-Control-Allow-Headers':
+          'X-Requested-With, content-type, Authorization',
+      },
     },
-  }
+  };
 
   const crosslink = {
     ...common,
@@ -120,7 +131,7 @@ module.exports = (params = {}) => {
         type: 'umd',
       },
     },
-  }
+  };
 
   return [bundle, crosslink];
 };

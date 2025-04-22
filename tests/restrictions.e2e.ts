@@ -3,25 +3,29 @@ import { expect, Page, test } from '@playwright/test';
 import { readFileSync } from 'fs';
 import { join } from 'path';
 
-import { gotoHtmlWidget } from './utlis/server/playground';
+import { gotoHtmlWidget } from './utils/server/playground';
 
-import { RESULT_SELECTOR, WIDGET_SELECTOR } from './utlis/selectors';
+import { RESULT_SELECTOR, WIDGET_SELECTOR } from './utils/selectors';
 
-import { prepareNetwork, printlnCode } from './utlis';
-import { mockRunRequest, waitRunRequest } from './utlis/mocks/compiler';
-import { runButton } from './utlis/interactions';
-import { makeJSPrintCode } from './utlis/mocks/result';
+import { prepareNetwork, printlnCode } from './utils';
+import { mockRunRequest, waitRunRequest } from './utils/mocks/compiler';
+import { runButton } from './utils/interactions';
+import { makeJSPrintCode } from './utils/mocks/wasm/result';
+
+const WASM = JSON.parse(
+  readFileSync(join(__dirname, 'utils/mocks/wasm/wasm.json'), 'utf-8'),
+);
+
+const JS_IR = Object.freeze({
+  jsCode: makeJSPrintCode('Hello, world!'),
+  errors: { 'File.kt': [] },
+  exception: null,
+  text: '<outStream>Hello, world!\n</outStream>',
+});
 
 const OUTPUTS = Object.freeze({
-  'js-ir': {
-    jsCode: makeJSPrintCode('Hello, world!'),
-    errors: { 'File.kt': [] },
-    exception: null,
-    text: '<outStream>Hello, world!\n</outStream>',
-  },
-  wasm: JSON.parse(
-    readFileSync(join(__dirname, 'utlis/mocks/wasm.json'), 'utf-8'),
-  ),
+  'js-ir': JS_IR,
+  wasm: WASM,
 });
 
 const VERSIONS = [
@@ -123,10 +127,10 @@ async function shouldFailedRun(
     page,
     { selector: 'code', version: version },
     /* language=html */ `
-    <code data-target-platform='${platform}'>${printlnCode(
-      'Hello, world!',
-    )}</code>
-  `,
+      <code data-target-platform='${platform}'>${printlnCode(
+        'Hello, world!',
+      )}</code>
+    `,
   );
 
   const editor = page.locator(WIDGET_SELECTOR);

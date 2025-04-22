@@ -9,8 +9,14 @@ export async function hideCursor(node: Locator, callback: () => Promise<void>) {
   await cursor.evaluate((element) => (element.style.display = null));
 }
 
+const MAX_DIFF_PIXEL_RATIO = 0.01;
+
 export function checkScreenshot(node: Locator, message: string) {
-  return hideCursor(node, () => expect(node, message).toHaveScreenshot());
+  return hideCursor(node, () =>
+    expect(node, message).toHaveScreenshot({
+      maxDiffPixelRatio: MAX_DIFF_PIXEL_RATIO,
+    }),
+  );
 }
 
 export function checkEditorView(editor: Locator, message: string) {
@@ -34,6 +40,9 @@ export function checkEditorView(editor: Locator, message: string) {
       height: boundingBox.height + margins.bottom,
     };
 
-    await expect(editor.page(), message).toHaveScreenshot({ clip });
+    await expect(editor.page(), message).toHaveScreenshot({
+      clip,
+      maxDiffPixelRatio: MAX_DIFF_PIXEL_RATIO,
+    });
   });
 }

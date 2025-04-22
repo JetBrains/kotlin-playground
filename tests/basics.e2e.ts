@@ -1,26 +1,18 @@
 import { expect, Locator, Page, test } from '@playwright/test';
 
-import { gotoHtmlWidget } from './utlis/server/playground';
+import { checkRunCase, prepareNetwork, printlnCode, toPostData } from './utils';
+import { gotoHtmlWidget } from './utils/server/playground';
 
 import {
-  LOADER_SELECTOR,
   OPEN_EDITOR_SELECTOR,
-  RESULT_SELECTOR,
   RUN_SELECTOR,
   TARGET_SELECTOR,
   VERSION_SELECTOR,
   WIDGET_SELECTOR,
-} from './utlis/selectors';
+} from './utils/selectors';
 
-import {
-  closeButton,
-  replaceStringInEditor,
-  runButton,
-} from './utlis/interactions';
-
-import { checkEditorView, checkScreenshot } from './utlis/screenshots';
-import { prepareNetwork, printlnCode, RouteFulfill, toPostData } from './utlis';
-import { mockRunRequest, waitRunRequest } from './utlis/mocks/compiler';
+import { closeButton, replaceStringInEditor } from './utils/interactions';
+import { checkEditorView, checkScreenshot } from './utils/screenshots';
 
 test.describe('basics', () => {
   test.beforeEach(async ({ page, baseURL }) => {
@@ -72,7 +64,7 @@ test.describe('basics', () => {
     await expect(editor.locator(OPEN_EDITOR_SELECTOR)).toHaveCount(1); // open on play-link exists
     await expect(editor.locator(TARGET_SELECTOR)).toHaveText('Target: JVM'); // default target JVM
     await expect(editor.locator(VERSION_SELECTOR)).toHaveText(
-      'Running on v.1.8.21', // latest version marker
+      'Running on v.1.9.20', // latest version marker
     );
 
     // Take screen fullpage, for sure original node should be invisible
@@ -111,9 +103,14 @@ test.describe('basics', () => {
   });
 });
 
-function checkPrintlnCase(page: Page, editor: Locator, text: string) {
+export function checkPrintlnCase(
+  page: Page,
+  editor: Locator,
+  text: string,
+  platform: string = 'java',
+) {
   const source = toPostData(printlnCode(text));
-  const postData = `{"args":"","files":[{"name":"File.kt","text":"${source}","publicId":""}],"confType":"java"}`;
+  const postData = `{"args":"","files":[{"name":"File.kt","text":"${source}","publicId":""}],"confType":"${platform}"}`;
 
   const serverOutput = {
     json: Object.freeze({
@@ -124,28 +121,4 @@ function checkPrintlnCase(page: Page, editor: Locator, text: string) {
   };
 
   return checkRunCase(page, editor, postData, serverOutput);
-}
-
-export async function checkRunCase(
-  page: Page,
-  editor: Locator,
-  postData: string,
-  serverOutput: RouteFulfill,
-) {
-  const resolveRun = await mockRunRequest(page);
-
-  const [request] = await Promise.all([
-    waitRunRequest(page),
-    runButton(editor),
-  ]);
-
-  expect(postData).toEqual(request.postData());
-
-  await expect(editor.locator(LOADER_SELECTOR)).toBeVisible();
-  // await expectScreenshot(editor, 'run code - loading!');
-
-  resolveRun(serverOutput);
-
-  await expect(editor.locator(RESULT_SELECTOR)).toBeVisible();
-  await checkEditorView(editor, 'run code - done!');
 }

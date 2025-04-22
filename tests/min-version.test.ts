@@ -1,14 +1,14 @@
 import { expect, test } from '@playwright/test';
-import { gotoHtmlWidget } from './utlis/server/playground';
-import { prepareNetwork, printlnCode } from './utlis';
-import { mockRunRequest, waitRunRequest } from './utlis/mocks/compiler';
-import { runButton } from './utlis/interactions';
+import { gotoHtmlWidget } from './utils/server/playground';
+import { prepareNetwork, printlnCode } from './utils';
+import { mockRunRequest, waitRunRequest } from './utils/mocks/compiler';
+import { runButton } from './utils/interactions';
 import {
   LOADER_SELECTOR,
   RESULT_SELECTOR,
   VERSION_SELECTOR,
   WIDGET_SELECTOR,
-} from './utlis/selectors';
+} from './utils/selectors';
 
 test.describe('Minimum compiler version', () => {
   test.beforeEach(async ({ page, baseURL }) => {

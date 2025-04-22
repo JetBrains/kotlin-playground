@@ -1,8 +1,8 @@
 import { expect, Page, test } from '@playwright/test';
-import { gotoHtmlWidget } from './utlis/server/playground';
-import { prepareNetwork, printlnCode, toHtmlAttributes } from './utlis';
-import { OPEN_EDITOR_SELECTOR, WIDGET_SELECTOR } from './utlis/selectors';
-import { checkEditorView } from './utlis/screenshots';
+import { gotoHtmlWidget } from './utils/server/playground';
+import { prepareNetwork, printlnCode, toHtmlAttributes } from './utils';
+import { OPEN_EDITOR_SELECTOR, WIDGET_SELECTOR } from './utils/selectors';
+import { checkEditorView } from './utils/screenshots';
 
 test.describe('open in playground', () => {
   test.beforeEach(async ({ page, baseURL }) => {
@@ -17,7 +17,7 @@ test.describe('open in playground', () => {
     const link = editor.locator(OPEN_EDITOR_SELECTOR).locator('a[href]');
 
     const url =
-      'https://play.kotlinlang.org/editor/v1/N4Igxg9gJgpiBcIBmBXAdgAgLYEMCWaAFAJQbAA6mG1ADgE4EAuANkeSABIzPMQA0GAO4Q6zKAEJ2xStQC%2BIPiEY46AcxiMACsxyMkIrAhAArHADccC8BCw08zGHQBqjgM54IaIwEYAdAA5fACZvEFkgA%3D%3D%3D';
+      'https://play.kotlinlang.org/editor/v1/N4Igxg9gJgpiBcIBmBXAdgAgLYEMCWaAFAJQbAA6mG1ADgE4EAuANkeSABIzPMQA0GAO4Q6zKAEJ2xStQC%2BIPiEY46AcxiMACsxyMkIrAhAArHADccC8BCw08zGHQBqjgM54IaIwEYAdAE5fACYABhBZIA%3D%3D';
 
     await Promise.all([
       expect(link).toHaveCount(1),
