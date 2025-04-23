@@ -13,6 +13,7 @@ import 'codemirror/addon/edit/closebrackets'
 import 'codemirror/addon/comment/comment'
 import 'codemirror/addon/comment/continuecomment'
 import 'codemirror/mode/javascript/javascript';
+import 'codemirror/mode/protobuf/protobuf'
 import 'codemirror/mode/shell/shell';
 import 'codemirror/mode/swift/swift';
 import merge from 'deepmerge';
@@ -62,6 +63,7 @@ const MODES = {
   XML: "text/html",
   C: "text/x-c",
   OBJ_C: "text/x-objectivec",
+  PROTOBUF: "text/x-protobuf",
   SWIFT: "text/x-swift",
   SHELL: "text/x-sh"
 };
@@ -244,6 +246,8 @@ export default class ExecutableCode {
         return MODES.OBJ_C;
       case "swift":
         return MODES.SWIFT;
+      case "protobuf":
+        return MODES.PROTOBUF;
       default:
         return MODES.KOTLIN;
     }
