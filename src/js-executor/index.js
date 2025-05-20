@@ -251,12 +251,6 @@ export default class JsExecutor {
                   '(extends) => { return { extends }; }',
                   '(extends_) => { return { extends_ }; }',
                 ),
-            )
-            .then((stdlibCode) =>
-              executeWasmCodeWithSkiko(this.iframe.contentWindow, stdlibCode),
-            )
-            .then((stdlibCode) =>
-              executeWasmCodeWithSkiko(this.iframe.contentWindow, stdlibCode),
             );
 
           return Promise.all([skikoExports, stdlibExports]);
