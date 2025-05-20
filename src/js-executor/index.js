@@ -46,7 +46,7 @@ export default class JsExecutor {
     compilerVersion,
   ) {
     if (platform === TargetPlatforms.SWIFT_EXPORT) {
-      return `<span class="standard-output ${theme}"><div class="result-code">${jsCode}</span>`;
+      return `<span class='standard-output ${theme}'><div class='result-code'>${jsCode}</span>`;
     }
     if (platform === TargetPlatforms.CANVAS) {
       this.iframe.style.display = 'block';
@@ -119,14 +119,14 @@ export default class JsExecutor {
       try {
         const output = this.iframe.contentWindow.eval(jsCode);
         return output
-          ? `<span class="standard-output ${theme}">${processingHtmlBrackets(
+          ? `<span class='standard-output ${theme}'>${processingHtmlBrackets(
               output,
             )}</span>`
           : '';
       } catch (e) {
         if (onError) onError();
         let exceptionOutput = showJsException(e);
-        return `<span class="error-output">${exceptionOutput}</span>`;
+        return `<span class='error-output'>${exceptionOutput}</span>`;
       }
     }
     await this.timeout(400);
@@ -160,14 +160,14 @@ export default class JsExecutor {
       const outputString = bufferedOutput.buffer;
       bufferedOutput.buffer = '';
       return outputString
-        ? `<span class="standard-output ${theme}">${processingHtmlBrackets(
+        ? `<span class='standard-output ${theme}'>${processingHtmlBrackets(
             outputString,
           )}</span>`
         : '';
     } catch (e) {
       if (onError) onError();
       let exceptionOutput = showJsException(e);
-      return `<span class="error-output">${exceptionOutput}</span>`;
+      return `<span class='error-output'>${exceptionOutput}</span>`;
     }
   }
 
@@ -240,7 +240,7 @@ export default class JsExecutor {
               // necessary to load stdlib.wasm before its initialization to parallelize
               // language=JavaScript
               (
-                `const stdlibWasm = fetch('${API_URLS.STDLIB_WASM(stdlibVersion)}');\n` +
+                `const stdlibWasm = fetch('${API_URLS.STDLIB_WASM(stdlibVersion)}');  ` +
                 script
               )
                 .replace(
@@ -251,6 +251,9 @@ export default class JsExecutor {
                   '(extends) => { return { extends }; }',
                   '(extends_) => { return { extends_ }; }',
                 ),
+            )
+            .then((stdlibCode) =>
+              executeWasmCodeWithSkiko(this.iframe.contentWindow, stdlibCode),
             );
 
           return Promise.all([skikoExports, stdlibExports]);
@@ -273,7 +276,7 @@ export default class JsExecutor {
         });
 
       this.iframe.height = '1000';
-      iframeDoc.write(`<canvas height="1000" id="ComposeTarget"></canvas>`);
+      iframeDoc.write(`<canvas height='1000' id='ComposeTarget'></canvas>`);
     }
     iframeDoc.write('<body style="margin: 0; overflow: hidden;"></body>');
     iframeDoc.close();
