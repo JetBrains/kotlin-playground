@@ -1,16 +1,24 @@
-import { expect, Page, test } from '@playwright/test';
-
 import { readFileSync } from 'fs';
 import { join } from 'path';
 
-import { gotoHtmlWidget } from './utils/server/playground';
-
-import { RESULT_SELECTOR, WIDGET_SELECTOR } from './utils/selectors';
+import { ConsoleMessage } from 'playwright-core';
+import { expect, Page, test } from '@playwright/test';
 
 import { prepareNetwork, printlnCode } from './utils';
-import { mockRunRequest, waitRunRequest } from './utils/mocks/compiler';
+import { RESULT_SELECTOR, WIDGET_SELECTOR } from './utils/selectors';
+import { gotoHtmlWidget } from './utils/server/playground';
 import { runButton } from './utils/interactions';
-import { makeJSPrintCode } from './utils/mocks/wasm/result';
+
+import {
+  mockJsLegacyAssets,
+  mockRunRequest,
+  waitRunRequest,
+} from './utils/mocks/compiler';
+
+import {
+  makeJSLegacyPrintCode,
+  makeJSPrintCode,
+} from './utils/mocks/wasm/result';
 
 const WASM = JSON.parse(
   readFileSync(join(__dirname, 'utils/mocks/wasm/wasm.json'), 'utf-8'),
@@ -23,9 +31,29 @@ const JS_IR = Object.freeze({
   text: '<outStream>Hello, world!\n</outStream>',
 });
 
+const JS_LEGACY = Object.freeze({
+  jsCode: makeJSLegacyPrintCode('Hello, world!'),
+  errors: { 'File.kt': [] },
+  exception: null,
+  text: '<outStream>Hello, world!\n</outStream>',
+});
+
 const OUTPUTS = Object.freeze({
-  'js-ir': JS_IR,
-  wasm: WASM,
+  'js-ir': {
+    '1.3.10': JS_LEGACY,
+    '1.9.0': JS_IR,
+    '2.0.1': JS_IR,
+  },
+  js: {
+    '1.3.10': JS_LEGACY,
+    '1.9.0': JS_IR,
+    '2.0.1': JS_IR,
+  },
+  wasm: {
+    '1.3.10': WASM,
+    '1.9.0': WASM,
+    '2.0.1': WASM,
+  },
 });
 
 const VERSIONS = [
@@ -44,21 +72,28 @@ test.describe('platform restrictions', () => {
     }); // offline mode
   });
 
-  test('JS_IR for unsupported version', async ({ page }) => {
-    await shouldFailedRun(
-      page,
-      'js-ir',
-      '1.3.10',
-      'JS IR compiler backend accessible only since 1.5.0 version',
+  test('JS with legacy compiler frontend', async ({ page }) => {
+    // kotlin.js + jquery.min.js
+    const unRoute = await mockJsLegacyAssets(page);
+    await shouldSuccessRun(page, 'js', '1.3.10');
+    await checkJsIrWarning(page, () =>
+      shouldSuccessRun(page, 'js-ir', '1.3.10'),
+    );
+    await unRoute();
+  });
+
+  test('JS with modern compiler frontend', async ({ page }) => {
+    await shouldSuccessRun(page, 'js-ir', '1.9.0');
+    await checkJsIrWarning(page, () =>
+      shouldSuccessRun(page, 'js-ir', '1.9.0'),
     );
   });
 
-  test('JS_IR for supported by minor version', async ({ page }) => {
-    await shouldSuccessRun(page, 'js-ir', '1.9.0');
-  });
-
-  test('JS_IR for supported by major version', async ({ page }) => {
-    await shouldSuccessRun(page, 'js-ir', '2.0.1');
+  test('JS with major version', async ({ page }) => {
+    await shouldSuccessRun(page, 'js', '2.0.1');
+    await checkJsIrWarning(page, () =>
+      shouldSuccessRun(page, 'js-ir', '2.0.1'),
+    );
   });
 
   test('WASM for unsupported version', async ({ page }) => {
@@ -90,7 +125,7 @@ test.describe('platform restrictions', () => {
 async function shouldSuccessRun(
   page: Page,
   platform: keyof typeof OUTPUTS,
-  version: string,
+  version: keyof (typeof OUTPUTS)[typeof platform],
 ) {
   await gotoHtmlWidget(
     page,
@@ -109,7 +144,7 @@ async function shouldSuccessRun(
   await Promise.all([waitRunRequest(page), runButton(editor)]);
 
   resolveRun({
-    json: Object.freeze(OUTPUTS[platform]),
+    json: Object.freeze(OUTPUTS[platform][version]),
   });
 
   // playground loaded
@@ -140,4 +175,23 @@ async function shouldFailedRun(
   await expect(
     editor.locator(RESULT_SELECTOR).locator('.test-fail'),
   ).toContainText(text);
+}
+
+async function checkJsIrWarning(page: Page, cb: () => Promise<void>) {
+  let isWarning = false;
+
+  function onConsole(msg: ConsoleMessage) {
+    if (
+      msg.type() === 'warning' &&
+      msg.text() === 'JS_IR is deprecated, use JS + compiler-version instead'
+    )
+      isWarning = true;
+  }
+
+  page.on('console', onConsole);
+
+  await cb();
+
+  expect(isWarning).toBe(true);
+  page.off('console', onConsole);
 }

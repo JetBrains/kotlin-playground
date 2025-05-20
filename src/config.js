@@ -28,9 +28,6 @@ export const API_URLS = {
         url = `${this.server}/api/${version}/compiler/translate`;
         break;
       case TargetPlatforms.JS:
-        url = `${this.server}/api/${version}/compiler/translate`;
-        break;
-      case TargetPlatforms.JS_IR:
         url = `${this.server}/api/${version}/compiler/translate?ir=true`;
         break;
       case TargetPlatforms.WASM:

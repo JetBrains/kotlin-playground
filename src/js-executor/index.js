@@ -1,10 +1,15 @@
 import './index.scss';
-import {API_URLS} from '../config';
-import {showJsException} from '../view/output-view';
-import {processingHtmlBrackets} from '../utils';
-import {isWasmRelated, TargetPlatforms} from '../utils/platforms';
-import {executeJs, executeWasmCode, executeWasmCodeWithSkiko, executeWasmCodeWithStdlib} from './execute-es-module';
-import {fetch} from "whatwg-fetch";
+import { API_URLS } from '../config';
+import { showJsException } from '../view/output-view';
+import { processingHtmlBrackets } from '../utils';
+import { isJsLegacy, isWasmRelated, TargetPlatforms } from '../utils/platforms';
+import {
+  executeJs,
+  executeWasmCode,
+  executeWasmCodeWithSkiko,
+  executeWasmCodeWithStdlib,
+} from './execute-es-module';
+import { fetch } from 'whatwg-fetch';
 
 const INIT_SCRIPT =
   'if(kotlin.BufferedOutput!==undefined){kotlin.out = new kotlin.BufferedOutput()}' +
@@ -38,9 +43,10 @@ export default class JsExecutor {
     theme,
     onError,
     additionalRequestsResults,
+    compilerVersion,
   ) {
     if (platform === TargetPlatforms.SWIFT_EXPORT) {
-      return `<span class="standard-output ${theme}"><div class="result-code">${jsCode}</span>`;
+      return `<span class='standard-output ${theme}'><div class='result-code'>${jsCode}</span>`;
     }
     if (platform === TargetPlatforms.CANVAS) {
       this.iframe.style.display = 'block';
@@ -90,18 +96,22 @@ export default class JsExecutor {
         return result;
       }
     }
-    return await this.execute(jsCode, jsLibs, theme, onError, platform);
+    return await this.execute(
+      jsCode,
+      jsLibs,
+      theme,
+      onError,
+      platform,
+      compilerVersion,
+    );
   }
 
-  async execute(jsCode, jsLibs, theme, onError, platform) {
+  async execute(jsCode, jsLibs, theme, onError, platform, compilerVersion) {
     const loadedScripts = (
       this.iframe.contentDocument || this.iframe.document
     ).getElementsByTagName('script').length;
-    let offset;
-    if (platform === TargetPlatforms.JS_IR) {
-      // 1 scripts by default: INIT_SCRIPT_IR
-      offset = 1;
-    } else {
+    let offset = 1; // 1 scripts by default: INIT_SCRIPT_IR
+    if (isJsLegacy(platform, compilerVersion)) {
       // 2 scripts by default: INIT_SCRIPT + kotlin stdlib
       offset = 2;
     }
@@ -109,40 +119,55 @@ export default class JsExecutor {
       try {
         const output = this.iframe.contentWindow.eval(jsCode);
         return output
-          ? `<span class="standard-output ${theme}">${processingHtmlBrackets(
-            output,
-          )}</span>`
+          ? `<span class='standard-output ${theme}'>${processingHtmlBrackets(
+              output,
+            )}</span>`
           : '';
       } catch (e) {
         if (onError) onError();
         let exceptionOutput = showJsException(e);
-        return `<span class="error-output">${exceptionOutput}</span>`;
+        return `<span class='error-output'>${exceptionOutput}</span>`;
       }
     }
     await this.timeout(400);
-    return await this.execute(jsCode, jsLibs, theme, onError, platform);
+    return await this.execute(
+      jsCode,
+      jsLibs,
+      theme,
+      onError,
+      platform,
+      compilerVersion,
+    );
   }
 
-  async executeWasm(jsCode, wasmCode, executor, theme, onError, imports, output) {
+  async executeWasm(
+    jsCode,
+    wasmCode,
+    executor,
+    theme,
+    onError,
+    imports,
+    output,
+  ) {
     try {
       const exports = await executor(
         this.iframe.contentWindow,
         jsCode,
         wasmCode,
       );
-      await exports.instantiate({"playground.master": imports});
+      await exports.instantiate({ 'playground.master': imports });
       const bufferedOutput = output ?? exports.bufferedOutput;
       const outputString = bufferedOutput.buffer;
       bufferedOutput.buffer = '';
       return outputString
-        ? `<span class="standard-output ${theme}">${processingHtmlBrackets(
-          outputString,
-        )}</span>`
+        ? `<span class='standard-output ${theme}'>${processingHtmlBrackets(
+            outputString,
+          )}</span>`
         : '';
     } catch (e) {
       if (onError) onError();
       let exceptionOutput = showJsException(e);
-      return `<span class="error-output">${exceptionOutput}</span>`;
+      return `<span class='error-output'>${exceptionOutput}</span>`;
     }
   }
 
@@ -159,10 +184,7 @@ export default class JsExecutor {
     node.appendChild(this.iframe);
     let iframeDoc = this.iframe.contentDocument || this.iframe.document;
     iframeDoc.open();
-    if (
-      targetPlatform === TargetPlatforms.JS ||
-      targetPlatform === TargetPlatforms.CANVAS
-    ) {
+    if (isJsLegacy(targetPlatform, compilerVersion)) {
       const kotlinScript =
         API_URLS.KOTLIN_JS +
         `${normalizeJsVersion(this.kotlinVersion)}/kotlin.js`;
@@ -175,85 +197,86 @@ export default class JsExecutor {
       for (let lib of jsLibs) {
         iframeDoc.write("<script src='" + lib + "'></script>");
       }
-      if (targetPlatform === TargetPlatforms.JS_IR) {
-        iframeDoc.write(`<script>${INIT_SCRIPT_IR}</script>`);
-      } else {
-        iframeDoc.write(`<script>${INIT_SCRIPT}</script>`);
-      }
+      iframeDoc.write(
+        `<script>${isJsLegacy(targetPlatform, compilerVersion) ? INIT_SCRIPT : INIT_SCRIPT_IR}</script>`,
+      );
     }
     if (targetPlatform === TargetPlatforms.COMPOSE_WASM) {
-
-      const skikoStdlib = fetch(API_URLS.RESOURCE_VERSIONS(),{
-        method: 'GET'
-      }).then(response => response.json())
-        .then(versions => {
-          const skikoVersion = versions["skiko"];
+      const skikoStdlib = fetch(API_URLS.RESOURCE_VERSIONS(), {
+        method: 'GET',
+      })
+        .then((response) => response.json())
+        .then((versions) => {
+          const skikoVersion = versions['skiko'];
 
           const skikoExports = fetch(API_URLS.SKIKO_MJS(skikoVersion), {
             method: 'GET',
             headers: {
               'Content-Type': 'text/javascript',
-            }
-          }).then(script => script.text())
-            .then(script => script.replace(
-              "new URL(\"skiko.wasm\",import.meta.url).href",
-              `'${API_URLS.SKIKO_WASM(skikoVersion)}'`
-            ))
-            .then(skikoCode =>
-              executeJs(
-                this.iframe.contentWindow,
-                skikoCode,
-              ))
-            .then(skikoExports => fixedSkikoExports(skikoExports))
+            },
+          })
+            .then((script) => script.text())
+            .then((script) =>
+              script.replace(
+                'new URL("skiko.wasm",import.meta.url).href',
+                `'${API_URLS.SKIKO_WASM(skikoVersion)}'`,
+              ),
+            )
+            .then((skikoCode) =>
+              executeJs(this.iframe.contentWindow, skikoCode),
+            )
+            .then((skikoExports) => fixedSkikoExports(skikoExports));
 
-          const stdlibVersion = versions["stdlib"];
+          const stdlibVersion = versions['stdlib'];
 
           const stdlibExports = fetch(API_URLS.STDLIB_MJS(stdlibVersion), {
             method: 'GET',
             headers: {
               'Content-Type': 'text/javascript',
-            }
-          }).then(script => script.text())
-            .then(script =>
+            },
+          })
+            .then((script) => script.text())
+            .then((script) =>
               // necessary to load stdlib.wasm before its initialization to parallelize
               // language=JavaScript
-              (`const stdlibWasm = fetch('${API_URLS.STDLIB_WASM(stdlibVersion)}');\n` + script).replace(
-                "fetch(new URL('./stdlib_master.wasm',import.meta.url).href)",
-                "stdlibWasm"
-              ).replace(
-                "(extends) => { return { extends }; }",
-                "(extends_) => { return { extends_ }; }"
-              ))
-            .then(stdlibCode =>
-              executeWasmCodeWithSkiko(
-                this.iframe.contentWindow,
-                stdlibCode,
+              (
+                `const stdlibWasm = fetch('${API_URLS.STDLIB_WASM(stdlibVersion)}');  ` +
+                script
               )
+                .replace(
+                  "fetch(new URL('./stdlib_master.wasm',import.meta.url).href)",
+                  'stdlibWasm',
+                )
+                .replace(
+                  '(extends) => { return { extends }; }',
+                  '(extends_) => { return { extends_ }; }',
+                ),
             )
+            .then((stdlibCode) =>
+              executeWasmCodeWithSkiko(this.iframe.contentWindow, stdlibCode),
+            );
 
-          return Promise.all([skikoExports, stdlibExports])
-        })
+          return Promise.all([skikoExports, stdlibExports]);
+        });
 
       this.stdlibExports = skikoStdlib
         .then(async ([skikoExportsResult, stdlibExportsResult]) => {
-            return [
-              await stdlibExportsResult.instantiate({
-                "./skiko.mjs": skikoExportsResult
-              }),
-              stdlibExportsResult
-            ]
-          }
-        )
+          return [
+            await stdlibExportsResult.instantiate({
+              './skiko.mjs': skikoExportsResult,
+            }),
+            stdlibExportsResult,
+          ];
+        })
         .then(([stdlibResult, outputResult]) => {
-            return {
-              "stdlib": stdlibResult.exports,
-              "output": outputResult.bufferedOutput
-            }
-          }
-        )
+          return {
+            stdlib: stdlibResult.exports,
+            output: outputResult.bufferedOutput,
+          };
+        });
 
-      this.iframe.height = "1000"
-      iframeDoc.write(`<canvas height="1000" id="ComposeTarget"></canvas>`);
+      this.iframe.height = '1000';
+      iframeDoc.write(`<canvas height='1000' id='ComposeTarget'></canvas>`);
     }
     iframeDoc.write('<body style="margin: 0; overflow: hidden;"></body>');
     iframeDoc.close();
@@ -264,25 +287,39 @@ function fixedSkikoExports(skikoExports) {
   return {
     ...skikoExports,
     org_jetbrains_skia_Bitmap__1nGetPixmap: function () {
-      console.log("org_jetbrains_skia_TextBlobBuilderRunHandler__1nGetFinalizer")
+      console.log(
+        'org_jetbrains_skia_TextBlobBuilderRunHandler__1nGetFinalizer',
+      );
     },
     org_jetbrains_skia_Bitmap__1nIsVolatile: function () {
-      console.log("org_jetbrains_skia_TextBlobBuilderRunHandler__1nGetFinalizer")
+      console.log(
+        'org_jetbrains_skia_TextBlobBuilderRunHandler__1nGetFinalizer',
+      );
     },
     org_jetbrains_skia_Bitmap__1nSetVolatile: function () {
-      console.log("org_jetbrains_skia_TextBlobBuilderRunHandler__1nGetFinalizer")
+      console.log(
+        'org_jetbrains_skia_TextBlobBuilderRunHandler__1nGetFinalizer',
+      );
     },
     org_jetbrains_skia_TextBlobBuilderRunHandler__1nGetFinalizer: function () {
-      console.log("org_jetbrains_skia_TextBlobBuilderRunHandler__1nGetFinalizer")
+      console.log(
+        'org_jetbrains_skia_TextBlobBuilderRunHandler__1nGetFinalizer',
+      );
     },
     org_jetbrains_skia_TextBlobBuilderRunHandler__1nMake: function () {
-      console.log("org_jetbrains_skia_TextBlobBuilderRunHandler__1nGetFinalizer")
+      console.log(
+        'org_jetbrains_skia_TextBlobBuilderRunHandler__1nGetFinalizer',
+      );
     },
     org_jetbrains_skia_TextBlobBuilderRunHandler__1nMakeBlob: function () {
-      console.log("org_jetbrains_skia_TextBlobBuilderRunHandler__1nGetFinalizer")
+      console.log(
+        'org_jetbrains_skia_TextBlobBuilderRunHandler__1nGetFinalizer',
+      );
     },
     org_jetbrains_skia_svg_SVGCanvasKt__1nMake: function () {
-      console.log("org_jetbrains_skia_TextBlobBuilderRunHandler__1nGetFinalizer")
-    }
-  }
+      console.log(
+        'org_jetbrains_skia_TextBlobBuilderRunHandler__1nGetFinalizer',
+      );
+    },
+  };
 }
