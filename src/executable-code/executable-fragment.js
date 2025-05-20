@@ -313,7 +313,8 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
   }
 
   onConsoleCloseButtonEnter() {
-    const { jsLibs, onCloseConsole, targetPlatform, compilerVersion } = this.state;
+    const { jsLibs, onCloseConsole, targetPlatform, compilerVersion } =
+      this.state;
     // creates a new iframe and removes the old one, thereby stops execution of any running script
     if (isJsRelated(targetPlatform) || isWasmRelated(targetPlatform))
       this.jsExecutor.reloadIframeScripts(
@@ -454,6 +455,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
                 theme,
                 onError,
                 additionalRequestsResults,
+                compilerVersion,
               )
               .then((output) => {
                 const originState = state.openConsole;
