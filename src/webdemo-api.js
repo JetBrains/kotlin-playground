@@ -9,6 +9,7 @@ import {
   processJUnitResults,
   processJVMOutput,
 } from './view/output-view';
+import { completionCallback } from './utils/websockets/webSocketConnection';
 
 /**
  * @typedef {Object} KotlinVersion
@@ -223,6 +224,44 @@ export default class WebDemoApi {
     ).then((data) => {
       callback(data);
     });
+  }
+
+  /**
+   * Request for getting list of different completion proposals through WebSockets
+   *
+   * Note: currently `compilerVersion` is not used as it is not supported by lsp-based
+   * completions. Please refer to KTL-3773.
+   *
+   * @param code - string code
+   * @param cursor - cursor position in code
+   * @param compilerVersion - string kotlin compiler
+   * @param hiddenDependencies   - read only additional files
+   * @param platform - kotlin platform {@see TargetPlatform}
+   * @param callback
+   */
+  static getWSAutoCompletion(
+    code,
+    cursor,
+    compilerVersion,
+    platform,
+    hiddenDependencies,
+    callback,
+  ) {
+    const { line, ch, ...options } = cursor;
+    const files = [buildFileObject(code, DEFAULT_FILE_NAME)].concat(
+      hiddenDependencies.map((file, index) =>
+        buildFileObject(file, `hiddenDependency${index}.kt`),
+      ),
+    );
+
+    const project = {
+      args: '',
+      files,
+      confType: platform.id,
+      ...(options || {}),
+    };
+
+    completionCallback(callback, project, line, ch);
   }
 
   /**
