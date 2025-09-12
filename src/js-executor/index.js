@@ -183,13 +183,13 @@ export default class JsExecutor {
     }
     if (targetPlatform === TargetPlatforms.COMPOSE_WASM) {
 
-      const skikoStdlib = fetch(API_URLS.RESOURCE_VERSIONS(),{
+      const skikoStdlib = fetch(API_URLS.RESOURCE_VERSIONS(compilerVersion),{
         method: 'GET'
       }).then(response => response.json())
         .then(versions => {
           const skikoVersion = versions["skiko"];
 
-          const skikoExports = fetch(API_URLS.SKIKO_MJS(skikoVersion), {
+          const skikoExports = fetch(API_URLS.SKIKO_MJS(skikoVersion, compilerVersion), {
             method: 'GET',
             headers: {
               'Content-Type': 'text/javascript',
@@ -197,7 +197,7 @@ export default class JsExecutor {
           }).then(script => script.text())
             .then(script => script.replace(
               "new URL(\"skiko.wasm\",import.meta.url).href",
-              `'${API_URLS.SKIKO_WASM(skikoVersion)}'`
+              `'${API_URLS.SKIKO_WASM(skikoVersion, compilerVersion)}'`
             ))
             .then(skikoCode =>
               executeJs(
@@ -208,7 +208,7 @@ export default class JsExecutor {
 
           const stdlibVersion = versions["stdlib"];
 
-          const stdlibExports = fetch(API_URLS.STDLIB_MJS(stdlibVersion), {
+          const stdlibExports = fetch(API_URLS.STDLIB_MJS(stdlibVersion, compilerVersion), {
             method: 'GET',
             headers: {
               'Content-Type': 'text/javascript',
@@ -217,7 +217,7 @@ export default class JsExecutor {
             .then(script =>
               // necessary to load stdlib.wasm before its initialization to parallelize
               // language=JavaScript
-              (`const stdlibWasm = fetch('${API_URLS.STDLIB_WASM(stdlibVersion)}');\n` + script).replace(
+              (`const stdlibWasm = fetch('${API_URLS.STDLIB_WASM(stdlibVersion, compilerVersion)}');\n` + script).replace(
                 "fetch(new URL('./stdlib_master.wasm',import.meta.url).href)",
                 "stdlibWasm"
               ).replace(
