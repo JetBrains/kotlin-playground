@@ -41,8 +41,6 @@ And you can also set a default Kotlin version for code snippets to run on. Bear 
 </script>
 ```
 
-Fork & clone [the old server repository](https://github.com/JetBrains/kotlin-web-demo) or [the new server](https://github.com/AlexanderPrendota/kotlin-compiler-server).
-
 ### Host your own instance
 
 Install Kotlin-playground as dependency via NPM.
