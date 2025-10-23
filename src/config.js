@@ -60,6 +60,10 @@ export const API_URLS = {
   COMPLETE(version) {
     return `${this.server}/api/${version}/compiler/complete`;
   },
+  // TODO(KTL-3773): support multiple Kotlin versions with LSP-based completions
+  COMPLETE_WEBSOCKET(/* version */) {
+    return `ws://${this.server}/api/complete`;
+  },
   get VERSIONS() {
     return `${this.server}/versions`;
   },
