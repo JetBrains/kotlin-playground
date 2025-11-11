@@ -11,10 +11,14 @@ export const RUNTIME_CONFIG = { ...getConfigFromElement(currentScript) };
  * @type {{COMPILE: string, COMPLETE: string, VERSIONS: string, JQUERY: string, KOTLIN_JS: string}}
  */
 export const API_URLS = {
-  server: (RUNTIME_CONFIG.server || __WEBDEMO_URL__).replace(/\/$/, ''),
-  composeServer: 'https://api.kotlinlang.org/'.replace(/\/$/, ''),
-  s3ComposeServerResource:
-    'https://play-kotlinlang-org-kcs-prod.s3.amazonaws.com',
+  server: (__WEBDEMO_URL__ || RUNTIME_CONFIG.server).replace(/\/$/, ''),
+  composeServer: (__WEBDEMO_URL__ || 'https://compose-stage.sandbox.intellij.net').replace(
+    /\/$/,
+    '',
+  ),
+  composeResources: (__WEBDEMO_RESOURCES_URL__ || 'https://compose-stage.sandbox.intellij.net').replace(
+    /\/$/, ''
+  ),
 
   COMPILE(platform, version) {
     let url;
@@ -58,21 +62,6 @@ export const API_URLS = {
   },
   get VERSIONS() {
     return `${this.server}/versions`;
-  },
-  RESOURCE_VERSIONS(version) {
-    return `${this.composeServer}/api/${version}/compose/resource/compose-wasm-versions`;
-  },
-  SKIKO_MJS(hash, version) {
-    return `${this.s3ComposeServerResource}/api/compose/resource/skiko-${hash}.mjs`;
-  },
-  SKIKO_WASM(hash, version) {
-    return `${this.s3ComposeServerResource}/api/compose/resource/skiko-${hash}.wasm`;
-  },
-  STDLIB_MJS(hash, version) {
-    return `${this.s3ComposeServerResource}/api/compose/resource/stdlib-${hash}.mjs`;
-  },
-  STDLIB_WASM(hash, version) {
-    return `${this.s3ComposeServerResource}/api/compose/resource/stdlib-${hash}.wasm`;
   },
   get JQUERY() {
     return `https://cdn.jsdelivr.net/npm/jquery@1/dist/jquery.min.js`;
