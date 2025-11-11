@@ -313,7 +313,8 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
   }
 
   onConsoleCloseButtonEnter() {
-    const { jsLibs, onCloseConsole, targetPlatform, compilerVersion } = this.state;
+    const { jsLibs, onCloseConsole, targetPlatform, compilerVersion } =
+      this.state;
     // creates a new iframe and removes the old one, thereby stops execution of any running script
     if (isJsRelated(targetPlatform) || isWasmRelated(targetPlatform))
       this.jsExecutor.reloadIframeScripts(
@@ -411,24 +412,15 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
         targetPlatform,
         compilerVersion,
       );
-      const additionalRequests = [];
-      if (targetPlatform === TargetPlatforms.COMPOSE_WASM) {
-        if (!this.jsExecutor.skikoImport) {
-          additionalRequests.push(this.jsExecutor.skikoImport);
-        }
-      }
 
-      Promise.all([
-        WebDemoApi.translateKotlinToJs(
+      WebDemoApi.translateKotlinToJs(
           this.getCode(),
           compilerVersion,
           targetPlatform,
           args,
           hiddenDependencies,
-        ),
-        ...additionalRequests,
-      ]).then(
-        ([state]) => {
+      ).then(
+        (state) => {
           state.waitingForOutput = false;
           const jsCode = state.jsCode;
           const wasm = state.wasm;
@@ -453,6 +445,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
                 outputHeight,
                 theme,
                 onError,
+                compilerVersion,
               )
               .then((output) => {
                 const originState = state.openConsole;

@@ -2,9 +2,8 @@ import './index.scss';
 import { API_URLS } from '../config';
 import { showJsException } from '../view/output-view';
 import { processingHtmlBrackets } from '../utils';
-import { isWasmRelated, TargetPlatforms } from '../utils/platforms';
-import { executeJs, executeWasmCode, executeWasmCodeWithSkiko } from './execute-es-module';
-import { fetch } from "whatwg-fetch";
+import { isJsLegacy, isWasmRelated, TargetPlatforms } from '../utils/platforms';
+import { executeWasmCode } from './execute-es-module';
 
 const INIT_SCRIPT =
   'if(kotlin.BufferedOutput!==undefined){kotlin.out = new kotlin.BufferedOutput()}' +
@@ -26,7 +25,6 @@ const normalizeJsVersion = (version) => {
 export default class JsExecutor {
   constructor(kotlinVersion) {
     this.kotlinVersion = kotlinVersion;
-    this.skikoImport = undefined;
   }
 
   async executeJsCode(
@@ -37,9 +35,10 @@ export default class JsExecutor {
     outputHeight,
     theme,
     onError,
+    compilerVersion,
   ) {
     if (platform === TargetPlatforms.SWIFT_EXPORT) {
-      return `<span class="standard-output ${theme}"><div class="result-code">${jsCode}</span>`;
+      return `<span class='standard-output ${theme}'><div class='result-code'>${jsCode}</span>`;
     }
     if (platform === TargetPlatforms.CANVAS) {
       this.iframe.style.display = 'block';
@@ -71,9 +70,9 @@ export default class JsExecutor {
         const result = await this.executeWasm(
           jsCode,
           wasm,
-          executeWasmCodeWithSkiko,
+          executeWasmCode,
           theme,
-          processError,
+          processError
         );
 
         if (exception) {
@@ -86,18 +85,22 @@ export default class JsExecutor {
         return result;
       }
     }
-    return await this.execute(jsCode, jsLibs, theme, onError, platform);
+    return await this.execute(
+      jsCode,
+      jsLibs,
+      theme,
+      onError,
+      platform,
+      compilerVersion,
+    );
   }
 
-  async execute(jsCode, jsLibs, theme, onError, platform) {
+  async execute(jsCode, jsLibs, theme, onError, platform, compilerVersion) {
     const loadedScripts = (
       this.iframe.contentDocument || this.iframe.document
     ).getElementsByTagName('script').length;
-    let offset;
-    if (platform === TargetPlatforms.JS_IR) {
-      // 1 scripts by default: INIT_SCRIPT_IR
-      offset = 1;
-    } else {
+    let offset = 1; // 1 scripts by default: INIT_SCRIPT_IR
+    if (isJsLegacy(platform, compilerVersion)) {
       // 2 scripts by default: INIT_SCRIPT + kotlin stdlib
       offset = 2;
     }
@@ -105,21 +108,34 @@ export default class JsExecutor {
       try {
         const output = this.iframe.contentWindow.eval(jsCode);
         return output
-          ? `<span class="standard-output ${theme}">${processingHtmlBrackets(
+          ? `<span class='standard-output ${theme}'>${processingHtmlBrackets(
               output,
             )}</span>`
           : '';
       } catch (e) {
         if (onError) onError();
         let exceptionOutput = showJsException(e);
-        return `<span class="error-output">${exceptionOutput}</span>`;
+        return `<span class='error-output'>${exceptionOutput}</span>`;
       }
     }
     await this.timeout(400);
-    return await this.execute(jsCode, jsLibs, theme, onError, platform);
+    return await this.execute(
+      jsCode,
+      jsLibs,
+      theme,
+      onError,
+      platform,
+      compilerVersion,
+    );
   }
 
-  async executeWasm(jsCode, wasmCode, executor, theme, onError) {
+  async executeWasm(
+    jsCode,
+    wasmCode,
+    executor,
+    theme,
+    onError,
+  ) {
     try {
       const exports = await executor(
         this.iframe.contentWindow,
@@ -127,17 +143,18 @@ export default class JsExecutor {
         wasmCode,
       );
       await exports.instantiate();
-      const output = exports.bufferedOutput.buffer;
-      exports.bufferedOutput.buffer = '';
-      return output
-        ? `<span class="standard-output ${theme}">${processingHtmlBrackets(
-            output,
+      const bufferedOutput = this.iframe.contentWindow.bufferedOutput ?? exports.bufferedOutput;
+      const outputString = bufferedOutput.buffer;
+      bufferedOutput.buffer = '';
+      return outputString
+        ? `<span class='standard-output ${theme}'>${processingHtmlBrackets(
+            outputString,
           )}</span>`
         : '';
     } catch (e) {
       if (onError) onError();
       let exceptionOutput = showJsException(e);
-      return `<span class="error-output">${exceptionOutput}</span>`;
+      return `<span class='error-output'>${exceptionOutput}</span>`;
     }
   }
 
@@ -154,10 +171,7 @@ export default class JsExecutor {
     node.appendChild(this.iframe);
     let iframeDoc = this.iframe.contentDocument || this.iframe.document;
     iframeDoc.open();
-    if (
-      targetPlatform === TargetPlatforms.JS ||
-      targetPlatform === TargetPlatforms.CANVAS
-    ) {
+    if (isJsLegacy(targetPlatform, compilerVersion)) {
       const kotlinScript =
         API_URLS.KOTLIN_JS +
         `${normalizeJsVersion(this.kotlinVersion)}/kotlin.js`;
@@ -170,35 +184,11 @@ export default class JsExecutor {
       for (let lib of jsLibs) {
         iframeDoc.write("<script src='" + lib + "'></script>");
       }
-      if (targetPlatform === TargetPlatforms.JS_IR) {
-        iframeDoc.write(`<script>${INIT_SCRIPT_IR}</script>`);
-      } else {
-        iframeDoc.write(`<script>${INIT_SCRIPT}</script>`);
-      }
+      iframeDoc.write(
+        `<script>${isJsLegacy(targetPlatform, compilerVersion) ? INIT_SCRIPT : INIT_SCRIPT_IR}</script>`,
+      );
     }
     if (targetPlatform === TargetPlatforms.COMPOSE_WASM) {
-      this.skikoImport = fetch(API_URLS.SKIKO_MJS(compilerVersion), {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'text/javascript',
-        }
-      })
-        .then(script => script.text())
-        .then(script => script.replace(
-          "new URL(\"skiko.wasm\",import.meta.url).href",
-          `'${API_URLS.SKIKO_WASM(compilerVersion)}'`
-        ))
-        .then(async skikoCode => {
-            return await executeJs(
-              this.iframe.contentWindow,
-              skikoCode,
-            );
-          }
-        )
-        .then(skikoImports => {
-          this.iframe.contentWindow.skikoImports = skikoImports;
-        });
-
       this.iframe.height = "1000"
       iframeDoc.write(`<canvas height="1000" id="ComposeTarget"></canvas>`);
     }

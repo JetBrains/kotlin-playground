@@ -1,6 +1,6 @@
 {
   "name": "kotlin-playground",
-  "version": "1.31.0-alfa11",
+  "version": "1.32.0-alpha.3",
   "description": "Self-contained component to embed in websites for running Kotlin code",
   "keywords": [
     "kotlin",
@@ -80,7 +80,7 @@
     "copy-examples": "node utils/copy-examples",
     "release:ci": "rm -rf dist && npm run build:all && $NPM_TOKEN=%env.NPM_TOKEN% npm publish",
     "start": "webpack-dev-server --port 9002",
-    "start-with-local-compiler": "webpack-dev-server --port 9002 --env webDemoUrl='//localhost:8080'",
+    "start-with-local-compiler": "webpack-dev-server --port 9002 --env webDemoUrl='http://localhost:8080' webDemoResourcesUrl='http://localhost:8081'",
     "lint": "eslint . --ext .ts",
     "fix": "eslint --fix --ext .ts .",
     "test": "npm run build:all && npm run test:run",

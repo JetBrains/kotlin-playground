@@ -11,10 +11,14 @@ export const RUNTIME_CONFIG = { ...getConfigFromElement(currentScript) };
  * @type {{COMPILE: string, COMPLETE: string, VERSIONS: string, JQUERY: string, KOTLIN_JS: string}}
  */
 export const API_URLS = {
-  server: (RUNTIME_CONFIG.server || __WEBDEMO_URL__).replace(/\/$/, ''),
-  composeServer: (
-    'https://compose.sandbox.intellij.net' || __WEBDEMO_URL__
-  ).replace(/\/$/, ''),
+  server: (__WEBDEMO_URL__ || RUNTIME_CONFIG.server).replace(/\/$/, ''),
+  composeServer: (__WEBDEMO_URL__ || 'https://compose-stage.sandbox.intellij.net').replace(
+    /\/$/,
+    '',
+  ),
+  composeResources: (__WEBDEMO_RESOURCES_URL__ || 'https://compose-stage.sandbox.intellij.net').replace(
+    /\/$/, ''
+  ),
 
   COMPILE(platform, version) {
     let url;
@@ -27,9 +31,6 @@ export const API_URLS = {
         url = `${this.server}/api/${version}/compiler/translate`;
         break;
       case TargetPlatforms.JS:
-        url = `${this.server}/api/${version}/compiler/translate`;
-        break;
-      case TargetPlatforms.JS_IR:
         url = `${this.server}/api/${version}/compiler/translate?ir=true`;
         break;
       case TargetPlatforms.WASM:
@@ -61,12 +62,6 @@ export const API_URLS = {
   },
   get VERSIONS() {
     return `${this.server}/versions`;
-  },
-  SKIKO_MJS() {
-    return `${this.composeServer}/api/resource/skiko.mjs`;
-  },
-  SKIKO_WASM() {
-    return `${this.composeServer}/api/resource/skiko.wasm`;
   },
   get JQUERY() {
     return `https://cdn.jsdelivr.net/npm/jquery@1/dist/jquery.min.js`;
