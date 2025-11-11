@@ -3,13 +3,7 @@ import { API_URLS } from '../config';
 import { showJsException } from '../view/output-view';
 import { processingHtmlBrackets } from '../utils';
 import { isJsLegacy, isWasmRelated, TargetPlatforms } from '../utils/platforms';
-import {
-  executeJs,
-  executeWasmCode,
-  executeWasmCodeWithSkiko,
-  executeWasmCodeWithStdlib,
-} from './execute-es-module';
-import { fetch } from 'whatwg-fetch';
+import { executeWasmCode } from './execute-es-module';
 
 const INIT_SCRIPT =
   'if(kotlin.BufferedOutput!==undefined){kotlin.out = new kotlin.BufferedOutput()}' +
@@ -31,7 +25,6 @@ const normalizeJsVersion = (version) => {
 export default class JsExecutor {
   constructor(kotlinVersion) {
     this.kotlinVersion = kotlinVersion;
-    this.stdlibExports = undefined;
   }
 
   async executeJsCode(
@@ -42,7 +35,6 @@ export default class JsExecutor {
     outputHeight,
     theme,
     onError,
-    additionalRequestsResults,
     compilerVersion,
   ) {
     if (platform === TargetPlatforms.SWIFT_EXPORT) {
@@ -75,15 +67,12 @@ export default class JsExecutor {
         // for some reason resize function in Compose does not work in Firefox in invisible block
         this.iframe.style.display = 'block';
 
-        const additionalRequestsResult = additionalRequestsResults[0];
         const result = await this.executeWasm(
           jsCode,
           wasm,
-          executeWasmCodeWithStdlib,
+          executeWasmCode,
           theme,
-          processError,
-          additionalRequestsResult.stdlib,
-          additionalRequestsResult.output,
+          processError
         );
 
         if (exception) {
@@ -146,8 +135,6 @@ export default class JsExecutor {
     executor,
     theme,
     onError,
-    imports,
-    output,
   ) {
     try {
       const exports = await executor(
@@ -155,8 +142,8 @@ export default class JsExecutor {
         jsCode,
         wasmCode,
       );
-      await exports.instantiate({ 'playground.master': imports });
-      const bufferedOutput = output ?? exports.bufferedOutput;
+      await exports.instantiate();
+      const bufferedOutput = this.iframe.contentWindow.bufferedOutput ?? exports.bufferedOutput;
       const outputString = bufferedOutput.buffer;
       bufferedOutput.buffer = '';
       return outputString
@@ -202,124 +189,10 @@ export default class JsExecutor {
       );
     }
     if (targetPlatform === TargetPlatforms.COMPOSE_WASM) {
-      const skikoStdlib = fetch(API_URLS.RESOURCE_VERSIONS(), {
-        method: 'GET',
-      })
-        .then((response) => response.json())
-        .then((versions) => {
-          const skikoVersion = versions['skiko'];
-
-          const skikoExports = fetch(API_URLS.SKIKO_MJS(skikoVersion), {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'text/javascript',
-            },
-          })
-            .then((script) => script.text())
-            .then((script) =>
-              script.replace(
-                'new URL("skiko.wasm",import.meta.url).href',
-                `'${API_URLS.SKIKO_WASM(skikoVersion)}'`,
-              ),
-            )
-            .then((skikoCode) =>
-              executeJs(this.iframe.contentWindow, skikoCode),
-            )
-            .then((skikoExports) => fixedSkikoExports(skikoExports));
-
-          const stdlibVersion = versions['stdlib'];
-
-          const stdlibExports = fetch(API_URLS.STDLIB_MJS(stdlibVersion), {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'text/javascript',
-            },
-          })
-            .then((script) => script.text())
-            .then((script) =>
-              // necessary to load stdlib.wasm before its initialization to parallelize
-              // language=JavaScript
-              (
-                `const stdlibWasm = fetch('${API_URLS.STDLIB_WASM(stdlibVersion)}');  ` +
-                script
-              )
-                .replace(
-                  "fetch(new URL('./stdlib_master.wasm',import.meta.url).href)",
-                  'stdlibWasm',
-                )
-                .replace(
-                  '(extends) => { return { extends }; }',
-                  '(extends_) => { return { extends_ }; }',
-                ),
-            )
-            .then((stdlibCode) =>
-              executeWasmCodeWithSkiko(this.iframe.contentWindow, stdlibCode),
-            );
-
-          return Promise.all([skikoExports, stdlibExports]);
-        });
-
-      this.stdlibExports = skikoStdlib
-        .then(async ([skikoExportsResult, stdlibExportsResult]) => {
-          return [
-            await stdlibExportsResult.instantiate({
-              './skiko.mjs': skikoExportsResult,
-            }),
-            stdlibExportsResult,
-          ];
-        })
-        .then(([stdlibResult, outputResult]) => {
-          return {
-            stdlib: stdlibResult.exports,
-            output: outputResult.bufferedOutput,
-          };
-        });
-
-      this.iframe.height = '1000';
-      iframeDoc.write(`<canvas height='1000' id='ComposeTarget'></canvas>`);
+      this.iframe.height = "1000"
+      iframeDoc.write(`<canvas height="1000" id="ComposeTarget"></canvas>`);
     }
     iframeDoc.write('<body style="margin: 0; overflow: hidden;"></body>');
     iframeDoc.close();
   }
-}
-
-function fixedSkikoExports(skikoExports) {
-  return {
-    ...skikoExports,
-    org_jetbrains_skia_Bitmap__1nGetPixmap: function () {
-      console.log(
-        'org_jetbrains_skia_TextBlobBuilderRunHandler__1nGetFinalizer',
-      );
-    },
-    org_jetbrains_skia_Bitmap__1nIsVolatile: function () {
-      console.log(
-        'org_jetbrains_skia_TextBlobBuilderRunHandler__1nGetFinalizer',
-      );
-    },
-    org_jetbrains_skia_Bitmap__1nSetVolatile: function () {
-      console.log(
-        'org_jetbrains_skia_TextBlobBuilderRunHandler__1nGetFinalizer',
-      );
-    },
-    org_jetbrains_skia_TextBlobBuilderRunHandler__1nGetFinalizer: function () {
-      console.log(
-        'org_jetbrains_skia_TextBlobBuilderRunHandler__1nGetFinalizer',
-      );
-    },
-    org_jetbrains_skia_TextBlobBuilderRunHandler__1nMake: function () {
-      console.log(
-        'org_jetbrains_skia_TextBlobBuilderRunHandler__1nGetFinalizer',
-      );
-    },
-    org_jetbrains_skia_TextBlobBuilderRunHandler__1nMakeBlob: function () {
-      console.log(
-        'org_jetbrains_skia_TextBlobBuilderRunHandler__1nGetFinalizer',
-      );
-    },
-    org_jetbrains_skia_svg_SVGCanvasKt__1nMake: function () {
-      console.log(
-        'org_jetbrains_skia_TextBlobBuilderRunHandler__1nGetFinalizer',
-      );
-    },
-  };
 }

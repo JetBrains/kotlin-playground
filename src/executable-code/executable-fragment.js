@@ -412,24 +412,15 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
         targetPlatform,
         compilerVersion,
       );
-      const additionalRequests = [];
-      if (targetPlatform === TargetPlatforms.COMPOSE_WASM) {
-        if (this.jsExecutor.stdlibExports) {
-          additionalRequests.push(this.jsExecutor.stdlibExports);
-        }
-      }
 
-      Promise.all([
-        WebDemoApi.translateKotlinToJs(
+      WebDemoApi.translateKotlinToJs(
           this.getCode(),
           compilerVersion,
           targetPlatform,
           args,
           hiddenDependencies,
-        ),
-        ...additionalRequests,
-      ]).then(
-        ([state, ...additionalRequestsResults]) => {
+      ).then(
+        (state) => {
           state.waitingForOutput = false;
           const jsCode = state.jsCode;
           const wasm = state.wasm;
@@ -454,7 +445,6 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
                 outputHeight,
                 theme,
                 onError,
-                additionalRequestsResults,
                 compilerVersion,
               )
               .then((output) => {
