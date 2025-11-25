@@ -12,10 +12,9 @@ export const RUNTIME_CONFIG = { ...getConfigFromElement(currentScript) };
  */
 export const API_URLS = {
   server: (RUNTIME_CONFIG.server || __WEBDEMO_URL__).replace(/\/$/, ''),
-  composeServer: 'https://compose-stage.sandbox.intellij.net'.replace(
-    /\/$/,
-    '',
-  ),
+  composeServer: 'https://api.kotlinlang.org/'.replace(/\/$/, ''),
+  s3ComposeServerResource:
+    'https://play-kotlinlang-org-kcs-prod.s3.amazonaws.com',
 
   COMPILE(platform, version) {
     let url;
@@ -37,7 +36,7 @@ export const API_URLS = {
         url = `${this.server}/api/${version}/compiler/translate?ir=true&compiler=wasm`;
         break;
       case TargetPlatforms.COMPOSE_WASM:
-        url = `${this.composeServer}/api/compiler/translate?compiler=${TargetPlatforms.COMPOSE_WASM.id}`;
+        url = `${this.composeServer}/api/${version}/compose/compiler/translate?compiler=${TargetPlatforms.COMPOSE_WASM.id}`;
         break;
       case TargetPlatforms.JUNIT:
         url = `${this.server}/api/${version}/compiler/test`;
@@ -63,20 +62,20 @@ export const API_URLS = {
   get VERSIONS() {
     return `${this.server}/versions`;
   },
-  RESOURCE_VERSIONS() {
-    return `${this.composeServer}/api/resource/compose-wasm-versions`;
+  RESOURCE_VERSIONS(version) {
+    return `${this.composeServer}/api/${version}/compose/resource/compose-wasm-versions`;
   },
-  SKIKO_MJS(version) {
-    return `${this.composeServer}/api/resource/skiko-${version}.mjs`;
+  SKIKO_MJS(hash, version) {
+    return `${this.s3ComposeServerResource}/api/${version}/compose/resource/skiko-${hash}.mjs`;
   },
-  SKIKO_WASM(version) {
-    return `${this.composeServer}/api/resource/skiko-${version}.wasm`;
+  SKIKO_WASM(hash, version) {
+    return `${this.s3ComposeServerResource}/api/${version}/compose/resource/skiko-${hash}.wasm`;
   },
-  STDLIB_MJS(hash) {
-    return `${this.composeServer}/api/resource/stdlib-${hash}.mjs`;
+  STDLIB_MJS(hash, version) {
+    return `${this.s3ComposeServerResource}/api/${version}/compose/resource/stdlib-${hash}.mjs`;
   },
-  STDLIB_WASM(hash) {
-    return `${this.composeServer}/api/resource/stdlib-${hash}.wasm`;
+  STDLIB_WASM(hash, version) {
+    return `${this.s3ComposeServerResource}/api/${version}/compose/resource/stdlib-${hash}.wasm`;
   },
   get JQUERY() {
     return `https://cdn.jsdelivr.net/npm/jquery@1/dist/jquery.min.js`;
