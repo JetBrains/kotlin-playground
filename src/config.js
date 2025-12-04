@@ -3,7 +3,12 @@ import { TargetPlatforms } from './utils/platforms';
 
 const currentScript = getCurrentScript();
 
-export const RUNTIME_CONFIG = { ...getConfigFromElement(currentScript) };
+export const RUNTIME_CONFIG = {
+  ...getConfigFromElement(currentScript),
+  interceptor: {
+    onRequest: null,
+  }
+};
 
 /**
  * API Paths

@@ -4,7 +4,7 @@ import {showJsException} from '../view/output-view';
 import {processingHtmlBrackets} from '../utils';
 import {isWasmRelated, TargetPlatforms} from '../utils/platforms';
 import {executeJs, executeWasmCode, executeWasmCodeWithSkiko, executeWasmCodeWithStdlib} from './execute-es-module';
-import {fetch} from "whatwg-fetch";
+import {fetchWithInterceptor} from '../interceptor/fetch-interceptor';
 
 const INIT_SCRIPT =
   'if(kotlin.BufferedOutput!==undefined){kotlin.out = new kotlin.BufferedOutput()}' +
@@ -183,13 +183,13 @@ export default class JsExecutor {
     }
     if (targetPlatform === TargetPlatforms.COMPOSE_WASM) {
 
-      const skikoStdlib = fetch(API_URLS.RESOURCE_VERSIONS(),{
+      const skikoStdlib = fetchWithInterceptor(API_URLS.RESOURCE_VERSIONS(),{
         method: 'GET'
       }).then(response => response.json())
         .then(versions => {
           const skikoVersion = versions["skiko"];
 
-          const skikoExports = fetch(API_URLS.SKIKO_MJS(skikoVersion), {
+          const skikoExports = fetchWithInterceptor(API_URLS.SKIKO_MJS(skikoVersion), {
             method: 'GET',
             headers: {
               'Content-Type': 'text/javascript',
@@ -208,7 +208,7 @@ export default class JsExecutor {
 
           const stdlibVersion = versions["stdlib"];
 
-          const stdlibExports = fetch(API_URLS.STDLIB_MJS(stdlibVersion), {
+          const stdlibExports = fetchWithInterceptor(API_URLS.STDLIB_MJS(stdlibVersion), {
             method: 'GET',
             headers: {
               'Content-Type': 'text/javascript',

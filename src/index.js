@@ -22,6 +22,7 @@ polyfill();
  * @property {Function} onConsoleOpen
  * @property {Function} onConsoleClose
  * @property {Function} callBack
+ * @property {Function} onRequest
  *
  * @param {string} selector
  * @param {Object} options
@@ -29,6 +30,11 @@ polyfill();
  */
 export default function create(selector, options = {}) {
   API_URLS.server = options.server || API_URLS.server;
+
+  if (options.onRequest) {
+    RUNTIME_CONFIG.interceptor.onRequest = options.onRequest;
+  }
+
   return ExecutableCode.create(selector, options);
 }
 

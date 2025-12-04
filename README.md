@@ -132,6 +132,39 @@ playground('.selector', options)
   instance.getCode()  // function for getting code from snippet.
   ```
 
+- `onRequest(request)` — Request interceptor that allows you to modify HTTP requests before they are sent.
+   _request_ — request with the following properties:
+  - `url` — the request URL
+  - `method` — HTTP method (GET, POST, etc.)
+  - `headers` — request headers
+  - `body` — request body (if applicable)
+
+  The interceptor should return the modified request
+
+  ```js
+  const options = {
+    onRequest: async (request) => {
+      request.headers = {
+        ...request.headers,
+        'Authorization': 'Basic a290bGluLXBsYXlncm91bmQ6MTIzNA=='
+      };
+
+      if (request.url.includes("/compiler/highlight"))
+      request.url = request.url + '?severity=WARNING';
+
+      if (request.body && request.url.includes("/compiler/complete")) {
+        const body = JSON.parse(request.body);
+        body.type = 'CLASS';
+        request.body = JSON.stringify(body);
+      }
+
+      return request;
+    }
+  };
+
+  playground('.selector', options);
+  ```
+
 ## Customizing editors
 
 

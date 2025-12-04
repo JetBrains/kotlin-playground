@@ -1,4 +1,3 @@
-import { fetch } from 'whatwg-fetch';
 import { API_URLS } from './config';
 import flatten from 'flatten';
 import { isWasmRelated, TargetPlatforms } from './utils/platforms';
@@ -9,6 +8,7 @@ import {
   processJUnitResults,
   processJVMOutput,
 } from './view/output-view';
+import { fetchWithInterceptor } from './interceptor/fetch-interceptor';
 
 /**
  * @typedef {Object} KotlinVersion
@@ -31,7 +31,7 @@ export default class WebDemoApi {
    */
   static getCompilerVersions() {
     if (!CACHE.compilerVersions) {
-      CACHE.compilerVersions = fetch(API_URLS.VERSIONS)
+      CACHE.compilerVersions = fetchWithInterceptor(API_URLS.VERSIONS)
         .then((response) => response.json())
         .catch(() => (CACHE.compilerVersions = null));
     }
@@ -268,7 +268,7 @@ function executeCode(
     ...(options || {}),
   };
 
-  return fetch(url, {
+  return fetchWithInterceptor(url, {
     method: 'POST',
     body: JSON.stringify(body),
     headers: {
