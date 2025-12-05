@@ -66,16 +66,16 @@ export const API_URLS = {
     return `${this.composeServer}/api/${version}/compose/resource/compose-wasm-versions`;
   },
   SKIKO_MJS(hash, version) {
-    return `${this.s3ComposeServerResource}/api/${version}/compose/resource/skiko-${hash}.mjs`;
+    return `${this.s3ComposeServerResource}/api/compose/resource/skiko-${hash}.mjs`;
   },
   SKIKO_WASM(hash, version) {
-    return `${this.s3ComposeServerResource}/api/${version}/compose/resource/skiko-${hash}.wasm`;
+    return `${this.s3ComposeServerResource}/api/compose/resource/skiko-${hash}.wasm`;
   },
   STDLIB_MJS(hash, version) {
-    return `${this.s3ComposeServerResource}/api/${version}/compose/resource/stdlib-${hash}.mjs`;
+    return `${this.s3ComposeServerResource}/api/compose/resource/stdlib-${hash}.mjs`;
   },
   STDLIB_WASM(hash, version) {
-    return `${this.s3ComposeServerResource}/api/${version}/compose/resource/stdlib-${hash}.wasm`;
+    return `${this.s3ComposeServerResource}/api/compose/resource/stdlib-${hash}.wasm`;
   },
   get JQUERY() {
     return `https://cdn.jsdelivr.net/npm/jquery@1/dist/jquery.min.js`;
