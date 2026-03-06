@@ -27,10 +27,6 @@ function prepareJsCode(jsCode) {
           ` +
     jsCode
       .replaceAll(
-        "await import('./",
-        "await import('" + API_URLS.composeResources + "/"
-      )
-      .replaceAll(
         "%3",
         "%253"
       )

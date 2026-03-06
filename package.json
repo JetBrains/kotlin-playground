@@ -8,7 +8,10 @@
   ],
   "author": "JetBrains",
   "license": "Apache-2.0",
-  "repository": "JetBrains/kotlin-playground",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JetBrains/kotlin-playground.git"
+  },
   "main": "dist/playground.min.js",
   "files": [
     "dist",

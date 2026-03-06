@@ -12,17 +12,6 @@ export const RUNTIME_CONFIG = { ...getConfigFromElement(currentScript) };
  */
 export const API_URLS = {
   server: (__WEBDEMO_URL__ || RUNTIME_CONFIG.server).replace(/\/$/, ''),
-  composeServer: (
-    __WEBDEMO_URL__ ||
-    RUNTIME_CONFIG.composeServer ||
-    'https://compose-stage.sandbox.intellij.net'
-  ).replace(/\/$/, ''),
-  composeResources: (
-    __WEBDEMO_RESOURCES_URL__ ||
-    RUNTIME_CONFIG.composeResources ||
-    'https://compose-stage.sandbox.intellij.net'
-  ).replace(/\/$/, ''),
-
   COMPILE(platform, version) {
     let url;
 
@@ -40,7 +29,7 @@ export const API_URLS = {
         url = `${this.server}/api/${version}/compiler/translate?ir=true&compiler=wasm`;
         break;
       case TargetPlatforms.COMPOSE_WASM:
-        url = `${this.composeServer}/api/${version}/compose/compiler/translate?compiler=${TargetPlatforms.COMPOSE_WASM.id}`;
+        url = `${this.server}/api/${version}/compose/compiler/translate?compiler=${TargetPlatforms.COMPOSE_WASM.id}`;
         break;
       case TargetPlatforms.JUNIT:
         url = `${this.server}/api/${version}/compiler/test`;
