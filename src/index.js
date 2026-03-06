@@ -29,6 +29,9 @@ polyfill();
  */
 export default function create(selector, options = {}) {
   API_URLS.server = options.server || API_URLS.server;
+  API_URLS.composeServer = options.composeServer || API_URLS.composeServer;
+  API_URLS.composeResources =
+    options.composeResources || API_URLS.composeResources;
   return ExecutableCode.create(selector, options);
 }
 
