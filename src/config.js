@@ -12,13 +12,16 @@ export const RUNTIME_CONFIG = { ...getConfigFromElement(currentScript) };
  */
 export const API_URLS = {
   server: (__WEBDEMO_URL__ || RUNTIME_CONFIG.server).replace(/\/$/, ''),
-  composeServer: (__WEBDEMO_URL__ || 'https://compose-stage.sandbox.intellij.net').replace(
-    /\/$/,
-    '',
-  ),
-  composeResources: (__WEBDEMO_RESOURCES_URL__ || 'https://compose-stage.sandbox.intellij.net').replace(
-    /\/$/, ''
-  ),
+  composeServer: (
+    __WEBDEMO_URL__ ||
+    RUNTIME_CONFIG.composeServer ||
+    'https://compose-stage.sandbox.intellij.net'
+  ).replace(/\/$/, ''),
+  composeResources: (
+    __WEBDEMO_RESOURCES_URL__ ||
+    RUNTIME_CONFIG.composeResources ||
+    'https://compose-stage.sandbox.intellij.net'
+  ).replace(/\/$/, ''),
 
   COMPILE(platform, version) {
     let url;
