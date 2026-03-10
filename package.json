@@ -1,6 +1,6 @@
 {
   "name": "kotlin-playground",
-  "version": "1.33.4-compose-wasm-beta",
+  "version": "1.34.0",
   "description": "Self-contained component to embed in websites for running Kotlin code",
   "keywords": [
     "kotlin",
