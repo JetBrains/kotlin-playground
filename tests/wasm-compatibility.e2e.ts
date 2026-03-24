@@ -21,6 +21,7 @@ const JS_1_9 = Object.freeze({
 
 const OUTPUTS = Object.freeze({
   'js-ir': JS_1_9,
+  js: JS_1_9,
   wasm: WASM_1_9,
 });
 
@@ -30,7 +31,7 @@ test.describe('WASM platform with `moduleId` in output', () => {
   });
 
   test('JS 1.9 server response', async ({ page }) => {
-    await run(page, 'js-ir');
+    await run(page, 'js-ir', 'js');
   });
 
   test('WASM 1.9 server response', async ({ page }) => {
@@ -38,7 +39,11 @@ test.describe('WASM platform with `moduleId` in output', () => {
   });
 });
 
-async function run(page: Page, platform: keyof typeof OUTPUTS) {
+async function run(
+  page: Page,
+  platform: keyof typeof OUTPUTS,
+  confType: keyof typeof OUTPUTS = platform,
+) {
   const version = '1.9.20';
   const text = 'Hello, world!';
   const source = printlnCode(text);
@@ -48,7 +53,7 @@ async function run(page: Page, platform: keyof typeof OUTPUTS) {
     `<code data-target-platform='${platform}'>${source}</code>`,
   );
   const editor = page.locator(WIDGET_SELECTOR);
-  const postData = `{"args":"","files":[{"name":"File.kt","text":"${toPostData(source)}","publicId":""}],"confType":"${platform}"}`;
+  const postData = `{"args":"","files":[{"name":"File.kt","text":"${toPostData(source)}","publicId":""}],"confType":"${confType}"}`;
   await checkRunCase(page, editor, postData, { json: OUTPUTS[platform] });
   await expect(editor.locator(RESULT_SELECTOR)).toHaveText(text);
 }

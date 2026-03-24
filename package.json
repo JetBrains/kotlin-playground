@@ -1,6 +1,6 @@
 {
   "name": "kotlin-playground",
-  "version": "1.32.1",
+  "version": "1.33.4-compose-wasm-beta",
   "description": "Self-contained component to embed in websites for running Kotlin code",
   "keywords": [
     "kotlin",
@@ -8,7 +8,10 @@
   ],
   "author": "JetBrains",
   "license": "Apache-2.0",
-  "repository": "JetBrains/kotlin-playground",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JetBrains/kotlin-playground.git"
+  },
   "main": "dist/playground.min.js",
   "files": [
     "dist",
@@ -80,7 +83,7 @@
     "copy-examples": "node utils/copy-examples",
     "release:ci": "rm -rf dist && npm run build:all && $NPM_TOKEN=%env.NPM_TOKEN% npm publish",
     "start": "webpack-dev-server --port 9002",
-    "start-with-local-compiler": "webpack-dev-server --port 9002 --env webDemoUrl='//localhost:8080' webDemoResourcesUrl='//localhost:8081'",
+    "start-with-local-compiler": "webpack-dev-server --port 9002 --env webDemoUrl='http://localhost:8080' webDemoResourcesUrl='http://localhost:8081'",
     "lint": "eslint . --ext .ts",
     "fix": "eslint --fix --ext .ts .",
     "test": "npm run build:all && npm run test:run",

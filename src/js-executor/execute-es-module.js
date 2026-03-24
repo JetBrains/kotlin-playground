@@ -1,14 +1,8 @@
+import {API_URLS} from "../config";
+
 export async function executeWasmCode(container, jsCode, wasmCode) {
   const newCode = prepareJsCode(jsCode);
   return execute(container, newCode, wasmCode);
-}
-
-export async function executeWasmCodeWithSkiko(container, jsCode) {
-  return executeJs(container, prepareJsCode(jsCode));
-}
-
-export async function executeWasmCodeWithStdlib(container, jsCode, wasmCode) {
-  return execute(container, prepareJsCode(jsCode), wasmCode);
 }
 
 function execute(container, jsCode, wasmCode) {
@@ -16,7 +10,7 @@ function execute(container, jsCode, wasmCode) {
   return executeJs(container, jsCode);
 }
 
-export function executeJs(container, jsCode) {
+function executeJs(container, jsCode) {
   return container.eval(`import(/* webpackIgnore: true */ '${'data:text/javascript;base64,' + btoa(jsCode)}');`)
 }
 

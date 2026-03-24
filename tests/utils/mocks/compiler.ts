@@ -2,7 +2,8 @@ import { BrowserContext, Route, Request, Page } from '@playwright/test';
 import { join } from 'path';
 import { RouteFulfill } from '../index';
 
-export const API_HOST = 'api.kotlinlang.org';
+export const API_HOST = 'api.kotlinlang.org' as const;
+export const CDN_HOST = 'cdn.jsdelivr.net' as const;
 
 function defaultVersions(route: Route, req: Request) {
   if (req.method() !== 'GET') {
@@ -64,4 +65,37 @@ export async function waitRunRequest(page: Page) {
   return page.waitForRequest(
     (req) => req.method() === 'POST' && isRunRequest(req.url()),
   );
+}
+
+function kotlinJSAsset(route: Route, req: Request) {
+  if (req.method() !== 'GET') {
+    return route.continue();
+  }
+
+  return route.fulfill({ path: join(__dirname, 'kotlin.js') });
+}
+
+function jqAsset(route: Route, req: Request) {
+  if (req.method() !== 'GET') {
+    return route.continue();
+  }
+
+  return route.fulfill({ path: join(__dirname, 'jquery.min.js') });
+}
+
+export async function mockJsLegacyAssets(page: Page | BrowserContext) {
+  const checkKotlinUrl = (url: URL) =>
+    url.host === CDN_HOST &&
+    url.pathname.match(/^\/?npm\/kotlin@\d+.\d+.\d+\/kotlin\.js$/) !== null;
+
+  const checkJQUrl = (url: URL) =>
+    url.host === CDN_HOST &&
+    url.pathname.match(/^\/?npm\/jquery@1\/dist\/jquery\.min\.js$/) !== null;
+
+  await Promise.all([
+    page.route(checkKotlinUrl, kotlinJSAsset),
+    page.route(checkJQUrl, jqAsset),
+  ]);
+
+  return () => page.unroute(checkKotlinUrl, kotlinJSAsset);
 }
