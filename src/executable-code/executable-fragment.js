@@ -779,6 +779,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
         'Cmd-Alt-L': 'indentAuto',
         'Shift-Tab': 'indentLess',
         'Ctrl-/': 'toggleComment',
+        'Cmd-/': 'toggleComment',
         'Cmd-[': false,
         'Cmd-]': false,
         'Ctrl-Space': 'autocomplete',
