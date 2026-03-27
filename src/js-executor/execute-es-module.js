@@ -15,6 +15,8 @@ function executeJs(container, jsCode) {
 }
 
 function prepareJsCode(jsCode) {
+  const re = /instantiateStreaming\(fetch\(new URL\('([^']*)',\s*import\.meta\.url\)\.href\),\s*importObject\s*,\s*\{\s*builtins\s*:\s*\[''\]\s*\}\s*\)\)\.instance;/g;
+
   return `
           class BufferedOutput {
             constructor() {
@@ -24,12 +26,16 @@ function prepareJsCode(jsCode) {
           export const bufferedOutput = new BufferedOutput()
           ` +
     jsCode
+      .replaceAll(
+        "%3",
+        "%253"
+      )
       .replace(
         "instantiateStreaming(fetch(wasmFilePath), importObject)).instance;",
         "instantiate(window.wasmCode, importObject)).instance;\nwindow.wasmCode = undefined;"
       )
       .replace(
-        /instantiateStreaming\(fetch\(new URL\('\.\/playground\.wasm',import\.meta\.url\)\.href\),\s?importObject(?:,\s?\{ builtins:\s?\[''\]\s?\})?\)\)\.instance;/,
+        re,
         "instantiate(window.wasmCode, importObject)).instance;\nwindow.wasmCode = undefined;"
       )
       .replace(
