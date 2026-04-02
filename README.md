@@ -130,6 +130,26 @@ playground('.selector', options)
   instance.getCode()  // function for getting code from snippet.
   ```
 
+- `onRequest(url, fetchOptions)` — Async interceptor called before **every** request to the server (compile, highlight, autocomplete, versions). Must return the (optionally modified) `fetchOptions` object. Useful for adding authorization headers when using a private server.
+
+  ```js
+  const options = {
+    server: 'https://my-private-kotlin-server',
+    onRequest: async (url, fetchOptions) => {
+      const token = await getAuthToken();
+      return {
+        ...fetchOptions,
+        headers: {
+          ...fetchOptions.headers,
+          'Authorization': `Bearer ${token}`,
+        },
+      };
+    },
+  };
+
+  playground('.selector', options);
+  ```
+
 ## Customizing editors
 
 

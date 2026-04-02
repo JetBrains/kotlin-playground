@@ -20,23 +20,53 @@ import {
  * @property {string|null} stdlibVersion
  */
 
-const CACHE = {
-  compilerVersions: null,
-};
 const DEFAULT_FILE_NAME = 'File.kt';
 
+/** @type {Map<string, Promise>} */
+const VERSIONS_CACHE = new Map();
+
+/**
+ * @typedef {Object} Interceptors
+ * @property {(url: string, fetchOptions: RequestInit) => Promise<RequestInit>}
+ */
+
 export default class WebDemoApi {
+  /** @param {Interceptors} [interceptors] */
+  constructor(interceptors = {}) {
+    this.interceptors = interceptors;
+  }
+
   /**
-   * @return {Promise<Array<KotlinVersion>>}
+   * Central fetch proxy. Applies interceptors if provided.
+   * @param {string} url
+   * @param {RequestInit} [options]
+   * @return {Promise<Response>}
    */
-  static getCompilerVersions() {
-    if (!CACHE.compilerVersions) {
-      CACHE.compilerVersions = fetch(API_URLS.VERSIONS)
-        .then((response) => response.json())
-        .catch(() => (CACHE.compilerVersions = null));
+  async apiFetch(url, options = {}) {
+    const fetchOptions = this.interceptors.onRequest
+      ? await this.interceptors.onRequest(url, options)
+      : options;
+
+    return fetch(url, fetchOptions);
+  }
+
+  /**  @return {Promise<Array<KotlinVersion>>} */
+  getCompilerVersions() {
+    const cacheKey = API_URLS.VERSIONS;
+
+    if (!VERSIONS_CACHE.has(cacheKey)) {
+      VERSIONS_CACHE.set(
+        cacheKey,
+        this.apiFetch(cacheKey)
+          .then((response) => response.json())
+          .catch(() => {
+            VERSIONS_CACHE.delete(cacheKey);
+            return null;
+          }),
+      );
     }
 
-    return CACHE.compilerVersions;
+    return VERSIONS_CACHE.get(cacheKey);
   }
 
   /**
@@ -49,7 +79,7 @@ export default class WebDemoApi {
    * @param hiddenDependencies   - read only additional files
    * @returns {*|PromiseLike<T>|Promise<T>}
    */
-  static translateKotlinToJs(
+  translateKotlinToJs(
     code,
     compilerVersion,
     platform,
@@ -89,6 +119,7 @@ export default class WebDemoApi {
     }
 
     return executeCode(
+      this,
       API_URLS.COMPILE(platform, compilerVersion),
       code,
       compilerVersion,
@@ -120,7 +151,7 @@ export default class WebDemoApi {
    * @param hiddenDependencies   - read only additional files
    * @returns {*|PromiseLike<T>|Promise<T>}
    */
-  static executeKotlinCode(
+  executeKotlinCode(
     code,
     compilerVersion,
     platform,
@@ -131,6 +162,7 @@ export default class WebDemoApi {
     onTestFailed,
   ) {
     return executeCode(
+      this,
       API_URLS.COMPILE(platform, compilerVersion),
       code,
       compilerVersion,
@@ -185,7 +217,7 @@ export default class WebDemoApi {
    * @param platform - kotlin platform {@see TargetPlatform}
    * @param callback
    */
-  static getAutoCompletion(
+  getAutoCompletion(
     code,
     cursor,
     compilerVersion,
@@ -196,6 +228,7 @@ export default class WebDemoApi {
     const { line, ch, ...options } = cursor;
     const url = API_URLS.COMPLETE(compilerVersion) + `?line=${line}&ch=${ch}`;
     executeCode(
+      this,
       url,
       code,
       compilerVersion,
@@ -217,8 +250,9 @@ export default class WebDemoApi {
    * @param hiddenDependencies   - read only additional files
    * @return {*|PromiseLike<T>|Promise<T>}
    */
-  static getHighlight(code, compilerVersion, platform, hiddenDependencies) {
+  getHighlight(code, compilerVersion, platform, hiddenDependencies) {
     return executeCode(
+      this,
       API_URLS.HIGHLIGHT(compilerVersion),
       code,
       compilerVersion,
@@ -229,7 +263,8 @@ export default class WebDemoApi {
   }
 }
 
-function executeCode(
+async function executeCode(
+  api,
   url,
   code,
   compilerVersion,
@@ -251,13 +286,15 @@ function executeCode(
     ...(options || {}),
   };
 
-  return fetch(url, {
+  const fetchOptions = {
     method: 'POST',
     body: JSON.stringify(body),
     headers: {
       'Content-Type': 'application/json; charset=utf-8',
     },
-  }).then((response) => response.json());
+  };
+
+  return api.apiFetch(url, fetchOptions).then((response) => response.json());
 }
 
 /**

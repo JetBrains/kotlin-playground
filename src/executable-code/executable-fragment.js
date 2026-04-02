@@ -5,7 +5,6 @@ import Monkberry from 'monkberry';
 import directives from 'monkberry-directives';
 import 'monkberry-events';
 import ExecutableCodeTemplate from './executable-fragment.monk';
-import WebDemoApi from '../webdemo-api';
 
 import {
   isJavaRelated,
@@ -28,8 +27,6 @@ import { countLines, THEMES } from '../utils';
 import debounce from 'debounce';
 import CompletionView from '../view/completion-view';
 import { processErrors } from '../view/output-view';
-import { fetch } from 'whatwg-fetch';
-import { API_URLS } from '../config';
 
 const IMPORT_NAME = 'import';
 const KEY_CODES = {
@@ -342,6 +339,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
 
   execute() {
     const {
+      api,
       onOpenConsole,
       targetPlatform,
       waitingForOutput,
@@ -369,42 +367,44 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
     if (onOpenConsole) onOpenConsole(); //open when waitingForOutput=true
     if (onRun) onRun();
     if (isJavaRelated(targetPlatform)) {
-      WebDemoApi.executeKotlinCode(
-        this.getCode(),
-        compilerVersion,
-        targetPlatform,
-        args,
-        theme,
-        hiddenDependencies,
-        onTestPassed,
-        onTestFailed,
-      ).then(
-        (state) => {
-          state.waitingForOutput = false;
-          if (state.output || state.exception) {
-            state.openConsole = true;
-          } else {
-            if (onCloseConsole) onCloseConsole();
-          }
-          if ((state.errors.length > 0 || state.exception) && onError)
-            onError();
-          this.update(state);
-        },
-        (error) => {
-          if (onError) onError();
-          this.update({
-            waitingForOutput: false,
-            output: processErrors([
-              {
-                severity: 'ERROR',
-                message: error.message,
-              },
-            ]),
-            openConsole: true,
-            exception: null,
-          });
-        },
-      );
+      api
+        .executeKotlinCode(
+          this.getCode(),
+          compilerVersion,
+          targetPlatform,
+          args,
+          theme,
+          hiddenDependencies,
+          onTestPassed,
+          onTestFailed,
+        )
+        .then(
+          (state) => {
+            state.waitingForOutput = false;
+            if (state.output || state.exception) {
+              state.openConsole = true;
+            } else {
+              if (onCloseConsole) onCloseConsole();
+            }
+            if ((state.errors.length > 0 || state.exception) && onError)
+              onError();
+            this.update(state);
+          },
+          (error) => {
+            if (onError) onError();
+            this.update({
+              waitingForOutput: false,
+              output: processErrors([
+                {
+                  severity: 'ERROR',
+                  message: error.message,
+                },
+              ]),
+              openConsole: true,
+              exception: null,
+            });
+          },
+        );
     } else {
       this.jsExecutor.reloadIframeScripts(
         jsLibs,
@@ -413,68 +413,70 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
         compilerVersion,
       );
 
-      WebDemoApi.translateKotlinToJs(
+      api
+        .translateKotlinToJs(
           this.getCode(),
           compilerVersion,
           targetPlatform,
           args,
           hiddenDependencies,
-      ).then(
-        (state) => {
-          state.waitingForOutput = false;
-          const jsCode = state.jsCode;
-          const wasm = state.wasm;
-          delete state.jsCode;
-          if (getJsCode) getJsCode(jsCode);
-          let errors = state.errors.filter(
-            (error) => error.severity === 'ERROR',
-          );
-          if (errors.length > 0) {
-            if (onError) onError();
-            state.output = processErrors(errors);
-            state.openConsole = true;
-            state.exception = null;
-            this.update(state);
-          } else {
-            this.jsExecutor
-              .executeJsCode(
-                jsCode,
-                wasm,
-                jsLibs,
-                targetPlatform,
-                outputHeight,
-                theme,
-                onError,
-                compilerVersion,
-              )
-              .then((output) => {
-                const originState = state.openConsole;
-
-                if (
-                  targetPlatform === TargetPlatforms.CANVAS ||
-                  targetPlatform === TargetPlatforms.COMPOSE_WASM
-                ) {
-                  state.openConsole = true;
-                }
-
-                if (output) {
-                  state.openConsole = true;
-                  state.output = output;
-                } else {
-                  state.output = '';
-                  if (onCloseConsole) onCloseConsole();
-                }
-
-                if (
-                  onOpenConsole &&
-                  originState !== state.openConsole &&
-                  state.openConsole === true
+        )
+        .then(
+          (state) => {
+            state.waitingForOutput = false;
+            const jsCode = state.jsCode;
+            const wasm = state.wasm;
+            delete state.jsCode;
+            if (getJsCode) getJsCode(jsCode);
+            let errors = state.errors.filter(
+              (error) => error.severity === 'ERROR',
+            );
+            if (errors.length > 0) {
+              if (onError) onError();
+              state.output = processErrors(errors);
+              state.openConsole = true;
+              state.exception = null;
+              this.update(state);
+            } else {
+              this.jsExecutor
+                .executeJsCode(
+                  jsCode,
+                  wasm,
+                  jsLibs,
+                  targetPlatform,
+                  outputHeight,
+                  theme,
+                  onError,
+                  compilerVersion,
                 )
-                  onOpenConsole();
+                .then((output) => {
+                  const originState = state.openConsole;
 
-                state.exception = null;
-                this.update(state);
-                /*
+                  if (
+                    targetPlatform === TargetPlatforms.CANVAS ||
+                    targetPlatform === TargetPlatforms.COMPOSE_WASM
+                  ) {
+                    state.openConsole = true;
+                  }
+
+                  if (output) {
+                    state.openConsole = true;
+                    state.output = output;
+                  } else {
+                    state.output = '';
+                    if (onCloseConsole) onCloseConsole();
+                  }
+
+                  if (
+                    onOpenConsole &&
+                    originState !== state.openConsole &&
+                    state.openConsole === true
+                  )
+                    onOpenConsole();
+
+                  state.exception = null;
+                  this.update(state);
+                  /*
                 if (targetPlatform === TargetPlatforms.SWIFT_EXPORT) {
                   const code = this.nodes[0]
                     .querySelector(SELECTORS.JS_CODE_OUTPUT_EXECUTOR)
@@ -494,24 +496,24 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
                   }
                 }
                 */
-              });
-          }
-        },
-        (error) => {
-          if (onError) onError();
-          this.update({
-            waitingForOutput: false,
-            output: processErrors([
-              {
-                severity: 'ERROR',
-                message: error.message,
-              },
-            ]),
-            openConsole: true,
-            exception: null,
-          });
-        },
-      );
+                });
+            }
+          },
+          (error) => {
+            if (onError) onError();
+            this.update({
+              waitingForOutput: false,
+              output: processErrors([
+                {
+                  severity: 'ERROR',
+                  message: error.message,
+                },
+              ]),
+              openConsole: true,
+              exception: null,
+            });
+          },
+        );
     }
   }
 
@@ -661,15 +663,19 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
      * Show highlight for extraKey Ctrl+Alt+H/Cmd+Option+H
      */
     let highlight = () => {
-      const { compilerVersion, targetPlatform, hiddenDependencies } =
+      const { api, compilerVersion, targetPlatform, hiddenDependencies } =
         this.state;
+
       this.removeStyles();
-      WebDemoApi.getHighlight(
-        this.getCode(),
-        compilerVersion,
-        targetPlatform,
-        hiddenDependencies,
-      ).then((data) => this.showDiagnostics(data));
+
+      api
+        .getHighlight(
+          this.getCode(),
+          compilerVersion,
+          targetPlatform,
+          hiddenDependencies,
+        )
+        .then((data) => this.showDiagnostics(data));
     };
 
     const showImportSuggestions = (mirror) => {
@@ -713,7 +719,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
       let currentCursor = this.state.folded
         ? { line: cur.line + this.prefix.split('\n').length - 1, ch: cur.ch }
         : cur;
-      WebDemoApi.getAutoCompletion(
+      this.state.api.getAutoCompletion(
         code,
         currentCursor,
         this.state.compilerVersion,
@@ -816,12 +822,14 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
         if (onChange) onChange(cm.getValue());
         this.removeStyles();
         if (onFlyHighLight) {
-          WebDemoApi.getHighlight(
-            this.getCode(),
-            compilerVersion,
-            targetPlatform,
-            hiddenDependencies,
-          ).then((data) => this.showDiagnostics(data));
+          this.state.api
+            .getHighlight(
+              this.getCode(),
+              compilerVersion,
+              targetPlatform,
+              hiddenDependencies,
+            )
+            .then((data) => this.showDiagnostics(data));
         }
       }, DEBOUNCE_TIME),
     );
