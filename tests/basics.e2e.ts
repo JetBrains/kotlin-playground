@@ -1,4 +1,5 @@
 import { expect, Locator, Page, test } from '@playwright/test';
+import { join } from 'path';
 
 import { checkRunCase, prepareNetwork, printlnCode, toPostData } from './utils';
 import { gotoHtmlWidget } from './utils/server/playground';
@@ -100,6 +101,38 @@ test.describe('basics', () => {
 
     // playground loaded
     await expect(editor).toHaveCount(1);
+  });
+
+  test('multiple playground() calls with same server share one versions request', async ({
+    page,
+    baseURL,
+  }) => {
+    let versionsRequestCount = 0;
+
+    await prepareNetwork(page, baseURL, {
+      versions: (route, req) => {
+        if (req.method() === 'GET') versionsRequestCount++;
+        route.fulfill({ path: join(__dirname, 'utils/mocks/versions.json') });
+      },
+    });
+
+    await gotoHtmlWidget(
+      page,
+      `<code id="a">${printlnCode('Hello')}</code>
+       <code id="b">${printlnCode('World')}</code>`,
+    );
+
+    // Two separate playground() calls — VERSIONS_CACHE should deduplicate
+    await page.addScriptTag({
+      content: "(() => { window.KotlinPlayground('#a'); })();",
+    });
+    await page.addScriptTag({
+      content: "(() => { window.KotlinPlayground('#b'); })();",
+    });
+
+    await expect(page.locator(WIDGET_SELECTOR)).toHaveCount(2);
+
+    expect(versionsRequestCount).toBe(1);
   });
 });
 

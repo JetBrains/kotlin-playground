@@ -22,6 +22,7 @@ polyfill();
  * @property {Function} onConsoleOpen
  * @property {Function} onConsoleClose
  * @property {Function} callBack
+ * @property {function(url: string, fetchOptions: RequestInit): Promise<RequestInit>} [onRequest]
  *
  * @param {string} selector
  * @param {Object} options
