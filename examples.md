@@ -555,5 +555,32 @@ fun main(args: Array<String>) {
 
 </div>
 
+
+<div class="kotlin-code" data-target-platform="jvm" data-compiler-args='{"Xexplicit-api": "strict"}'>
+
+```kotlin
+class Calculator {
+
+  // 2. No explicit return type - inferred as Int
+  fun add(a: Int, b: Int) = a + b
+
+  // 3. No explicit visibility on property
+  val version = "1.0"
+
+  // 4. No explicit return type on function
+  fun greeting() = "Hello from Calculator"
+}
+
+// 5. Top-level function without explicit visibility or return type
+fun createCalculator() = Calculator()
+
+fun main() {
+  val c = createCalculator();
+  println(c.version);
+}
+```
+
+</div>
+
 </body>
 </html>
