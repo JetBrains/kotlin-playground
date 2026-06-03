@@ -54,6 +54,7 @@ export default class WebDemoApi {
     compilerVersion,
     platform,
     args,
+    compilerArguments,
     hiddenDependencies,
   ) {
     const MINIMAL_VERSION_WASM = '1.9.0';
@@ -94,6 +95,7 @@ export default class WebDemoApi {
       compilerVersion,
       platform,
       args,
+      compilerArguments,
       hiddenDependencies,
     ).then(function (data) {
       let output = '';
@@ -125,6 +127,7 @@ export default class WebDemoApi {
     compilerVersion,
     platform,
     args,
+    compilerArguments,
     theme,
     hiddenDependencies,
     onTestPassed,
@@ -136,6 +139,7 @@ export default class WebDemoApi {
       compilerVersion,
       platform,
       args,
+      compilerArguments,
       hiddenDependencies,
     ).then(function (data) {
       let output = '';
@@ -235,6 +239,7 @@ function executeCode(
   compilerVersion,
   targetPlatform,
   args,
+  compilerArguments,
   hiddenDependencies,
   options,
 ) {
@@ -246,6 +251,7 @@ function executeCode(
 
   const body = {
     args,
+    compilerArguments,
     files,
     confType: targetPlatform.id,
     ...(options || {}),

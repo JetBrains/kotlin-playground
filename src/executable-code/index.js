@@ -47,6 +47,7 @@ const ATTRIBUTES = {
   JS_LIBS: 'data-js-libs',
   FOLDED_BUTTON: 'folded-button',
   ARGUMENTS: 'args',
+  COMPILER_ARGUMENTS: 'compiler-args',
   LINES: 'lines',
   AUTO_INDENT: 'auto-indent',
   TRACK_RUN_ID: 'data-track-run-id',
@@ -84,6 +85,7 @@ export default class ExecutableCode {
     const to = targetNode.hasAttribute(ATTRIBUTES.TO) ? parseInt(targetNode.getAttribute(ATTRIBUTES.TO)) : null;
     const editorTheme = this.getTheme(targetNode);
     const args = targetNode.hasAttribute(ATTRIBUTES.ARGUMENTS) ? targetNode.getAttribute(ATTRIBUTES.ARGUMENTS) : "";
+    const compilerArguments = targetNode.hasAttribute(ATTRIBUTES.COMPILER_ARGUMENTS) ? targetNode.getAttribute(ATTRIBUTES.COMPILER_ARGUMENTS) : "";
     const hiddenDependencies = this.getHiddenDependencies(targetNode);
     const outputHeight = targetNode.getAttribute(ATTRIBUTES.OUTPUT_HEIGHT) || null;
     const targetPlatform = getTargetById(targetNode.getAttribute(ATTRIBUTES.PLATFORM)) || TargetPlatforms.JAVA;
@@ -143,6 +145,7 @@ export default class ExecutableCode {
       theme: editorTheme,
       indent: indent,
       args: args,
+      compilerArguments,
       mode: mode,
       crosslink,
       matchBrackets: matchBrackets,
