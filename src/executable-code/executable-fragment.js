@@ -349,6 +349,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
       onRun,
       onError,
       args,
+      compilerArguments,
       theme,
       hiddenDependencies,
       onTestPassed,
@@ -374,6 +375,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
         compilerVersion,
         targetPlatform,
         args,
+        compilerArguments,
         theme,
         hiddenDependencies,
         onTestPassed,
@@ -418,6 +420,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
           compilerVersion,
           targetPlatform,
           args,
+          compilerArguments,
           hiddenDependencies,
       ).then(
         (state) => {

@@ -54,6 +54,7 @@ export default class WebDemoApi {
     compilerVersion,
     platform,
     args,
+    compilerArguments,
     hiddenDependencies,
   ) {
     const MINIMAL_VERSION_WASM = '1.9.0';
@@ -94,6 +95,7 @@ export default class WebDemoApi {
       compilerVersion,
       platform,
       args,
+      compilerArguments,
       hiddenDependencies,
     ).then(function (data) {
       let output = '';
@@ -125,6 +127,7 @@ export default class WebDemoApi {
     compilerVersion,
     platform,
     args,
+    compilerArguments,
     theme,
     hiddenDependencies,
     onTestPassed,
@@ -136,6 +139,7 @@ export default class WebDemoApi {
       compilerVersion,
       platform,
       args,
+      compilerArguments,
       hiddenDependencies,
     ).then(function (data) {
       let output = '';
@@ -235,6 +239,7 @@ function executeCode(
   compilerVersion,
   targetPlatform,
   args,
+  compilerArguments,
   hiddenDependencies,
   options,
 ) {
@@ -248,12 +253,15 @@ function executeCode(
     args,
     files,
     confType: targetPlatform.id,
-    ...(options || {}),
   };
+
+  if (compilerArguments && Object.entries(compilerArguments).length > 0) {
+    body.compilerArguments = compilerArguments;
+  }
 
   return fetch(url, {
     method: 'POST',
-    body: JSON.stringify(body),
+    body: JSON.stringify({ ...body, ...(options || {}) }),
     headers: {
       'Content-Type': 'application/json; charset=utf-8',
     },
