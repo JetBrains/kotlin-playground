@@ -251,15 +251,17 @@ function executeCode(
 
   const body = {
     args,
-    compilerArguments,
     files,
     confType: targetPlatform.id,
-    ...(options || {}),
   };
+
+  if (compilerArguments && Object.entries(compilerArguments).length > 0) {
+    body.compilerArguments = compilerArguments;
+  }
 
   return fetch(url, {
     method: 'POST',
-    body: JSON.stringify(body),
+    body: JSON.stringify({ ...body, ...(options || {}) }),
     headers: {
       'Content-Type': 'application/json; charset=utf-8',
     },
