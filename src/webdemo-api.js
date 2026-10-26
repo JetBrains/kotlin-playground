@@ -118,6 +118,7 @@ export default class WebDemoApi {
    * @param onTestPassed    - function will call after test's passed
    * @param onTestFailed    - function will call after test's failed
    * @param hiddenDependencies   - read only additional files
+   * @param junitOutput          - show standard output of passed and failed tests
    * @returns {*|PromiseLike<T>|Promise<T>}
    */
   static executeKotlinCode(
@@ -129,6 +130,7 @@ export default class WebDemoApi {
     hiddenDependencies,
     onTestPassed,
     onTestFailed,
+    junitOutput,
   ) {
     return executeCode(
       API_URLS.COMPILE(platform, compilerVersion),
@@ -156,6 +158,8 @@ export default class WebDemoApi {
                   data.testResults,
                   onTestPassed,
                   onTestFailed,
+                  theme,
+                  junitOutput,
                 ))
               : (output = processJVMOutput(data.text || '', theme));
             break;

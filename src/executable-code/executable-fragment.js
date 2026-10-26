@@ -357,6 +357,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
       jsLibs,
       outputHeight,
       getJsCode,
+      junitOutput,
     } = this.state;
     if (waitingForOutput) {
       return;
@@ -378,6 +379,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
         hiddenDependencies,
         onTestPassed,
         onTestFailed,
+        junitOutput,
       ).then(
         (state) => {
           state.waitingForOutput = false;

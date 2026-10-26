@@ -254,9 +254,10 @@ fun main(args: Array<String>) {
 
 </div>
 
-Use `data-target-platform` attribute with value `junit` for creating examples with tests:
+Use `data-target-platform` attribute with value `junit` for creating examples with tests.
+Add `data-junit-output="true"` to show standard output of passed and failed tests:
 
-<div class="kotlin-code" data-target-platform="junit">
+<div class="kotlin-code" data-target-platform="junit" data-junit-output="true">
 
 ```kotlin
 import org.junit.Test
@@ -275,8 +276,14 @@ class TestExtensionFunctions() {
 /*
 Then implement extension functions Int.r() and Pair.r() and make them convert Int and Pair to RationalNumber.
 */
-fun Int.r(): RationalNumber = RationalNumber(this, 2)
-fun Pair<Int, Int>.r(): RationalNumber = RationalNumber(first, second)
+fun Int.r(): RationalNumber {
+  println("RationalNumber: ${this}, 2")
+  return RationalNumber(this, 2)
+}
+fun Pair<Int, Int>.r(): RationalNumber {
+  println("RationalNumber: ${first}, ${second}")
+  return RationalNumber (first, second)
+}
 
 data class RationalNumber(val numerator: Int, val denominator: Int)
 //sampleEnd

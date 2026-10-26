@@ -32,7 +32,7 @@ export function processJVMOutput(output, theme) {
     .split(`${ANGLE_BRACKETS_LEFT_HTML}/errStream${ANGLE_BRACKETS_RIGHT_HTML}`).join("</span>");
 }
 
-export function processJUnitResults(data, onTestPassed, onTestFailed) {
+export function processJUnitResults(data, onTestPassed, onTestFailed, theme, showOutput) {
   let result = "";
   let totalTime = 0;
   let passed = true;
@@ -42,13 +42,14 @@ export function processJUnitResults(data, onTestPassed, onTestFailed) {
     result += listOfResults.reduce((previousTest, currentTest) => {
       totalTime = totalTime + (currentTest.executionTime / 1000);
       if (currentTest.status === TEST_STATUS.ERROR.value || currentTest.status === TEST_STATUS.FAIL.value) passed = false;
+      const output = showOutput && currentTest.output ? processJVMOutput(currentTest.output, theme) : "";
       switch (currentTest.status) {
         case TEST_STATUS.FAIL.value:
-          return previousTest + buildOutputTestLine(TEST_STATUS.FAIL.text, currentTest.methodName, currentTest.comparisonFailure.message);
+          return previousTest + buildOutputTestLine(TEST_STATUS.FAIL.text, currentTest.methodName, currentTest.comparisonFailure.message, output);
         case TEST_STATUS.ERROR.value:
           return previousTest + buildOutputTestLine(TEST_STATUS.ERROR.text, currentTest.methodName, currentTest.exception.message);
         case TEST_STATUS.PASSED.value:
-          return previousTest + buildOutputTestLine(TEST_STATUS.PASSED.text, currentTest.methodName, "");
+          return previousTest + buildOutputTestLine(TEST_STATUS.PASSED.text, currentTest.methodName, "", output);
       }
     }, "");
   }
@@ -58,11 +59,11 @@ export function processJUnitResults(data, onTestPassed, onTestFailed) {
   return testTime + result;
 }
 
-function buildOutputTestLine(status, method, message) {
+function buildOutputTestLine(status, method, message, output) {
   return `
   <div class="console-block">
     <span class="console-icon ${status.toLocaleLowerCase()}"></span>
-    <div class="test-${status.toLocaleLowerCase()}">${status}: ${method}${message ? ': ' + convertToHtmlTag(message) : ''}</div>
+    <div class="test-${status.toLocaleLowerCase()}">${status}: ${method}${message ? ': ' + convertToHtmlTag(message) : ''}${output ? `<div class="test-output">Output: ${output}</div>` : ''}</div>
   </div>
   `;
 }

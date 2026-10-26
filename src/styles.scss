@@ -311,6 +311,11 @@ $wt-color-azure: #167dff;
   vertical-align: top;
 }
 
+.test-output .standard-output,
+.test-output .standard-output.darcula {
+  color: inherit;
+}
+
 .console-close {
   position: absolute;
   right: 0;
@@ -344,7 +349,7 @@ $wt-color-azure: #167dff;
 .console-icon {
   margin-top: 2px;
   padding-right: 20px;
-  width: 15px;
+  min-width: 15px;
   height: 15px;
 }
 

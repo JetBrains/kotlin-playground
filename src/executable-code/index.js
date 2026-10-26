@@ -51,7 +51,8 @@ const ATTRIBUTES = {
   AUTO_INDENT: 'auto-indent',
   TRACK_RUN_ID: 'data-track-run-id',
   CROSSLINK: 'data-crosslink',
-  SCROLLBAR_STYLE: 'data-scrollbar-style'
+  SCROLLBAR_STYLE: 'data-scrollbar-style',
+  JUNIT_OUTPUT: 'data-junit-output'
 };
 
 const MODES = {
@@ -95,6 +96,7 @@ export default class ExecutableCode {
     const autoComplete = targetNode.getAttribute(ATTRIBUTES.COMPLETE) === "true";
     const matchBrackets = targetNode.getAttribute(ATTRIBUTES.MATCH_BRACKETS) === "true";
     const autoIndent = targetNode.getAttribute(ATTRIBUTES.AUTO_INDENT) === "true";
+    const junitOutput = targetNode.getAttribute(ATTRIBUTES.JUNIT_OUTPUT) === "true";
     const dataTrackRunId = targetNode.getAttribute(ATTRIBUTES.TRACK_RUN_ID);
     const dataShorterHeight = targetNode.getAttribute(ATTRIBUTES.SHORTER_HEIGHT);
     const dataScrollbarStyle = targetNode.getAttribute(ATTRIBUTES.SCROLLBAR_STYLE);
@@ -161,7 +163,8 @@ export default class ExecutableCode {
       dataTrackRunId,
       shorterHeight,
       outputHeight,
-      scrollbarStyle: dataScrollbarStyle
+      scrollbarStyle: dataScrollbarStyle,
+      junitOutput
     }, eventFunctions));
 
     this.config = cfg;
