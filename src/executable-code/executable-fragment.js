@@ -351,8 +351,6 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
       args,
       theme,
       hiddenDependencies,
-      onTestPassed,
-      onTestFailed,
       onCloseConsole,
       jsLibs,
       outputHeight,
@@ -376,8 +374,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
         args,
         theme,
         hiddenDependencies,
-        onTestPassed,
-        onTestFailed,
+        this.state,
       ).then(
         (state) => {
           state.waitingForOutput = false;
@@ -419,6 +416,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
           targetPlatform,
           args,
           hiddenDependencies,
+          this.state,
       ).then(
         (state) => {
           state.waitingForOutput = false;
@@ -669,6 +667,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
         compilerVersion,
         targetPlatform,
         hiddenDependencies,
+        this.state,
       ).then((data) => this.showDiagnostics(data));
     };
 
@@ -720,6 +719,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
         this.state.targetPlatform,
         this.state.hiddenDependencies,
         processingCompletionsList,
+        this.state,
       );
       let withImports = this.canAddImport;
 
@@ -821,6 +821,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
             compilerVersion,
             targetPlatform,
             hiddenDependencies,
+            this.state,
           ).then((data) => this.showDiagnostics(data));
         }
       }, DEBOUNCE_TIME),

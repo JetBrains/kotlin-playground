@@ -1,7 +1,14 @@
 import { fetch } from 'whatwg-fetch';
 import { API_URLS } from './config';
-import flatten from 'flatten';
 import { isWasmRelated, TargetPlatforms } from './utils/platforms';
+import {
+  isApiRequest,
+  isCompileResult,
+  isTestReport,
+  toDiagnostics,
+  toTestReport,
+  transform,
+} from './events';
 import {
   findSecurityException,
   getExceptionCauses,
@@ -27,11 +34,18 @@ const DEFAULT_FILE_NAME = 'File.kt';
 
 export default class WebDemoApi {
   /**
+   * @param {import('./events').PlaygroundEvents} [events]
    * @return {Promise<Array<KotlinVersion>>}
    */
-  static getCompilerVersions() {
+  static getCompilerVersions(events) {
     if (!CACHE.compilerVersions) {
-      CACHE.compilerVersions = fetch(API_URLS.VERSIONS)
+      const request = {
+        type: 'versions',
+        url: API_URLS.VERSIONS,
+        method: 'GET',
+        headers: {},
+      };
+      CACHE.compilerVersions = sendRequest(request, {}, events)
         .then((response) => response.json())
         .catch(() => (CACHE.compilerVersions = null));
     }
@@ -47,6 +61,7 @@ export default class WebDemoApi {
    * @param platform        - TargetPlatform
    * @param args            - command line arguments
    * @param hiddenDependencies   - read only additional files
+   * @param {import('./events').PlaygroundEvents} [events]
    * @returns {*|PromiseLike<T>|Promise<T>}
    */
   static translateKotlinToJs(
@@ -55,6 +70,7 @@ export default class WebDemoApi {
     platform,
     args,
     hiddenDependencies,
+    events = {},
   ) {
     const MINIMAL_VERSION_WASM = '1.9.0';
     const MINIMAL_VERSION_SWIFT_EXPORT = '2.0.0';
@@ -88,6 +104,8 @@ export default class WebDemoApi {
       });
     }
 
+    const ctx = { platform: platform.id, compilerVersion, code };
+
     return executeCode(
       API_URLS.COMPILE(platform, compilerVersion),
       code,
@@ -95,16 +113,30 @@ export default class WebDemoApi {
       platform,
       args,
       hiddenDependencies,
-    ).then(function (data) {
-      let output = '';
-      let errorsAndWarnings = flatten(Object.values(data.errors));
-      return {
-        output: output,
-        errors: errorsAndWarnings,
-        jsCode: data.jsCode,
-        wasm: data.wasm,
-      };
-    });
+      null,
+      events,
+      'compile',
+    )
+      .then((data) =>
+        transform(
+          'onCompileResult',
+          events.onCompileResult,
+          {
+            diagnostics: toDiagnostics(data.errors),
+            jsCode: data.jsCode,
+            wasm: data.wasm,
+          },
+          ctx,
+          isCompileResult,
+          'CompileResult',
+        ),
+      )
+      .then((result) => ({
+        output: '',
+        errors: result.diagnostics,
+        jsCode: result.jsCode,
+        wasm: result.wasm,
+      }));
   }
 
   /**
@@ -115,64 +147,82 @@ export default class WebDemoApi {
    * @param platform        - TargetPlatform
    * @param args            - command line arguments
    * @param theme           - theme of editor
-   * @param onTestPassed    - function will call after test's passed
-   * @param onTestFailed    - function will call after test's failed
    * @param hiddenDependencies   - read only additional files
+   * @param {import('./events').PlaygroundEvents} [events] - onRequest, onCompileResult, onTestResult, onTestPassed, onTestFailed
    * @returns {*|PromiseLike<T>|Promise<T>}
    */
-  static executeKotlinCode(
+  static async executeKotlinCode(
     code,
     compilerVersion,
     platform,
     args,
     theme,
     hiddenDependencies,
-    onTestPassed,
-    onTestFailed,
+    events = {},
   ) {
-    return executeCode(
+    const ctx = { platform: platform.id, compilerVersion, code };
+
+    const data = await executeCode(
       API_URLS.COMPILE(platform, compilerVersion),
       code,
       compilerVersion,
       platform,
       args,
       hiddenDependencies,
-    ).then(function (data) {
-      let output = '';
-      let errorsAndWarnings = flatten(Object.values(data.errors));
-      let errors = errorsAndWarnings.filter(
-        (error) => error.severity === 'ERROR',
-      );
-      if (errors.length > 0) {
-        output = processErrors(errors, theme);
-      } else {
-        switch (platform) {
-          case TargetPlatforms.JAVA:
-            if (data.text) output = processJVMOutput(data.text, theme);
-            break;
-          case TargetPlatforms.JUNIT:
-            data.testResults
-              ? (output = processJUnitResults(
-                  data.testResults,
-                  onTestPassed,
-                  onTestFailed,
-                ))
-              : (output = processJVMOutput(data.text || '', theme));
-            break;
-        }
+      null,
+      events,
+      'compile',
+    );
+
+    const result = await transform(
+      'onCompileResult',
+      events.onCompileResult,
+      { diagnostics: toDiagnostics(data.errors) },
+      ctx,
+      isCompileResult,
+      'CompileResult',
+    );
+
+    let output = '';
+    let errorsAndWarnings = result.diagnostics;
+    let errors = errorsAndWarnings.filter(
+      (error) => error.severity === 'ERROR',
+    );
+    if (errors.length > 0) {
+      output = processErrors(errors, theme);
+    } else {
+      switch (platform) {
+        case TargetPlatforms.JAVA:
+          if (data.text) output = processJVMOutput(data.text, theme);
+          break;
+        case TargetPlatforms.JUNIT:
+          if (data.testResults) {
+            const report = await transform(
+              'onTestResult',
+              events.onTestResult,
+              toTestReport(data.testResults),
+              ctx,
+              isTestReport,
+              'TestReport',
+            );
+            output = processJUnitResults(report, events, ctx);
+          } else {
+            output = processJVMOutput(data.text || '', theme);
+          }
+          break;
       }
-      let exceptions = null;
-      if (data.exception != null) {
-        exceptions = findSecurityException(data.exception);
-        exceptions.causes = getExceptionCauses(exceptions);
-        exceptions.cause = undefined;
-      }
-      return {
-        errors: errorsAndWarnings,
-        output: output,
-        exception: exceptions,
-      };
-    });
+    }
+    let exceptions = null;
+    if (data.exception != null) {
+      exceptions = findSecurityException(data.exception);
+      exceptions.causes = getExceptionCauses(exceptions);
+      exceptions.cause = undefined;
+    }
+    return {
+      errors: errorsAndWarnings,
+      output: output,
+      exception: exceptions,
+    };
   }
 
   /**
@@ -184,6 +234,7 @@ export default class WebDemoApi {
    * @param hiddenDependencies   - read only additional files
    * @param platform - kotlin platform {@see TargetPlatform}
    * @param callback
+   * @param {import('./events').PlaygroundEvents} [events] - only onRequest is used
    */
   static getAutoCompletion(
     code,
@@ -192,6 +243,7 @@ export default class WebDemoApi {
     platform,
     hiddenDependencies,
     callback,
+    events,
   ) {
     const { line, ch, ...options } = cursor;
     const url = API_URLS.COMPLETE(compilerVersion) + `?line=${line}&ch=${ch}`;
@@ -203,6 +255,8 @@ export default class WebDemoApi {
       '',
       hiddenDependencies,
       options,
+      events,
+      'complete',
     ).then((data) => {
       callback(data);
     });
@@ -215,9 +269,16 @@ export default class WebDemoApi {
    * @param compilerVersion - string kotlin compiler
    * @param platform - kotlin platform {@see TargetPlatform}
    * @param hiddenDependencies   - read only additional files
+   * @param {import('./events').PlaygroundEvents} [events] - only onRequest is used
    * @return {*|PromiseLike<T>|Promise<T>}
    */
-  static getHighlight(code, compilerVersion, platform, hiddenDependencies) {
+  static getHighlight(
+    code,
+    compilerVersion,
+    platform,
+    hiddenDependencies,
+    events,
+  ) {
     return executeCode(
       API_URLS.HIGHLIGHT(compilerVersion),
       code,
@@ -225,6 +286,9 @@ export default class WebDemoApi {
       platform,
       '',
       hiddenDependencies,
+      null,
+      events,
+      'highlight',
     ).then((data) => data[DEFAULT_FILE_NAME] || []);
   }
 }
@@ -237,6 +301,8 @@ function executeCode(
   args,
   hiddenDependencies,
   options,
+  events,
+  type,
 ) {
   const files = [buildFileObject(code, DEFAULT_FILE_NAME)].concat(
     hiddenDependencies.map((file, index) =>
@@ -251,13 +317,53 @@ function executeCode(
     ...(options || {}),
   };
 
-  return fetch(url, {
+  const request = {
+    type,
+    url,
     method: 'POST',
-    body: JSON.stringify(body),
     headers: {
       'Content-Type': 'application/json; charset=utf-8',
     },
-  }).then((response) => response.json());
+    body,
+  };
+  const ctx = { platform: targetPlatform.id, compilerVersion, code };
+
+  return sendRequest(request, ctx, events).then((response) => response.json());
+}
+
+/**
+ * Apply `onRequest` event and send the request.
+ *
+ * @param {import('./events').ApiRequest} request
+ * @param {import('./events').EventContext} ctx
+ * @param {import('./events').PlaygroundEvents} [events]
+ * @returns {Promise<Response>}
+ */
+function sendRequest(request, ctx, events) {
+  return transform(
+    'onRequest',
+    events && events.onRequest,
+    request,
+    ctx,
+    isApiRequest,
+    'ApiRequest',
+  ).then(({ url, method, headers, body }) =>
+    fetch(url, {
+      method,
+      headers,
+      body: body ? JSON.stringify(serializeBody(body)) : undefined,
+    }),
+  );
+}
+
+/**
+ * @param {import('./events').CompileRequestBody} body
+ */
+function serializeBody(body) {
+  return {
+    ...body,
+    files: body.files.map((file) => ({ ...file, publicId: '' })),
+  };
 }
 
 /**
@@ -265,12 +371,11 @@ function executeCode(
  * Build file object.
  * @param code - string code
  * @param fileName - name of file
- * @returns {{name: string, text: string, publicId: string}} - file object
+ * @returns {import('./events').SourceFile} - file object
  */
 function buildFileObject(code, fileName) {
   return {
     name: fileName,
     text: code,
-    publicId: '',
   };
 }

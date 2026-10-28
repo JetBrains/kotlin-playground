@@ -15,8 +15,11 @@ polyfill();
  * @typedef {Object} options
  * @property {string} server
  * @property {Function} onChange
- * @property {Function} onTestPassed
- * @property {Function} onTestFailed
+ * @property {import('./events').Transformer<import('./events').ApiRequest>} [onRequest]
+ * @property {import('./events').Transformer<import('./events').CompileResult>} [onCompileResult]
+ * @property {import('./events').Transformer<import('./events').TestReport>} [onTestResult]
+ * @property {import('./events').Listener<import('./events').TestReport>} [onTestPassed]
+ * @property {import('./events').Listener<import('./events').TestReport>} [onTestFailed]
  * @property {Function} onRun
  * @property {Function} onError
  * @property {Function} onConsoleOpen
