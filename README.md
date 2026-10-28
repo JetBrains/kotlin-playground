@@ -115,11 +115,16 @@ playground('.selector', options)
  _request_ — `{ type: 'versions'|'compile'|'highlight'|'complete', url, method, headers, body?: { args, confType, files: [{ name, text }] } }`.
 
 - `onCompileResult(result, ctx)` — Is called after compilation (run, test or translation to JS/Wasm), before the output is rendered.
- _result_ — `{ diagnostics: [{ severity: 'ERROR'|'WARNING'|'INFO', message, interval?, className? }], jsCode?, wasm? }`.
+ _result_ — `{ diagnostics: [{ severity: 'ERROR'|'WARNING'|'INFO', message, interval?, className?, fileName? }], jsCode?, wasm? }`.
+  _fileName_ — `'File.kt'` for the visible code, `'hiddenDependency{i}.kt'` for the hidden files (`<textarea class="hidden-dependency">`).
+  Only diagnostics of `File.kt` (or without `fileName`) are marked in the editor, the console shows all of them.
 
 - `onTestResult(report, ctx)` — Is called after JUnit tests are executed, before the output is rendered and before `onTestPassed`/`onTestFailed`.
   Skipped when compilation has errors (also the ones added by `onCompileResult`).
- _report_ — `{ cases: [{ className, methodName, status: 'OK'|'FAIL'|'ERROR', durationMs, output: [{ stream: 'out'|'err', text }], failure?: { message, expected?, actual? }, exception?: { message, fullName? } }] }`.
+ _report_ — `{ cases: [{ className, methodName, status: 'OK'|'FAIL'|'ERROR', durationMs, output: [{ stream: 'out'|'err', text }], failure?: { message, fullName?, stackTrace, cause?, expected?, actual? }, exception?: { message, fullName?, stackTrace: [{ className, methodName, fileName?, lineNumber }], cause? } }] }`.
+  `failure` is a failed assertion (`AssertionError`), `exception` is any other exception thrown by the test.
+  The server keeps only 3 top frames of the stack trace (so for `assertEquals` of numbers or objects and `assertTrue` they are mostly frames of `org.junit.Assert`)
+  and sends `expected`/`actual` only for `ComparisonFailure` (other assertions have empty strings); `ComparisonFailure` has the full stack trace.
 
   `onRequest`, `onCompileResult` and `onTestResult` can read and modify the data: either mutate the passed object
   or return a new one (sync or as a `Promise`). Returning `undefined` keeps the passed object with all mutations,

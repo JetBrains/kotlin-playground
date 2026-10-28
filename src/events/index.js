@@ -36,6 +36,7 @@
  * @property {string} message
  * @property {{start: Position, end: Position}} [interval]
  * @property {string} [className]
+ * @property {string} [fileName]       - `File.kt` for the visible code, `hiddenDependency{i}.kt` for hidden files
  *
  * @typedef {Object} CompileResult
  * @property {Diagnostic[]} diagnostics
@@ -48,14 +49,28 @@
  *
  * @typedef {'OK'|'FAIL'|'ERROR'} TestStatus
  *
+ * @typedef {Object} StackFrame
+ * @property {string} className
+ * @property {string} methodName
+ * @property {string} [fileName]
+ * @property {number} lineNumber
+ *
+ * @typedef {Object} TestException
+ * @property {string} message
+ * @property {string} [fullName]
+ * @property {StackFrame[]} stackTrace - the server keeps only 3 top frames, except for `ComparisonFailure`
+ * @property {TestException} [cause]
+ *
+ * @typedef {TestException & {expected?: string, actual?: string}} TestFailure
+ *
  * @typedef {Object} TestCase
  * @property {string} className
  * @property {string} methodName
  * @property {TestStatus} status
  * @property {number} durationMs
  * @property {OutputSegment[]} output
- * @property {{message: string, expected?: string, actual?: string}} [failure]
- * @property {{message: string, fullName?: string}} [exception]
+ * @property {TestFailure} [failure]
+ * @property {TestException} [exception]
  *
  * @typedef {Object} TestReport
  * @property {TestCase[]} cases
@@ -181,8 +196,11 @@ export function transform(name, fn, value, ctx, isValid, typeName) {
  * @returns {Diagnostic[]}
  */
 export function toDiagnostics(errorsByFile) {
-  return Object.values(errorsByFile || {}).reduce(
-    (acc, diagnostics) => acc.concat(diagnostics || []),
+  return Object.entries(errorsByFile || {}).reduce(
+    (acc, [fileName, diagnostics]) =>
+      acc.concat(
+        (diagnostics || []).map((diagnostic) => ({ ...diagnostic, fileName })),
+      ),
     /** @type {Diagnostic[]} */ ([]),
   );
 }
@@ -222,6 +240,35 @@ export function parseOutputStreams(text) {
 }
 
 /**
+ * @param {Record<string, any>} frame - stack trace element of the server response
+ * @returns {StackFrame}
+ */
+function toStackFrame({ className, methodName, fileName, lineNumber }) {
+  /** @type {StackFrame} */
+  const frame = { className, methodName, lineNumber };
+  if (fileName) frame.fileName = fileName;
+  return frame;
+}
+
+/**
+ * @param {{message?: string, fullName?: string, stackTrace?: Record<string, any>[], cause?: Record<string, any>}} exception
+ *   - `exception` or `comparisonFailure` of a test of the server response
+ * @returns {TestException}
+ */
+function toTestException({ message, fullName, stackTrace, cause }) {
+  /** @type {TestException} */
+  const exception = {
+    message: message || '',
+    stackTrace: (stackTrace || []).map(toStackFrame),
+  };
+
+  if (fullName) exception.fullName = fullName;
+  if (cause) exception.cause = toTestException(cause);
+
+  return exception;
+}
+
+/**
  * @param {Record<string, any[]> | undefined | null} testResults - `testResults` of the server response
  * @returns {TestReport}
  */
@@ -243,14 +290,15 @@ export function toTestReport(testResults) {
       };
 
       if (test.comparisonFailure) {
-        const { message, expected, actual } = test.comparisonFailure;
-        testCase.failure = { message: message || '', expected, actual };
+        const { expected, actual } = test.comparisonFailure;
+        /** @type {TestFailure} */
+        const failure = toTestException(test.comparisonFailure);
+        if (expected !== undefined) failure.expected = expected;
+        if (actual !== undefined) failure.actual = actual;
+        testCase.failure = failure;
       }
 
-      if (test.exception) {
-        const { message, fullName } = test.exception;
-        testCase.exception = { message: message || '', fullName };
-      }
+      if (test.exception) testCase.exception = toTestException(test.exception);
 
       cases.push(testCase);
     });

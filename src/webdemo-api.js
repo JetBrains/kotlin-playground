@@ -30,7 +30,8 @@ import {
 const CACHE = {
   compilerVersions: null,
 };
-const DEFAULT_FILE_NAME = 'File.kt';
+/** Name of the visible code file; hidden dependencies are `hiddenDependency{i}.kt` */
+export const DEFAULT_FILE_NAME = 'File.kt';
 
 export default class WebDemoApi {
   /**

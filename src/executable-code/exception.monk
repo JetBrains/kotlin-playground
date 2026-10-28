@@ -3,11 +3,15 @@
 {% for stacktraceElement of stackTrace %}
     <span class="stacktrace-element error-output">
         at {{ stacktraceElement.className }}.{{ stacktraceElement.methodName }}
+        {% if stacktraceElement.linkable %}
         (<span
           class="stacktrace-link"
           :onclick={{ this.onStackTraceClick.bind(this, stacktraceElement.fileName, stacktraceElement.lineNumber) }}>
           {{ stacktraceElement.fileName }}:{{ stacktraceElement.lineNumber }}
         </span>)
+        {% else %}
+        ({{ stacktraceElement.fileName }}:{{ stacktraceElement.lineNumber }})
+        {% endif %}
     </span>
     <br/>
 {% endfor %}

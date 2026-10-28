@@ -154,7 +154,7 @@ test.describe('events', () => {
           status: 'FAIL',
           durationMs: 2,
           output: [{ stream: 'out', text: 'failed output\n' }],
-          failure: { message: 'assertion message' },
+          failure: { message: 'assertion message', stackTrace: [] },
         },
         {
           className: 'TestOutput',
@@ -162,7 +162,7 @@ test.describe('events', () => {
           status: 'ERROR',
           durationMs: 1,
           output: [{ stream: 'err', text: 'error output\n' }],
-          exception: { message: 'exception message' },
+          exception: { message: 'exception message', stackTrace: [] },
         },
       ],
     });
@@ -397,5 +397,343 @@ test.describe('output streams', () => {
       'href',
       'http://kotl.in/issue',
     );
+  });
+});
+
+// responses below are recorded from api.kotlinlang.org (2.4.21)
+const junitFrame = (methodName: string, lineNumber: number) => ({
+  className: 'org.junit.Assert',
+  methodName,
+  fileName: 'Assert.java',
+  lineNumber,
+});
+
+const JUNIT_STACK_RESULT = Object.freeze({
+  errors: { 'File.kt': [], 'hiddenDependency0.kt': [] },
+  exception: null,
+  testResults: {
+    AverageTest: [
+      {
+        methodName: 'testAverageOfEmpty',
+        className: 'AverageTest',
+        status: 'ERROR',
+        executionTime: 1,
+        output: '',
+        exception: {
+          message: 'wrapped',
+          fullName: 'java.lang.IllegalStateException',
+          stackTrace: [
+            {
+              className: 'AverageTest',
+              methodName: 'testAverageOfEmpty',
+              fileName: 'hiddenDependency0.kt',
+              lineNumber: 5,
+            },
+            {
+              className: 'jdk.internal.reflect.NativeMethodAccessorImpl',
+              methodName: 'invoke0',
+              fileName: null,
+              lineNumber: -2,
+            },
+          ],
+          cause: {
+            message: '/ by zero',
+            fullName: 'java.lang.ArithmeticException',
+            stackTrace: [
+              {
+                className: 'FileKt',
+                methodName: 'average',
+                fileName: 'File.kt',
+                lineNumber: 1,
+              },
+            ],
+            cause: null,
+          },
+        },
+      },
+      {
+        methodName: 'testAverageString',
+        className: 'AverageTest',
+        status: 'FAIL',
+        executionTime: 2,
+        output: '',
+        comparisonFailure: {
+          message: 'expected:<[3]> but was:<[2]>',
+          expected: '3',
+          actual: '2',
+          fullName: 'org.junit.ComparisonFailure',
+          stackTrace: [
+            junitFrame('assertEquals', 117),
+            {
+              className: 'AverageTest',
+              methodName: 'testAverageString',
+              fileName: 'hiddenDependency0.kt',
+              lineNumber: 11,
+            },
+          ],
+          cause: null,
+        },
+      },
+      {
+        methodName: 'testAverageInt',
+        className: 'AverageTest',
+        status: 'FAIL',
+        executionTime: 3,
+        output: '',
+        comparisonFailure: {
+          message: 'expected:<3> but was:<2>',
+          expected: '',
+          actual: '',
+          fullName: 'java.lang.AssertionError',
+          stackTrace: [
+            junitFrame('fail', 89),
+            junitFrame('failNotEquals', 835),
+            junitFrame('assertEquals', 120),
+          ],
+          cause: null,
+        },
+      },
+    ],
+  },
+});
+
+//language=kotlin
+const RUN_CODE = `fun main() {
+//sampleStart
+    val x = 1
+    println(average(emptyList()))
+    val y = 2
+//sampleEnd
+}`;
+
+const RUN_EXCEPTION_RESULT = Object.freeze({
+  errors: { 'File.kt': [], 'hiddenDependency0.kt': [] },
+  text: '',
+  exception: {
+    message: '/ by zero',
+    fullName: 'java.lang.ArithmeticException',
+    stackTrace: [
+      {
+        className: 'HiddenDependency0Kt',
+        methodName: 'average',
+        fileName: 'hiddenDependency0.kt',
+        lineNumber: 2,
+      },
+      {
+        className: 'FileKt',
+        methodName: 'main',
+        fileName: 'File.kt',
+        lineNumber: 3,
+      },
+      {
+        className: 'FileKt',
+        methodName: 'main',
+        fileName: 'File.kt',
+        lineNumber: 1,
+      },
+      {
+        className: 'FileKt',
+        methodName: 'main',
+        fileName: 'File.kt',
+        lineNumber: -1,
+      },
+    ],
+    cause: null,
+    localizedMessage: null,
+  },
+});
+
+const diagnostic = (
+  line: number,
+  from: number,
+  to: number,
+  message: string,
+) => ({
+  interval: { start: { line, ch: from }, end: { line, ch: to } },
+  message,
+  severity: 'ERROR',
+  className: 'ERROR',
+});
+
+const HIDDEN_DEPENDENCY = `<textarea class="hidden-dependency">
+fun average(numbers: List&lt;Int&gt;): Int = numbers.sum() / numbers.size
+</textarea>`;
+
+function gutterLabels(editor: Locator) {
+  return editor
+    .locator('.ERRORgutter')
+    .evaluateAll((nodes) => nodes.map((node) => node.getAttribute('label')));
+}
+
+function cursorLine(page: Page) {
+  return page.evaluate(
+    () =>
+      (
+        document.querySelector('.CodeMirror') as unknown as {
+          CodeMirror: { getCursor(): { line: number } };
+        }
+      ).CodeMirror.getCursor().line,
+  );
+}
+
+test.describe('hidden files and stack traces', () => {
+  test.beforeEach(async ({ page, baseURL }) => {
+    await prepareNetwork(page, baseURL); // offline mode
+  });
+
+  test('onTestResult keeps stack traces and causes', async ({ page }) => {
+    const editor = await initWidget(page, junitHtml, '{}');
+    await run(page, editor, JUNIT_STACK_RESULT);
+
+    const [[report]] = (await getCalls(page)).onTestResult as [
+      [{ cases: Record<string, unknown>[] }],
+    ];
+    const [error, comparison, assertion] = report.cases;
+
+    expect(error.exception).toEqual({
+      message: 'wrapped',
+      fullName: 'java.lang.IllegalStateException',
+      stackTrace: [
+        {
+          className: 'AverageTest',
+          methodName: 'testAverageOfEmpty',
+          fileName: 'hiddenDependency0.kt',
+          lineNumber: 5,
+        },
+        {
+          className: 'jdk.internal.reflect.NativeMethodAccessorImpl',
+          methodName: 'invoke0',
+          lineNumber: -2,
+        },
+      ],
+      cause: {
+        message: '/ by zero',
+        fullName: 'java.lang.ArithmeticException',
+        stackTrace: [
+          {
+            className: 'FileKt',
+            methodName: 'average',
+            fileName: 'File.kt',
+            lineNumber: 1,
+          },
+        ],
+      },
+    });
+    expect(comparison.failure).toEqual({
+      message: 'expected:<[3]> but was:<[2]>',
+      fullName: 'org.junit.ComparisonFailure',
+      expected: '3',
+      actual: '2',
+      stackTrace: [
+        junitFrame('assertEquals', 117),
+        {
+          className: 'AverageTest',
+          methodName: 'testAverageString',
+          fileName: 'hiddenDependency0.kt',
+          lineNumber: 11,
+        },
+      ],
+    });
+    expect(assertion.failure).toEqual({
+      message: 'expected:<3> but was:<2>',
+      fullName: 'java.lang.AssertionError',
+      expected: '',
+      actual: '',
+      stackTrace: [
+        junitFrame('fail', 89),
+        junitFrame('failNotEquals', 835),
+        junitFrame('assertEquals', 120),
+      ],
+    });
+  });
+
+  test('diagnostics of hidden files are not marked in the editor', async ({
+    page,
+  }) => {
+    const editor = await initWidget(
+      page,
+      `<code>${printlnCode('Hello')}${HIDDEN_DEPENDENCY}</code>`,
+      '{}',
+    );
+    const { result } = await run(page, editor, {
+      errors: {
+        'File.kt': [diagnostic(1, 4, 11, 'visible error')],
+        'hiddenDependency0.kt': [diagnostic(0, 4, 11, 'hidden error')],
+      },
+      exception: null,
+      text: '',
+    });
+
+    await expect(result).toContainText('visible error');
+    await expect(result).toContainText('hidden error');
+    expect(await gutterLabels(editor)).toEqual(['visible error']);
+
+    const [[compileResult]] = (await getCalls(page)).onCompileResult as [
+      [{ diagnostics: { message: string; fileName?: string }[] }],
+    ];
+    expect(
+      compileResult.diagnostics.map(({ message, fileName }) => ({
+        message,
+        fileName,
+      })),
+    ).toEqual([
+      { message: 'visible error', fileName: 'File.kt' },
+      { message: 'hidden error', fileName: 'hiddenDependency0.kt' },
+    ]);
+  });
+
+  test('diagnostics without fileName are marked in the editor', async ({
+    page,
+  }) => {
+    //language=javascript
+    const events = `{
+      onCompileResult(result) {
+        result.diagnostics.push({
+          severity: 'ERROR',
+          message: 'custom error',
+          interval: { start: { line: 1, ch: 4 }, end: { line: 1, ch: 11 } },
+        });
+      },
+    }`;
+    const editor = await initWidget(
+      page,
+      `<code>${printlnCode('Hello')}</code>`,
+      events,
+    );
+    await run(page, editor, {
+      errors: { 'File.kt': [] },
+      exception: null,
+      text: '',
+    });
+
+    expect(await gutterLabels(editor)).toEqual(['custom error']);
+  });
+
+  test('only stack frames of the visible code are links', async ({ page }) => {
+    const editor = await initWidget(
+      page,
+      `<code>${RUN_CODE}${HIDDEN_DEPENDENCY}</code>`,
+      '{}',
+    );
+    const { result } = await run(page, editor, RUN_EXCEPTION_RESULT);
+
+    await expect(result.locator('.stacktrace-element')).toHaveText([
+      /HiddenDependency0Kt\.average\s*\(hiddenDependency0\.kt:2\)/,
+      /FileKt\.main\s*\(\s*File\.kt:3\s*\)/,
+      /FileKt\.main\s*\(\s*File\.kt:1\s*\)/,
+      /FileKt\.main\s*\(File\.kt:-1\)/,
+    ]);
+    const links = result.locator('.stacktrace-link');
+    await expect(links).toHaveText(['File.kt:3', 'File.kt:1']);
+
+    // folded code: File.kt:3 is the 2nd line of the visible sample
+    await links.first().click();
+    expect(await cursorLine(page)).toBe(1);
+    await expect(editor.locator('.CodeMirror-line')).toHaveCount(3);
+
+    // File.kt:1 is outside of the sample: the code is unfolded
+    await links.last().click();
+    await expect(editor.locator('.CodeMirror-line')).toHaveCount(5);
+    expect(await cursorLine(page)).toBe(0);
   });
 });
