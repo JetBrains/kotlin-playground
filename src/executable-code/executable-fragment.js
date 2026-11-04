@@ -5,7 +5,7 @@ import Monkberry from 'monkberry';
 import directives from 'monkberry-directives';
 import 'monkberry-events';
 import ExecutableCodeTemplate from './executable-fragment.monk';
-import WebDemoApi from '../webdemo-api';
+import WebDemoApi, { DEFAULT_FILE_NAME } from '../webdemo-api';
 
 import {
   isJavaRelated,
@@ -328,7 +328,20 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
   }
 
   onExceptionClick(fileName, line) {
-    this.codemirror.setCursor(line - 1, 0);
+    // frames of hidden files and synthetic frames (line <= 0) have no place in the editor
+    if (fileName !== DEFAULT_FILE_NAME || !(line > 0)) return;
+
+    const position = { line: line - 1, ch: 0 };
+
+    if (this.state.folded) {
+      const sampleLine = position.line - countLines(this.prefix);
+      // the line is outside of the sample: unfold the code to show it
+      if (sampleLine < 0 || sampleLine >= this.codemirror.lineCount()) {
+        this.update({ folded: false });
+      }
+    }
+
+    this.codemirror.setCursor(this.recalculatePosition(position));
     this.codemirror.focus();
   }
 
@@ -351,8 +364,6 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
       args,
       theme,
       hiddenDependencies,
-      onTestPassed,
-      onTestFailed,
       onCloseConsole,
       jsLibs,
       outputHeight,
@@ -376,8 +387,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
         args,
         theme,
         hiddenDependencies,
-        onTestPassed,
-        onTestFailed,
+        this.state,
       ).then(
         (state) => {
           state.waitingForOutput = false;
@@ -419,6 +429,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
           targetPlatform,
           args,
           hiddenDependencies,
+          this.state,
       ).then(
         (state) => {
           state.waitingForOutput = false;
@@ -564,6 +575,10 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
       return;
     }
     diagnostics.forEach((diagnostic) => {
+      // diagnostics of hidden files would be marked at the same line of the visible code
+      if (diagnostic.fileName && diagnostic.fileName !== DEFAULT_FILE_NAME) {
+        return;
+      }
       const interval = diagnostic.interval;
       if (interval == undefined) {
         return;
@@ -669,6 +684,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
         compilerVersion,
         targetPlatform,
         hiddenDependencies,
+        this.state,
       ).then((data) => this.showDiagnostics(data));
     };
 
@@ -720,6 +736,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
         this.state.targetPlatform,
         this.state.hiddenDependencies,
         processingCompletionsList,
+        this.state,
       );
       let withImports = this.canAddImport;
 
@@ -821,6 +838,7 @@ export default class ExecutableFragment extends ExecutableCodeTemplate {
             compilerVersion,
             targetPlatform,
             hiddenDependencies,
+            this.state,
           ).then((data) => this.showDiagnostics(data));
         }
       }, DEBOUNCE_TIME),

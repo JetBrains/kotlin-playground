@@ -105,9 +105,48 @@ playground('.selector', options)
 - `onChange(code)` — Fires every time the content of the editor is changed. Debounce time: 0.5s.
  _code_ — current playground code.
 
-- `onTestPassed` — Is called after all tests passed. Use for target platform `junit`.
+- `onTestPassed(report, ctx)` — Is called after all tests passed. Use for target platform `junit`.
+ _report_ — `TestReport` with all test cases (see below), _ctx_ — `{ platform, compilerVersion, code }`.
 
-- `onTestFailed` — Is called after all tests failed. Use for target platform `junit`.
+- `onTestFailed(report, ctx)` — Is called after some tests failed. Use for target platform `junit`.
+ _report_ — `TestReport` with all test cases (see below), _ctx_ — `{ platform, compilerVersion, code }`.
+
+- `onRequest(request, ctx)` — Is called before **every** request to the compiler server (versions, compile, highlight, completion).
+ _request_ — `{ type: 'versions'|'compile'|'highlight'|'complete', url, method, headers, body?: { args, confType, files: [{ name, text }] } }`.
+
+- `onCompileResult(result, ctx)` — Is called after compilation (run, test or translation to JS/Wasm), before the output is rendered.
+ _result_ — `{ diagnostics: [{ severity: 'ERROR'|'WARNING'|'INFO', message, interval?, className?, fileName? }], jsCode?, wasm? }`.
+  _fileName_ — `'File.kt'` for the visible code, `'hiddenDependency{i}.kt'` for the hidden files (`<textarea class="hidden-dependency">`).
+  Only diagnostics of `File.kt` (or without `fileName`) are marked in the editor, the console shows all of them.
+
+- `onTestResult(report, ctx)` — Is called after JUnit tests are executed, before the output is rendered and before `onTestPassed`/`onTestFailed`.
+  Skipped when compilation has errors (also the ones added by `onCompileResult`).
+ _report_ — `{ cases: [{ className, methodName, status: 'OK'|'FAIL'|'ERROR', durationMs, output: [{ stream: 'out'|'err', text }], failure?: { message, fullName?, stackTrace, cause?, expected?, actual? }, exception?: { message, fullName?, stackTrace: [{ className, methodName, fileName?, lineNumber }], cause? } }] }`.
+  `failure` is a failed assertion (`AssertionError`), `exception` is any other exception thrown by the test.
+  The server keeps only 3 top frames of the stack trace (so for `assertEquals` of numbers or objects and `assertTrue` they are mostly frames of `org.junit.Assert`)
+  and sends `expected`/`actual` only for `ComparisonFailure` (other assertions have empty strings); `ComparisonFailure` has the full stack trace.
+
+  `onRequest`, `onCompileResult` and `onTestResult` can read and modify the data: either mutate the passed object
+  or return a new one (sync or as a `Promise`). Returning `undefined` keeps the passed object with all mutations,
+  so don't modify a copy without returning it. A malformed returned or mutated value throws `TypeError`.
+  A thrown error during the run is shown in the console of the widget, for highlight and completion requests it is silent
+  (like a network error), and for the versions request all widgets fall back to highlight-only mode.
+  The versions response is cached for the page, so only `onRequest` of the first `playground()` call is applied to it.
+  All types are described with JSDoc in [`src/events/index.js`](src/events/index.js).
+
+  ```js
+  playground('.selector', {
+    server: 'https://my-private-kotlin-server',
+    onRequest: async (request) => {
+      request.headers.Authorization = `Bearer ${await getAuthToken()}`;
+    },
+    onTestFailed: (report) => {
+      report.cases
+        .filter((test) => test.status !== 'OK')
+        .forEach((test) => track(test.methodName, (test.failure || test.exception).message));
+    },
+  });
+  ```
 
 - `onCloseConsole` — Is called after the console's closed.
 

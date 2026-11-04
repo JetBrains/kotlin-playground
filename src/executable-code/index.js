@@ -292,7 +292,7 @@ export default class ExecutableCode {
       return Promise.resolve([]);
     }
 
-    return WebDemoApi.getCompilerVersions().then((versions) => {
+    return WebDemoApi.getCompilerVersions(options).then((versions) => {
       const instances = [];
 
       targetNodes.forEach((node) => {
